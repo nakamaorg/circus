@@ -1,0 +1,50 @@
+.root {
+  &__head {
+    margin: 20px 0;
+
+    .actions {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+
+      display: grid;
+      row-gap: 10px;
+      column-gap: 10px;
+      grid-template-columns: repeat(3, 1fr);
+
+      .action {
+        cursor: pointer;
+        text-align: center;
+
+        padding: 50px 20px;
+        border-radius: 10px;
+        background-color: rgb(240, 240, 240);
+      }
+    }
+  }
+
+  &__body {
+    .search {
+      &__input {
+        width: 100%;
+        padding: 10px;
+
+        font-size: 14px;
+        font-weight: 400;
+
+        border-radius: 6px;
+        border: 1px solid rgba(var(--color-text-rgb), 0.2);
+
+        &::placeholder {
+          color: rgba(var(--color-text-rgb), 0.5);
+        }
+
+        &:active,
+        &:focus {
+          outline: none;
+          box-shadow: 0 0 10px 0 rgba(55, 89, 201, 0.3);
+        }
+      }
+    }
+  }
+}

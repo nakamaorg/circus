@@ -2,7 +2,6 @@ import logo from "@/app/images/logo.png"
 
 import * as React from "react"
 import Image from "next/image"
-import { GalleryVerticalEnd } from "lucide-react"
 
 import {
   Sidebar,

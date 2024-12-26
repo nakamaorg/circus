@@ -15,7 +15,7 @@ export function LoginForm({
           <form className="p-6 md:p-8">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Welcome back</h1>
+                <h1 className="text-2xl font-bold">Welcome back, clown!</h1>
                 <p className="text-balance text-muted-foreground">
                   Login to your Acme Inc account
                 </p>

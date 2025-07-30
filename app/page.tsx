@@ -2,6 +2,7 @@
 
 import type { JSX } from "react";
 import Image from "next/image";
+import { useState } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DiscordLoginButton } from "../components/discord-login-button";
@@ -16,19 +17,57 @@ import { DiscordLoginButton } from "../components/discord-login-button";
  * @returns {JSX.Element} The login page component.
  */
 export default function LoginPage(): JSX.Element {
+  const [isExploding, setIsExploding] = useState(false);
+  const [confetti, setConfetti] = useState<Array<{ id: number; x: number; y: number }>>([]);
+
+  const handleLogoClick = (): void => {
+    setIsExploding(true);
+
+    // Create confetti particles
+    const newConfetti = Array.from({ length: 10 }, (_, i) => ({
+      id: Date.now() + i,
+      x: Math.random() * 100,
+      y: Math.random() * 50,
+    }));
+
+    setConfetti(newConfetti);
+
+    // Reset after animation
+    setTimeout(() => {
+      setIsExploding(false);
+      setConfetti([]);
+    }, 2000);
+  };
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo/Header Section */}
-        <div className="text-center mb-12 animate__animated animate__fadeInDown">
-          <div className="flex items-center justify-center mb-4">
-            <Image
-              src="/logo.png"
-              alt="Circus Logo"
-              width={80}
-              height={80}
-              className="transform -rotate-2 cursor-pointer hover:scale-105 transition-transform duration-200"
-            />
+        <div className="text-center mb-12 animate__animated animate__fadeInDown relative">
+          <div className="flex items-center justify-center mb-4 relative">
+            <div className="relative">
+              <Image
+                src="/logo.png"
+                alt="Circus Logo"
+                width={80}
+                height={80}
+                className={`transform -rotate-2 cursor-pointer rounded-xl border-2 border-black transition-transform duration-200 ${
+                  isExploding ? "explode" : ""
+                }`}
+                onClick={handleLogoClick}
+              />
+              {/* Confetti particles */}
+              {confetti.map(particle => (
+                <div
+                  key={particle.id}
+                  className="confetti"
+                  style={{
+                    left: `${particle.x}%`,
+                    top: `${particle.y}%`,
+                  }}
+                />
+              ))}
+            </div>
             <h1 className="text-6xl font-black text-foreground transform rotate-2 ml-4 cursor-default">
               CIRCUS
             </h1>

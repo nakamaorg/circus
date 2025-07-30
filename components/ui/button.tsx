@@ -13,14 +13,14 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-main text-main-foreground shadow-shadow hover:bg-main/90",
-        destructive: "bg-destructive text-destructive-foreground shadow-shadow hover:bg-destructive/90",
-        outline: "border-input bg-background shadow-shadow hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground shadow-shadow hover:bg-secondary/80",
+        default: "bg-main text-main-foreground shadow-shadow hover:translate-x-1 hover:translate-y-1 hover:shadow-[3px_3px_0px_0px_var(--border)]",
+        destructive: "bg-destructive text-destructive-foreground shadow-shadow hover:translate-x-1 hover:translate-y-1 hover:shadow-[3px_3px_0px_0px_var(--border)]",
+        outline: "border-input bg-background shadow-shadow hover:translate-x-1 hover:translate-y-1 hover:shadow-[3px_3px_0px_0px_var(--border)] hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground shadow-shadow hover:translate-x-1 hover:translate-y-1 hover:shadow-[3px_3px_0px_0px_var(--border)]",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        neutral: "bg-background text-foreground shadow-shadow hover:bg-background/90",
-        reverse: "bg-foreground text-background shadow-shadow hover:bg-foreground/90",
+        neutral: "bg-background text-foreground shadow-shadow hover:translate-x-1 hover:translate-y-1 hover:shadow-[3px_3px_0px_0px_var(--border)]",
+        reverse: "bg-foreground text-background shadow-shadow hover:translate-x-1 hover:translate-y-1 hover:shadow-[3px_3px_0px_0px_var(--border)]",
         noShadow: "bg-main text-main-foreground hover:bg-main/90",
       },
       size: {

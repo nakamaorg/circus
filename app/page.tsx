@@ -1,8 +1,7 @@
 "use client";
 
 import type { JSX } from "react";
-
-import { Zap } from "lucide-react";
+import Image from "next/image";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DiscordLoginButton } from "../components/discord-login-button";
@@ -23,13 +22,19 @@ export default function LoginPage(): JSX.Element {
         {/* Logo/Header Section */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
-            <h1 className="text-6xl font-black text-foreground transform -rotate-2">
+            <Image
+              src="/logo.png"
+              alt="Circus Logo"
+              width={80}
+              height={80}
+              className="transform -rotate-2"
+            />
+            <h1 className="text-6xl font-black text-foreground transform rotate-2 ml-4">
               CIRCUS
             </h1>
-            <Zap className="h-12 w-12 ml-2 transform rotate-12" />
           </div>
           <p className="text-2xl font-bold text-foreground transform rotate-1">
-            Where all clowns belong!
+            Where all clown belong!
           </p>
         </div>
 
@@ -51,7 +56,7 @@ export default function LoginPage(): JSX.Element {
 
               <div className="text-center">
                 <p className="text-sm font-bold text-foreground">
-                  We only accept Discord login because we&apos;re cool like that!
+                  Discord authentication required
                 </p>
               </div>
             </div>
@@ -61,7 +66,7 @@ export default function LoginPage(): JSX.Element {
         {/* Footer */}
         <div className="text-center mt-8">
           <p className="text-sm font-bold text-foreground transform -rotate-1">
-            © 2025 Circus - The most brutal login experience!
+            NakamaOrg Circus © 2025
           </p>
         </div>
       </div>

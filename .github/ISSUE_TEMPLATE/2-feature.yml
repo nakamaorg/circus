@@ -1,9 +1,9 @@
 name: Feature Request
 description: Request a new feature or enhancement.
-type: "Feature"
+type: Feature
 title: "[Feature]: "
-labels: ["✨ Enhancement"]
-projects: ["nakamaorg/2"]
+labels: [✨ Enhancement]
+projects: [nakamaorg/2]
 assignees:
   - eoussama
 body:
@@ -25,7 +25,7 @@ body:
       label: Feature Description
       description: Describe the feature you'd like to see implemented
       placeholder: Tell us about your feature idea!
-      value: "I would like to request..."
+      value: I would like to request...
     validations:
       required: true
   - type: textarea

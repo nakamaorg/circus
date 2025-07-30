@@ -1,6 +1,8 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
+
+import type { JSX } from "react";
 import { ChevronRight } from "lucide-react";
 
 import {

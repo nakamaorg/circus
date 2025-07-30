@@ -1,5 +1,5 @@
+import type { JSX } from "react";
 import Image from "next/image";
-
 import * as React from "react";
 import logo from "@/app/images/logo.png";
 

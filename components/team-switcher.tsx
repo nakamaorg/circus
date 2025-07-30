@@ -1,5 +1,6 @@
 "use client";
 
+import type { JSX } from "react";
 import { ChevronsUpDown, Plus } from "lucide-react";
 import * as React from "react";
 

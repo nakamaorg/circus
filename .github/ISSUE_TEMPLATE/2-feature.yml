@@ -1,7 +1,8 @@
 name: Feature Request
 description: Request a new feature or enhancement.
+type: "Feature"
 title: "[Feature]: "
-labels: ["enhancement"]
+labels: ["✨ Enhancement"]
 projects: ["nakamaorg/2"]
 assignees:
   - eoussama

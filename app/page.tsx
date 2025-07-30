@@ -27,7 +27,7 @@ export default function LoginPage(): JSX.Element {
     confetti({
       particleCount: 150,
       spread: 60,
-      origin: { y: 0.6 },
+      origin: { y: 0.3 },
       colors: ["#ff6b6b", "#4ecdc4", "#45b7d1", "#96ceb4", "#ffeaa7", "#fd79a8", "#fdcb6e", "#6c5ce7", "#a29bfe"],
     });
 
@@ -36,7 +36,7 @@ export default function LoginPage(): JSX.Element {
       confetti({
         particleCount: 100,
         spread: 160,
-        origin: { y: 0.6 },
+        origin: { y: 0.3 },
         colors: ["#ff6b6b", "#4ecdc4", "#45b7d1", "#96ceb4", "#ffeaa7", "#fd79a8", "#fdcb6e", "#6c5ce7", "#a29bfe"],
       });
     }, 250);

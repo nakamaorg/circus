@@ -104,7 +104,7 @@
   }
 
   /* Logo animation */
-  img[src*="logo"]:hover {
+  img[src*="logo"]:active {
     animation: tada 1s ease-in-out;
     transform: scale(1.05);
   }

@@ -1,6 +1,7 @@
 "use client";
 
 import type { JSX } from "react";
+import confetti from "canvas-confetti";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -18,25 +19,32 @@ import { DiscordLoginButton } from "../components/discord-login-button";
  */
 export default function LoginPage(): JSX.Element {
   const [isExploding, setIsExploding] = useState(false);
-  const [confetti, setConfetti] = useState<Array<{ id: number; x: number; y: number }>>([]);
 
   const handleLogoClick = (): void => {
     setIsExploding(true);
 
-    // Create confetti particles
-    const newConfetti = Array.from({ length: 10 }, (_, i) => ({
-      id: Date.now() + i,
-      x: Math.random() * 100,
-      y: Math.random() * 50,
-    }));
+    // Launch confetti with circus colors
+    confetti({
+      particleCount: 150,
+      spread: 60,
+      origin: { y: 0.6 },
+      colors: ["#ff6b6b", "#4ecdc4", "#45b7d1", "#96ceb4", "#ffeaa7", "#fd79a8", "#fdcb6e", "#6c5ce7", "#a29bfe"],
+    });
 
-    setConfetti(newConfetti);
+    // Launch a second burst from different angles
+    setTimeout(() => {
+      confetti({
+        particleCount: 100,
+        spread: 160,
+        origin: { y: 0.6 },
+        colors: ["#ff6b6b", "#4ecdc4", "#45b7d1", "#96ceb4", "#ffeaa7", "#fd79a8", "#fdcb6e", "#6c5ce7", "#a29bfe"],
+      });
+    }, 250);
 
-    // Reset after animation
+    // Reset explosion state
     setTimeout(() => {
       setIsExploding(false);
-      setConfetti([]);
-    }, 2000);
+    }, 1000);
   };
 
   return (
@@ -51,22 +59,11 @@ export default function LoginPage(): JSX.Element {
                 alt="Circus Logo"
                 width={80}
                 height={80}
-                className={`transform -rotate-2 cursor-pointer rounded-xl border-2 border-black transition-transform duration-200 ${
+                className={`transform -rotate-2 cursor-pointer rounded-xl border-2 border-black transition-transform duration-200 hover:scale-105 ${
                   isExploding ? "explode" : ""
                 }`}
                 onClick={handleLogoClick}
               />
-              {/* Confetti particles */}
-              {confetti.map(particle => (
-                <div
-                  key={particle.id}
-                  className="confetti"
-                  style={{
-                    left: `${particle.x}%`,
-                    top: `${particle.y}%`,
-                  }}
-                />
-              ))}
             </div>
             <h1 className="text-6xl font-black text-foreground transform rotate-2 ml-4 cursor-default">
               CIRCUS

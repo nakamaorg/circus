@@ -101,14 +101,19 @@ function SheetHeader({
 SheetHeader.displayName = "SheetHeader";
 
 /**
+ * @description
+ * SheetFooter component for displaying actions at the bottom of the sheet.
+ * It uses Tailwind CSS for styling and applies a flex layout for responsive design.
  *
- * @param root0
- * @param root0.className
+ * @param root0 - The props for the sheet footer component.
+ * @param root0.props - Additional HTML attributes to apply to the footer.
+ * @param root0.className - Additional class names to apply to the footer.
+ * @returns {JSX.Element} The sheet footer component.
  */
 function SheetFooter({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
   return (
     <div
       className={cn(

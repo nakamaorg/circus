@@ -43,9 +43,14 @@ type SidebarContext = {
 const SidebarContext = React.createContext<SidebarContext | null>(null);
 
 /**
+ * @description
+ * Custom hook to access the sidebar context.
+ * This hook provides access to the sidebar state, open status, and methods to control the sidebar.
+ * It should be used within a `SidebarProvider` component.
  *
+ * @returns {SidebarContext} The sidebar context containing state and methods.
  */
-function useSidebar() {
+function useSidebar(): SidebarContext {
   const context = React.useContext(SidebarContext);
 
   if (!context) {

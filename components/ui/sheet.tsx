@@ -80,14 +80,19 @@ const SheetContent = React.forwardRef<
 SheetContent.displayName = SheetPrimitive.Content.displayName;
 
 /**
+ * @description
+ * SheetHeader component for displaying the header section of the sheet.
+ * It uses Tailwind CSS for styling and applies a flex layout for responsive design.
  *
- * @param root0
- * @param root0.className
+ * @param root0 - The props for the sheet header component.
+ * @param root0.props - Additional HTML attributes to apply to the header.
+ * @param root0.className - Additional class names to apply to the header.
+ * @returns {JSX.Element} The sheet header component.
  */
 function SheetHeader({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
   return (
     <div
       className={cn(

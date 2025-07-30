@@ -51,14 +51,14 @@ export default function LoginPage(): JSX.Element {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo/Header Section */}
-        <div className="text-center mb-12 animate__animated animate__fadeInDown relative">
+        <div className="text-center mb-12 animate__animated animate__fadeInUp animate__faster relative">
           <div className="flex items-center justify-center mb-4 relative">
             <div className="relative">
               <Image
-                src="/logo.png"
-                alt="Circus Logo"
                 width={80}
                 height={80}
+                src="/logo.png"
+                alt="Circus Logo"
                 className={`transform -rotate-2 cursor-pointer rounded-xl border-2 border-black transition-transform duration-200 hover:scale-105 ${
                   isExploding ? "explode" : ""
                 }`}

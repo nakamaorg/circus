@@ -1,13 +1,27 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
+import { cn } from "@/lib/utils";
+
+
+
+/**
+ * @description
+ * LoginForm component for user login.
+ * It includes fields for email and password, a login button, and options for social login.
+ * The form is styled using Tailwind CSS and includes a background image for larger screens.
+ *
+ * @param root0 - The props for the login form component.
+ * @param root0.className - Additional class names to apply to the form.
+ * @param root0.props - Additional HTML attributes to apply to the form.
+ * @returns {JSX.Element} The login form component.
+ */
 export function LoginForm({
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div">): JSX.Element {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden">
@@ -72,9 +86,15 @@ export function LoginForm({
         </CardContent>
       </Card>
       <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+        By clicking continue, you agree to our
+        {" "}
+        <a href="#">Terms of Service</a>
+        {" "}
+        and
+        {" "}
+        <a href="#">Privacy Policy</a>
+        .
       </div>
     </div>
-  )
+  );
 }

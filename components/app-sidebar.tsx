@@ -1,7 +1,7 @@
-import logo from "@/app/images/logo.png"
+import Image from "next/image";
 
-import * as React from "react"
-import Image from "next/image"
+import * as React from "react";
+import logo from "@/app/images/logo.png";
 
 import {
   Sidebar,
@@ -15,18 +15,20 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+
+
 
 // This is sample data.
 const data = {
   navMain: [
     {
       title: "Home",
-      url: "dashboard"
+      url: "dashboard",
     },
     {
       title: "Profile",
-      url: "#"
+      url: "#",
     },
     {
       title: "Leaderboards",
@@ -58,7 +60,7 @@ const data = {
         {
           title: "Fields",
           url: "#",
-        }
+        },
       ],
     },
     {
@@ -72,7 +74,7 @@ const data = {
         {
           title: "Endorsements",
           url: "#",
-        }
+        },
       ],
     },
     {
@@ -86,13 +88,23 @@ const data = {
         {
           title: "Events",
           url: "#",
-        }
+        },
       ],
-    }
+    },
   ],
-}
+};
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+/**
+ * @description
+ * AppSidebar component for the main application sidebar.
+ * It includes a header with the application logo and version,
+ * a content area with main navigation items, and a rail for additional actions.
+ *
+ * @param root0 - The props for the app sidebar component.
+ * @param root0.props - Additional HTML attributes to apply to the sidebar.
+ * @returns {JSX.Element} The app sidebar component.
+ */
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>): JSX.Element {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -120,24 +132,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {data.navMain.map((item) => (
+            {data.navMain.map(item => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
                   <a href={item.url} className="font-medium">
                     {item.title}
                   </a>
                 </SidebarMenuButton>
-                {item.items?.length ? (
-                  <SidebarMenuSub>
-                    {item.items.map((item) => (
-                      <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton asChild isActive={item.isActive}>
-                          <a href={item.url}>{item.title}</a>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
-                  </SidebarMenuSub>
-                ) : null}
+                {item.items?.length
+                  ? (
+                      <SidebarMenuSub>
+                        {item.items.map(item => (
+                          <SidebarMenuSubItem key={item.title}>
+                            <SidebarMenuSubButton asChild isActive={item.isActive}>
+                              <a href={item.url}>{item.title}</a>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    )
+                  : null}
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
@@ -145,5 +159,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

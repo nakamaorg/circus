@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   BadgeCheck,
@@ -7,13 +7,13 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
-} from "lucide-react"
+} from "lucide-react";
 
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/avatar"
+} from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,24 +22,38 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
+
+
+/**
+ *@description
+ * NavUser component for displaying user information in the sidebar.
+ * It uses a dropdown menu to show
+ *
+ * @param root0 - The props for the nav user component.
+ * @param root0.user - An object containing user information.
+ * @param root0.user.name - The name of the user.
+ * @param root0.user.email - The email of the user.
+ * @param root0.user.avatar - The avatar URL of the user.
+ * @returns {JSX.Element} The nav user component.
+ */
 export function NavUser({
   user,
 }: {
   user: {
-    name: string
-    email: string
-    avatar: string
-  }
-}) {
-  const { isMobile } = useSidebar()
+    name: string;
+    email: string;
+    avatar: string;
+  };
+}): JSX.Element {
+  const { isMobile } = useSidebar();
 
   return (
     <SidebarMenu>
@@ -110,5 +124,5 @@ export function NavUser({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

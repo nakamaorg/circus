@@ -1,12 +1,13 @@
-"use client"
+"use client";
 
+import type { LucideIcon } from "lucide-react";
 import {
   Folder,
   Forward,
+
   MoreHorizontal,
   Trash2,
-  type LucideIcon,
-} from "lucide-react"
+} from "lucide-react";
 
 import {
   DropdownMenu,
@@ -14,7 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -23,24 +24,36 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
+
+
+/**
+ * @description
+ * NavProjects component for displaying a list of projects in the sidebar.
+ * It uses a dropdown menu to show additional actions for each project.
+ * The component is responsive and adapts to mobile view.
+ *
+ * @param root0 - The props for the nav projects component.
+ * @param root0.projects - An array of project objects, each containing a name, URL, and icon.
+ * @returns {JSX.Element} The nav projects component.
+ */
 export function NavProjects({
   projects,
 }: {
   projects: {
-    name: string
-    url: string
-    icon: LucideIcon
-  }[]
-}) {
-  const { isMobile } = useSidebar()
+    name: string;
+    url: string;
+    icon: LucideIcon;
+  }[];
+}): JSX.Element {
+  const { isMobile } = useSidebar();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarMenu>
-        {projects.map((item) => (
+        {projects.map(item => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
               <a href={item.url}>
@@ -85,5 +98,5 @@ export function NavProjects({
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

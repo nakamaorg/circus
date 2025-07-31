@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 
 
 /**
- *@description
+ * @description
  * Utility function to merge class names conditionally.
  * It combines the functionality of clsx and tailwind-merge to handle class names effectively.
  *

@@ -1,10 +1,13 @@
+/* eslint-disable node/prefer-global/process */
+
 import type { TEnv } from "../types/env.type";
-import { env as ev } from "node:process";
 import { envSchema } from "../schemas/env.schema";
 
 import "server-only";
 
 
+
+const ev = process.env;
 
 export const env: TEnv = {
   AUTH_SECRET: ev.AUTH_SECRET!,

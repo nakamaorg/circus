@@ -1,8 +1,8 @@
 import type { JSX } from "react";
 
-import { CircusLogo } from "@/components";
+import { CircusLogo } from "@/components/circus-logo";
+import { DiscordLoginButton } from "@/components/discord-login-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DiscordLoginButton } from "../../../components/discord-login-button";
 
 
 

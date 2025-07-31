@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
 import localFont from "next/font/local";
+
 import "./globals.scss";
 
 

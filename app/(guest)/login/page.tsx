@@ -3,16 +3,24 @@ import type { JSX } from "react";
 import { CircusLogo } from "@/components/circus-logo";
 import { DiscordLoginButton } from "@/components/discord-login-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { signIn } from "@/lib/helpers/auth.helper";
 
 
 
 /**
  * @description
  * Main login page for the Circus application.
+ * Features a NeoBrutalism design with Discord-only authentication.
  *
  * @returns {JSX.Element} The login page component.
  */
 export default function LoginPage(): JSX.Element {
+  const handleDiscordSignIn = async (): Promise<void> => {
+    "use server";
+
+    await signIn("discord");
+  };
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 overflow-hidden">
       <div className="w-full max-w-md">
@@ -38,7 +46,7 @@ export default function LoginPage(): JSX.Element {
           <CardContent>
             {/* Discord Login */}
             <div className="space-y-6">
-              <DiscordLoginButton />
+              <DiscordLoginButton signIn={handleDiscordSignIn} />
 
               <div className="text-center">
                 <p className="text-sm font-bold text-foreground cursor-default">

@@ -1,12 +1,16 @@
+import type { TUnsafe } from "@eoussama/core";
+
 import NextAuth from "next-auth";
 import Discord from "next-auth/providers/discord";
 import { env } from "@/lib/config/env.config";
 
 
 
-type TUser = {
-  discordId?: string;
-};
+declare module "next-auth" {
+  interface User {
+    discordId: TUnsafe<string>;
+  }
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: env.AUTH_SECRET,
@@ -28,7 +32,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
 
     async session({ session, token }) {
-      (session.user as TUser).discordId = token.discordId as string | undefined;
+      session.user.discordId = token.discordId as TUnsafe<string>;
 
       return session;
     },

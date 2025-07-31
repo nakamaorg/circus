@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
+
+import { SessionProvider } from "next-auth/react";
 import localFont from "next/font/local";
+import { ReactQueryProvider } from "@/components/providers/react-query-provider";
 
 import "./globals.scss";
 
@@ -37,7 +40,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <SessionProvider>
+          <ReactQueryProvider>
+            {children}
+          </ReactQueryProvider>
+        </SessionProvider>
       </body>
     </html>
   );

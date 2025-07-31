@@ -5,6 +5,7 @@ import type { JSX } from "react";
 import confetti from "canvas-confetti";
 import Image from "next/image";
 import { useState } from "react";
+import packageJson from "@/package.json";
 
 
 
@@ -57,7 +58,7 @@ export function CircusLogo(): JSX.Element {
         />
       </div>
       <h1 className="text-6xl font-black text-foreground transform rotate-2 ml-4 cursor-default">
-        CIRCUS
+        {packageJson.name.toUpperCase()}
       </h1>
     </div>
   );

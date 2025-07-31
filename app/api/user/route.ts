@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import type { TUser } from "@/lib/types/user.type";
-import { GetCommand, NumberValue, ScanCommand } from "@aws-sdk/lib-dynamodb";
+
+import { NumberValue, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { NextResponse } from "next/server";
 import { AWS_TABLES, docClient } from "@/lib/config/aws.config";
 import { auth } from "@/lib/helpers/auth.helper";
@@ -36,11 +37,6 @@ export async function GET(_request: NextRequest) {
     }
 
     const dbUser = dbResult.Items[0] as Record<string, unknown>;
-    const discordUser = {
-      id: session.user.discordId,
-      name: session.user.name || "Unknown",
-      avatar: session.user.image || null,
-    };
 
     const user: TUser = {
       id: dbUser.id as string,
@@ -48,9 +44,9 @@ export async function GET(_request: NextRequest) {
       autobiography: dbUser.autobiography as string,
       wanted: dbUser.wanted as boolean,
       discord: {
-        id: discordUser.id,
-        name: discordUser.name,
-        avatar: discordUser.avatar,
+        id: session.user.discordId,
+        name: session.user.name || "Unknown",
+        avatar: session.user.image || null,
       },
     };
 

@@ -1,5 +1,4 @@
-import { env } from "node:process";
-
+/* eslint-disable node/prefer-global/process */
 import NextAuth from "next-auth";
 import Discord from "next-auth/providers/discord";
 
@@ -13,8 +12,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   providers: [
     Discord({
-      clientId: env.DISCORD_CLIENT_ID!,
-      clientSecret: env.DISCORD_CLIENT_SECRET!,
+      clientId: process.env.DISCORD_CLIENT_ID!,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
       authorization: { params: { scope: "identify" } },
     }),
   ],

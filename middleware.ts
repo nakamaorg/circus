@@ -15,15 +15,16 @@ import { auth } from "@/lib/helpers/auth.helper";
  */
 export default async function middleware(request: NextRequest): Promise<NextResponse> {
   const session = await auth();
-  const isGuestRoute = request.nextUrl.pathname.startsWith("/login");
+  const isLoggedIn = !!session;
+  const { pathname } = request.nextUrl;
+  const isGuestRoute = pathname.startsWith("/login") || pathname.match(/^\/\(guest\)/);
 
-  if (isGuestRoute) {
-    if (session) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-    else {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
+  if (!isLoggedIn && !isGuestRoute) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  if (isLoggedIn && isGuestRoute) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return NextResponse.next();

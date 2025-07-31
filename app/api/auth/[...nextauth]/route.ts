@@ -1,1 +1,1 @@
-export { handlers as GET, handlers as POST } from "@/lib/helpers";
+export { handlers as GET, handlers as POST } from "@/lib/helpers/auth.helper";

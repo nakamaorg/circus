@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DiscordLoginButton } from "../components/discord-login-button";
+import { DiscordLoginButton } from "../../../components/discord-login-button";
 
 
 

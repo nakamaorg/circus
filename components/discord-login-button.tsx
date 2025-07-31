@@ -1,16 +1,13 @@
 "use client";
 
 import type { JSX } from "react";
-
-import { Button } from "@/components/ui/button";
-import { DiscordIcon } from "@/components/ui/discord-icon";
+import { Button, DiscordIcon } from "./ui";
 
 
 
 /**
  * @description
- * Discord login button component with NeoBrutalism styling.
- * Handles Discord OAuth authentication flow.
+ * Discord login button component.
  *
  * @returns {JSX.Element} The Discord login button component.
  */

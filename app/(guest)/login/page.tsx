@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  */
 export default function LoginPage(): JSX.Element {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 overflow-hidden">
       <div className="w-full max-w-md">
         {/* Logo/Header Section */}
         <div className="text-center mb-12 animate__animated animate__fadeInUp animate__faster relative">

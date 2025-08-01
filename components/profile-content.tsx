@@ -83,7 +83,7 @@ export function ProfileContent(): JSX.Element {
             <div className="grid gap-6 md:grid-cols-2">
               <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
                 <h3 className="text-lg font-black text-black mb-2 uppercase">Display Name</h3>
-                <p className="text-2xl font-black text-purple-700">{sessionUser.name || "Unknown User"}</p>
+                <p className="text-xl font-bold text-purple-700">{sessionUser.name || "Unknown User"}</p>
               </div>
               <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
                 <h3 className="text-lg font-black text-black mb-2 uppercase">Discord Username</h3>

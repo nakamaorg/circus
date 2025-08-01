@@ -1,0 +1,72 @@
+"use client";
+
+import type { JSX } from "react";
+
+import { Home } from "lucide-react";
+import Link from "next/link";
+
+import { CircusLogo } from "@/components/circus-logo";
+import { Button } from "@/components/ui";
+
+
+
+interface SidebarProps {
+  isOpen?: boolean;
+}
+
+/**
+ * @description
+ * Sidebar navigation component for the dashboard with refined NeoBrutalism design
+ *
+ * @param props - The component props
+ * @param props.isOpen - Whether the sidebar is open/visible
+ * @returns The sidebar component
+ */
+export function Sidebar({ isOpen = true }: SidebarProps): JSX.Element {
+  return (
+    <aside className="h-screen w-64 bg-yellow-300 border-r-2 border-black flex flex-col shadow-[4px_0px_0px_0px_rgba(0,0,0,1)] relative">
+      {/* Logo Section */}
+      <div className="p-4 border-b-2 border-black bg-white">
+        <div className="flex items-center justify-center">
+          <CircusLogo />
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 p-6">
+        <div className="space-y-4">
+          <Link href="/" className="block">
+            <Button
+              variant="outline"
+              className="w-full justify-start font-black text-lg px-6 py-4 bg-white hover:bg-pink-300 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 transform rotate-[-1deg] hover:rotate-0"
+            >
+              <Home className="mr-3 h-5 w-5" />
+              HOME
+            </Button>
+          </Link>
+        </div>
+      </nav>
+
+      {/* Version Info */}
+      <div className="p-6 border-t-2 border-black bg-cyan-300">
+        <div className="text-center bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
+          <p className="text-sm font-black text-black uppercase tracking-wider">
+            Circus v0.0.1
+          </p>
+          <p className="text-xs font-black text-black mt-2 uppercase">
+            NakamaOrg Circus © 2025
+          </p>
+        </div>
+      </div>
+
+      {/* Decorative Elements */}
+      {isOpen && (
+        <>
+          <div className="animate__animated animate__bounceInDown absolute top-20 -right-1 w-3 h-12 bg-pink-400 border-2 border-black transform rotate-12 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"></div>
+          <div className="animate__animated animate__bounceInLeft animate__faster absolute top-35 -right-0 w-4 h-4 bg-cyan-400 border-2 border-black rounded-full shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"></div>
+          <div className="animate__animated animate__bounceInUp animate__sl absolute bottom-32 -right-1 w-4 h-6 bg-yellow-400 border-2 border-black transform -rotate-12 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"></div>
+        </>
+      )}
+    </aside>
+  );
+}

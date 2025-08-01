@@ -2,7 +2,7 @@
 
 import type { JSX } from "react";
 
-import { Command, Home, LogOut, Search, User, X } from "lucide-react";
+import { Command, GanttChartSquare, Home, LogOut, Search, User, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -45,6 +45,17 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps): JSX.El
       icon: <Home className="w-4 h-4" />,
       action: () => {
         router.push("/");
+        onClose();
+      },
+      category: "Navigation",
+    },
+    {
+      id: "timeline",
+      title: "View Timeline",
+      description: "Browse animated timeline of events",
+      icon: <GanttChartSquare className="w-4 h-4" />,
+      action: () => {
+        router.push("/timeline");
         onClose();
       },
       category: "Navigation",

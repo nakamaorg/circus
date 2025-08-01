@@ -7,6 +7,7 @@ import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import { Breadcrumb } from "@/components/breadcrumb";
+import { useNavigation } from "@/components/providers/navigation-provider";
 import { Button } from "@/components/ui";
 import { UserMenu } from "@/components/user-menu";
 import { MENU_ITEMS } from "@/lib/consts/menu.const";
@@ -30,6 +31,7 @@ type TDashboardHeaderProps = {
  */
 export function DashboardHeader({ session, onMenuToggle }: TDashboardHeaderProps): JSX.Element {
   const pathname = usePathname();
+  const { startNavigation, finishNavigation } = useNavigation();
 
   // Generate breadcrumb items based on current path
   const getBreadcrumbItems = () => {
@@ -60,6 +62,17 @@ export function DashboardHeader({ session, onMenuToggle }: TDashboardHeaderProps
         <div className="flex-shrink-0">
           <Breadcrumb items={breadcrumbItems} />
         </div>
+
+        {/* Test Loader Button */}
+        <Button
+          onClick={() => {
+            startNavigation();
+            setTimeout(() => finishNavigation(), 2000);
+          }}
+          className="bg-red-400 hover:bg-red-500 text-white font-black text-xs px-2 py-1"
+        >
+          TEST LOADER
+        </Button>
 
         {/* Spacer */}
         <div className="flex-1"></div>

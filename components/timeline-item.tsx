@@ -103,9 +103,10 @@ export function TimelineItem({ event, index, isLeft }: TTimelineItemProps): JSX.
         className={`
           relative w-full max-w-xs sm:w-64 sm:max-w-sm md:w-72 lg:w-80 ${colorClass}
           border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-          transform transition-all duration-1000 ease-out overflow-hidden z-20
-          hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px]
-          cursor-pointer mx-4 sm:mx-0
+          transform transition-all duration-300 ease-out overflow-hidden z-20
+          hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] 
+          hover:scale-105 hover:rotate-1 hover:border-4
+          cursor-pointer mx-4 sm:mx-0 group
           ${isVisible
       ? "translate-x-0 translate-y-0 rotate-0 opacity-100"
       : `${isLeft ? "-translate-x-8 sm:-translate-x-16" : "translate-x-8 sm:translate-x-16"} translate-y-4 sm:translate-y-8 ${isLeft ? "rotate-3 sm:rotate-6" : "-rotate-3 sm:-rotate-6"} opacity-0`
@@ -141,11 +142,13 @@ export function TimelineItem({ event, index, isLeft }: TTimelineItemProps): JSX.
           <div className="flex items-center gap-2 text-xs font-bold text-black">
             <div className="flex items-center gap-1 bg-white/80 px-2 py-1 border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
               <Clock className="h-3 w-3" />
-              {new Date(event.timestamp * 1000).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
+              <span>
+                {new Date(event.timestamp * 1000).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+              </span>
             </div>
           </div>
 
@@ -161,9 +164,18 @@ export function TimelineItem({ event, index, isLeft }: TTimelineItemProps): JSX.
                 </span>
               ))}
               {event.keywords.length > 3 && (
-                <span className="text-xs font-bold text-black/70">
+                <span
+                  className="text-xs font-bold text-black/70 cursor-help relative group/tooltip"
+                  title={event.keywords.slice(3).join(", ")}
+                >
                   +
                   {event.keywords.length - 3}
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50 pointer-events-none">
+                    {event.keywords.slice(3).join(", ")}
+                    {/* Tooltip arrow */}
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+                  </div>
                 </span>
               )}
             </div>

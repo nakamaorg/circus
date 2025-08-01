@@ -2,8 +2,9 @@
 
 import type { JSX } from "react";
 
-import { Calendar, FileText, Key, Shield, User } from "lucide-react";
+import { Calendar, Check, Copy, FileText, User } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@/lib/hooks/use-user";
@@ -20,6 +21,7 @@ import { useUser } from "@/lib/hooks/use-user";
 export default function ProfilePage(): JSX.Element {
   const { data: session } = useSession();
   const { user: userData, isLoading } = useUser();
+  const [isCopied, setIsCopied] = useState(false);
   const sessionUser = session?.user;
 
   if (!session || !sessionUser) {
@@ -51,77 +53,84 @@ export default function ProfilePage(): JSX.Element {
       </div>
 
       {/* Profile Information */}
-      <div className="max-w-4xl mx-auto">
-        {/* Combined Info Card */}
-        <Card className="bg-pink-300 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200">
-          <CardHeader className="border-b-2 border-black bg-pink-400">
+      <div className="w-full relative">
+        {/* Floating Avatar */}
+        <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="relative">
+            {sessionUser.image
+              ? (
+                  <img
+                    src={sessionUser.image}
+                    alt="Discord Avatar"
+                    className="w-32 h-32 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white"
+                  />
+                )
+              : (
+                  <div className="w-32 h-32 bg-yellow-400 border-4 border-black rounded-full flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    <User className="h-16 w-16 text-black" />
+                  </div>
+                )}
+          </div>
+        </div>
+
+        {/* User Info Card */}
+        <Card className="bg-pink-300 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 pt-20">
+          <CardHeader className="border-b-2 border-black bg-pink-400 pt-8">
             <CardTitle className="text-3xl font-black text-black uppercase tracking-wide text-center flex items-center justify-center gap-3">
               <User className="h-8 w-8" />
               User Information
             </CardTitle>
           </CardHeader>
           <CardContent className="p-8">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {/* Basic Information */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-black text-black uppercase tracking-wide flex items-center gap-2 border-b-2 border-black pb-2">
-                  <User className="h-5 w-5" />
-                  Basic Info
-                </h3>
-                <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Name</p>
-                  <p className="text-lg font-black text-black">{sessionUser.name || userData?.name || "Not provided"}</p>
-                </div>
-                <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Discord Name</p>
-                  <p className="text-lg font-black text-black">{userData?.discord?.name || sessionUser.name || "Not provided"}</p>
-                </div>
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+              {/* Name */}
+              <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Name</p>
+                <p className="text-lg font-black text-black">{sessionUser.name || userData?.name || "Not provided"}</p>
               </div>
 
-              {/* Status & Role */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-black text-black uppercase tracking-wide flex items-center gap-2 border-b-2 border-black pb-2">
-                  <Shield className="h-5 w-5" />
-                  Status & Role
-                </h3>
-                <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Status</p>
-                  <p className={`text-lg font-black uppercase tracking-wide ${userData?.wanted ? "text-red-600" : "text-green-600"}`}>
-                    {userData?.wanted ? "Wanted" : "Saint"}
-                  </p>
-                </div>
-                <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Discord Avatar</p>
-                  <div className="flex items-center gap-3 mt-2">
-                    {sessionUser.image
-                      ? (
-                          <img
-                            src={sessionUser.image}
-                            alt="Discord Avatar"
-                            className="w-12 h-12 rounded-full border-2 border-black"
-                          />
-                        )
-                      : (
-                          <div className="w-12 h-12 bg-yellow-400 border-2 border-black rounded-full flex items-center justify-center">
-                            <User className="h-6 w-6 text-black" />
-                          </div>
-                        )}
-                    <p className="text-sm font-bold text-black">
-                      {sessionUser.image ? "Available" : "No avatar"}
-                    </p>
-                  </div>
-                </div>
+              {/* Discord Name */}
+              <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Discord Name</p>
+                <p className="text-lg font-black text-black">{userData?.discord?.name || sessionUser.name || "Not provided"}</p>
               </div>
 
-              {/* Discord Account */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-black text-black uppercase tracking-wide flex items-center gap-2 border-b-2 border-black pb-2">
-                  <Key className="h-5 w-5" />
-                  Discord Account
-                </h3>
-                <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Discord ID</p>
-                  <p className="text-lg font-black text-black break-all">{sessionUser.discordId || userData?.discord?.id || "Not available"}</p>
+              {/* Status */}
+              <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Status</p>
+                <p className={`text-lg font-black uppercase tracking-wide ${userData?.wanted ? "text-red-600" : "text-green-600"}`}>
+                  {userData?.wanted ? "Wanted" : "Saint"}
+                </p>
+              </div>
+
+              {/* Discord ID with Copy Button */}
+              <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Discord ID</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <p className="text-lg font-black text-black break-all flex-1">{sessionUser.discordId || userData?.discord?.id || "Not available"}</p>
+                  {(sessionUser.discordId || userData?.discord?.id) && (
+                    <button
+                      onClick={async () => {
+                        const discordId = sessionUser.discordId || userData?.discord?.id;
+
+                        if (discordId) {
+                          await navigator.clipboard.writeText(discordId);
+                          setIsCopied(true);
+                          setTimeout(() => setIsCopied(false), 2000);
+                        }
+                      }}
+                      className="bg-cyan-400 hover:bg-cyan-500 border-2 border-black p-2 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100"
+                      title={isCopied ? "Copied!" : "Copy Discord ID"}
+                    >
+                      {isCopied
+                        ? (
+                            <Check className="animate__animated animate__bounceIn h-4 w-4" />
+                          )
+                        : (
+                            <Copy className="animate__animated animate__fadeIn h-4 w-4" />
+                          )}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

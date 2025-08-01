@@ -121,7 +121,7 @@ export function ProfileContent(): JSX.Element {
         <Card className="bg-green-300 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
           <CardHeader className="border-b-2 border-black bg-green-400">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-3xl font-black text-black uppercase tracking-wider flex items-center gap-3">
+              <CardTitle className="text-3xl font-black text-black uppercase tracking-wider flex items-center justify-center gap-3 w-full">
                 <FileText className="h-8 w-8" />
                 Biography
               </CardTitle>

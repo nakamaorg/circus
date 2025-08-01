@@ -24,7 +24,6 @@ interface DashboardHeaderProps {
  * @param props - The component props
  * @param props.session - The user session
  * @param props.onMenuToggle - Menu toggle handler
- * @param props.sidebarOpen - Whether the sidebar is open
  * @returns The dashboard header component
  */
 export function DashboardHeader({ session, onMenuToggle }: DashboardHeaderProps): JSX.Element {

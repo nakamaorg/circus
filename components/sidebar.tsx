@@ -2,9 +2,9 @@
 
 import type { JSX } from "react";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CircusLogo } from "@/components/circus-logo";
+import { NavigationLink } from "@/components/navigation-link";
 import { Button } from "@/components/ui";
 import { MENU_ITEMS } from "@/lib/consts/menu.const";
 
@@ -44,7 +44,7 @@ export function Sidebar({ isOpen = true }: TSidebarProps): JSX.Element {
             const rotations = ["rotate-[-1deg]", "rotate-[1deg]"];
 
             return (
-              <Link key={item.link} href={item.link} className="block">
+              <NavigationLink key={item.link} href={item.link} className="block">
                 <Button
                   variant="outline"
                   className={`w-full justify-start font-black text-lg px-6 py-4 bg-yellow-200 ${hoverColors[index % 2]} border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 transform ${rotations[index % 2]} hover:rotate-0 ${isActive ? "bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" : ""}`}
@@ -52,7 +52,7 @@ export function Sidebar({ isOpen = true }: TSidebarProps): JSX.Element {
                   <Icon className="mr-3 h-5 w-5" />
                   {item.label.toUpperCase()}
                 </Button>
-              </Link>
+              </NavigationLink>
             );
           })}
         </div>

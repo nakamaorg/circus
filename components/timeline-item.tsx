@@ -71,45 +71,46 @@ export function TimelineItem({ event, index, isLeft }: TTimelineItemProps): JSX.
     <div
       ref={itemRef}
       className={`
-        relative flex items-center w-full mb-12 px-4 sm:px-0
-        ${isLeft ? "justify-start" : "justify-end"}
+        relative flex items-center w-full mb-8 sm:mb-12
+        ${isLeft ? "justify-start sm:justify-start" : "justify-start sm:justify-end"}
       `}
     >
       {/* Timeline connector line to center */}
       <div
         className={`
           absolute top-1/2 transform -translate-y-1/2 h-0.5 bg-black transition-all duration-1000 ease-out
-          ${isVisible ? "w-40 sm:w-60 md:w-80" : "w-0"}
-          ${isLeft ? "right-1/2 mr-0" : "left-1/2 ml-0"}
+          ${isVisible ? "w-20 sm:w-40 md:w-60 lg:w-80" : "w-0"}
+          ${isLeft ? "right-1/2 mr-0 sm:right-1/2 sm:mr-0" : "left-1/2 ml-0 sm:left-1/2 sm:ml-0"}
+          sm:${isLeft ? "right-1/2 mr-0" : "left-1/2 ml-0"}
         `}
       />
 
       {/* Timeline dot */}
       <div
         className={`
-          absolute top-1/2 transform -translate-y-1/2 w-8 h-8 rounded-full border-4 border-black
+          absolute top-1/2 transform -translate-y-1/2 w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 sm:border-4 border-black
           transition-all duration-700 ease-out z-10
           ${isVisible ? "scale-100 rotate-0" : "scale-0 rotate-180"}
-          ${isLeft ? "right-1/2 translate-x-1/2" : "left-1/2 -translate-x-1/2"}
+          ${isLeft ? "right-1/2 translate-x-1/2 sm:right-1/2 sm:translate-x-1/2" : "left-1/2 -translate-x-1/2 sm:left-1/2 sm:-translate-x-1/2"}
           ${colorClass} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
         `}
       >
-        <Calendar className="w-4 h-4 text-black absolute top-1 left-1" />
+        <Calendar className="w-3 h-3 sm:w-4 sm:h-4 text-black absolute top-0.5 left-0.5 sm:top-1 sm:left-1" />
       </div>
 
       {/* Event Card */}
       <Card
         className={`
-          relative w-64 sm:w-72 md:w-80 max-w-[calc(50vw-2rem)] ${colorClass}
+          relative w-full max-w-xs sm:w-64 sm:max-w-sm md:w-72 lg:w-80 ${colorClass}
           border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
           transform transition-all duration-1000 ease-out overflow-hidden z-20
           hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px]
-          cursor-pointer
+          cursor-pointer mx-4 sm:mx-0
           ${isVisible
       ? "translate-x-0 translate-y-0 rotate-0 opacity-100"
-      : `${isLeft ? "-translate-x-16" : "translate-x-16"} translate-y-8 ${isLeft ? "rotate-6" : "-rotate-6"} opacity-0`
+      : `${isLeft ? "-translate-x-8 sm:-translate-x-16" : "translate-x-8 sm:translate-x-16"} translate-y-4 sm:translate-y-8 ${isLeft ? "rotate-3 sm:rotate-6" : "-rotate-3 sm:-rotate-6"} opacity-0`
     }
-          ${isLeft ? "mr-1" : "ml-1"}
+          ${isLeft ? "sm:mr-1" : "sm:ml-1"}
         `}
         onClick={() => setShowModal(true)}
         style={{

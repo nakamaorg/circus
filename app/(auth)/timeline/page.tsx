@@ -88,17 +88,17 @@ export default function TimelinePage(): JSX.Element {
       {/* Timeline Content */}
       {sortedEvents && sortedEvents.length > 0
         ? (
-            <div className="relative max-w-6xl mx-auto px-4">
+            <div className="relative max-w-6xl mx-auto px-2 sm:px-4">
               {/* Central timeline line with solid color */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-2 bg-black h-full shadow-lg"></div>
+              <div className="absolute left-4 sm:left-1/2 transform sm:-translate-x-1/2 w-1 sm:w-2 bg-black h-full shadow-lg"></div>
 
               {/* Decorative top circle */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-6 w-10 h-10 bg-purple-400 border-4 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-20">
+              <div className="absolute left-4 sm:left-1/2 transform -translate-x-1/2 sm:-translate-x-1/2 -translate-y-4 sm:-translate-y-6 w-8 h-8 sm:w-10 sm:h-10 bg-purple-400 border-2 sm:border-4 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-20">
                 <div className="w-full h-full bg-white rounded-full animate-ping opacity-30"></div>
               </div>
 
               {/* Timeline Items */}
-              <div className="space-y-0 pt-12">
+              <div className="space-y-0 pt-8 sm:pt-12">
                 {sortedEvents.map((event, index) => (
                   <TimelineItem
                     key={event.id}
@@ -110,7 +110,7 @@ export default function TimelinePage(): JSX.Element {
               </div>
 
               {/* Decorative bottom circle */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0 translate-y-6 w-10 h-10 bg-cyan-400 border-4 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-20">
+              <div className="absolute left-4 sm:left-1/2 transform -translate-x-1/2 sm:-translate-x-1/2 bottom-0 translate-y-4 sm:translate-y-6 w-8 h-8 sm:w-10 sm:h-10 bg-cyan-400 border-2 sm:border-4 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-20">
                 <div className="w-full h-full bg-white rounded-full animate-ping opacity-30"></div>
               </div>
             </div>
@@ -132,10 +132,10 @@ export default function TimelinePage(): JSX.Element {
       {showBackToTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 w-14 h-14 bg-purple-400 border-4 border-black rounded-full shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 z-50 flex items-center justify-center animate-pulse"
+          className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 w-12 h-12 sm:w-14 sm:h-14 bg-purple-400 border-2 sm:border-4 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 z-50 flex items-center justify-center animate-pulse"
           aria-label="Back to top"
         >
-          <ChevronUp className="w-7 h-7 text-black font-bold" />
+          <ChevronUp className="w-5 h-5 sm:w-7 sm:h-7 text-black font-bold" />
         </button>
       )}
     </div>

@@ -179,7 +179,7 @@ export function ProfileContent(): JSX.Element {
               </CardTitle>
               <SpeakButton
                 text={userData.autobiography}
-                size="lg"
+                size="md"
                 variant="pink"
                 label="Read Biography Aloud"
               />

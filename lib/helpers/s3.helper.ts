@@ -117,3 +117,56 @@ export async function eventThumbnailExists(eventId: string): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * @description
+ * Generate a presigned URL for a lore media item in S3
+ *
+ * @param key - The S3 key for the media item
+ * @returns Promise<TNullable<string>> - The presigned URL or null if error/not found
+ */
+export async function getLoreMediaUrl(key: string): Promise<TNullable<string>> {
+  try {
+    const exists = await loreMediaExists(key);
+
+    if (!exists) {
+      return null;
+    }
+
+    const command = new GetObjectCommand({
+      Bucket: AWS_BUCKETS.NAKAMAORG,
+      Key: key,
+    });
+
+    // Generate presigned URL that expires in 1 hour
+    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+    return url;
+  }
+  catch {
+    return null;
+  }
+}
+
+/**
+ * @description
+ * Check if a lore media item exists
+ *
+ * @param key - The S3 key to check for
+ * @returns Promise<boolean> - Whether the lore media exists
+ */
+export async function loreMediaExists(key: string): Promise<boolean> {
+  try {
+    const command = new HeadObjectCommand({
+      Bucket: AWS_BUCKETS.NAKAMAORG,
+      Key: key,
+    });
+
+    await s3.send(command);
+
+    return true;
+  }
+  catch {
+    return false;
+  }
+}

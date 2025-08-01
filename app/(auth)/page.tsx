@@ -1,8 +1,11 @@
+"use client";
+
 import type { JSX } from "react";
 
 import { Rocket, Sparkles, Zap } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { usePageReady } from "@/lib/hooks/use-page-ready";
 
 
 
@@ -13,6 +16,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  * @returns {JSX.Element} The dashboard page component.
  */
 export default function DashboardPage(): JSX.Element {
+  usePageReady();
+
   return (
     <div className="space-y-8">
       {/* Hero Section */}

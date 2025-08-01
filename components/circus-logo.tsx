@@ -44,11 +44,11 @@ export function CircusLogo(): JSX.Element {
   };
 
   return (
-    <div className="flex items-center justify-center mb-4 relative">
+    <div className="flex flex-col items-center justify-center space-y-3 relative">
       <div className="relative">
         <Image
-          width={80}
-          height={80}
+          width={60}
+          height={60}
           src="/logo.png"
           alt="Circus Logo"
           className={`transform -rotate-2 cursor-pointer rounded-xl border-2 border-black transition-transform duration-200 hover:scale-105 ${
@@ -57,7 +57,7 @@ export function CircusLogo(): JSX.Element {
           onClick={handleLogoClick}
         />
       </div>
-      <h1 className="text-6xl font-black text-foreground transform rotate-2 ml-4 cursor-default">
+      <h1 className="text-3xl font-black text-foreground transform rotate-1 cursor-default text-center">
         {packageJson.name.toUpperCase()}
       </h1>
     </div>

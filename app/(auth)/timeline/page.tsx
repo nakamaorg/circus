@@ -83,12 +83,6 @@ export default function TimelinePage(): JSX.Element {
         <p className="text-xl font-bold text-black bg-white inline-block px-6 py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
           Journey through events in chronological order
         </p>
-        <div className="flex justify-center items-center space-x-3 mt-8">
-          <div className="w-3 h-3 bg-pink-400 border border-black rounded-full animate-bounce"></div>
-          <div className="w-3 h-3 bg-cyan-400 border border-black rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
-          <div className="w-3 h-3 bg-yellow-400 border border-black rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-          <div className="w-3 h-3 bg-green-400 border border-black rounded-full animate-bounce" style={{ animationDelay: "0.3s" }}></div>
-        </div>
       </div>
 
       {/* Timeline Content */}

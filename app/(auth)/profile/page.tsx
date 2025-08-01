@@ -51,78 +51,79 @@ export default function ProfilePage(): JSX.Element {
       </div>
 
       {/* Profile Information */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Basic Info Card */}
-        <Card className="bg-pink-300 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform rotate-1 hover:rotate-0 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+      <div className="max-w-4xl mx-auto">
+        {/* Combined Info Card */}
+        <Card className="bg-pink-300 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200">
           <CardHeader className="border-b-2 border-black bg-pink-400">
-            <CardTitle className="text-2xl font-black text-black uppercase tracking-wide flex items-center gap-3">
-              <User className="h-6 w-6" />
-              Basic Information
+            <CardTitle className="text-3xl font-black text-black uppercase tracking-wide text-center flex items-center justify-center gap-3">
+              <User className="h-8 w-8" />
+              User Information
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 space-y-4">
-            <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Name</p>
-              <p className="text-lg font-black text-black">{sessionUser.name || userData?.name || "Not provided"}</p>
-            </div>
-            <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Discord Name</p>
-              <p className="text-lg font-black text-black">{userData?.discord?.name || sessionUser.name || "Not provided"}</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Status Card */}
-        <Card className="bg-yellow-300 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform -rotate-1 hover:rotate-0 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
-          <CardHeader className="border-b-2 border-black bg-yellow-400">
-            <CardTitle className="text-2xl font-black text-black uppercase tracking-wide flex items-center gap-3">
-              <Shield className="h-6 w-6" />
-              Status & Role
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6 space-y-4">
-            <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Status</p>
-              <p className={`text-lg font-black uppercase tracking-wide ${userData?.wanted ? "text-red-600" : "text-green-600"}`}>
-                {userData?.wanted ? "Wanted" : "Saint"}
-              </p>
-            </div>
-            <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Discord Avatar</p>
-              <div className="flex items-center gap-3 mt-2">
-                {sessionUser.image
-                  ? (
-                      <img
-                        src={sessionUser.image}
-                        alt="Discord Avatar"
-                        className="w-12 h-12 rounded-full border-2 border-black"
-                      />
-                    )
-                  : (
-                      <div className="w-12 h-12 bg-yellow-400 border-2 border-black rounded-full flex items-center justify-center">
-                        <User className="h-6 w-6 text-black" />
-                      </div>
-                    )}
-                <p className="text-sm font-bold text-black">
-                  {sessionUser.image ? "Available" : "No avatar"}
-                </p>
+          <CardContent className="p-8">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {/* Basic Information */}
+              <div className="space-y-4">
+                <h3 className="text-xl font-black text-black uppercase tracking-wide flex items-center gap-2 border-b-2 border-black pb-2">
+                  <User className="h-5 w-5" />
+                  Basic Info
+                </h3>
+                <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Name</p>
+                  <p className="text-lg font-black text-black">{sessionUser.name || userData?.name || "Not provided"}</p>
+                </div>
+                <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Discord Name</p>
+                  <p className="text-lg font-black text-black">{userData?.discord?.name || sessionUser.name || "Not provided"}</p>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Discord Info Card */}
-        <Card className="bg-cyan-300 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform -rotate-1 hover:rotate-0 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
-          <CardHeader className="border-b-2 border-black bg-cyan-400">
-            <CardTitle className="text-2xl font-black text-black uppercase tracking-wide flex items-center gap-3">
-              <Key className="h-6 w-6" />
-              Discord Account
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6 space-y-4">
-            <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Discord ID</p>
-              <p className="text-lg font-black text-black break-all">{sessionUser.discordId || userData?.discord?.id || "Not available"}</p>
+              {/* Status & Role */}
+              <div className="space-y-4">
+                <h3 className="text-xl font-black text-black uppercase tracking-wide flex items-center gap-2 border-b-2 border-black pb-2">
+                  <Shield className="h-5 w-5" />
+                  Status & Role
+                </h3>
+                <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Status</p>
+                  <p className={`text-lg font-black uppercase tracking-wide ${userData?.wanted ? "text-red-600" : "text-green-600"}`}>
+                    {userData?.wanted ? "Wanted" : "Saint"}
+                  </p>
+                </div>
+                <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Discord Avatar</p>
+                  <div className="flex items-center gap-3 mt-2">
+                    {sessionUser.image
+                      ? (
+                          <img
+                            src={sessionUser.image}
+                            alt="Discord Avatar"
+                            className="w-12 h-12 rounded-full border-2 border-black"
+                          />
+                        )
+                      : (
+                          <div className="w-12 h-12 bg-yellow-400 border-2 border-black rounded-full flex items-center justify-center">
+                            <User className="h-6 w-6 text-black" />
+                          </div>
+                        )}
+                    <p className="text-sm font-bold text-black">
+                      {sessionUser.image ? "Available" : "No avatar"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Discord Account */}
+              <div className="space-y-4">
+                <h3 className="text-xl font-black text-black uppercase tracking-wide flex items-center gap-2 border-b-2 border-black pb-2">
+                  <Key className="h-5 w-5" />
+                  Discord Account
+                </h3>
+                <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <p className="text-sm font-bold text-black/70 uppercase tracking-wide">Discord ID</p>
+                  <p className="text-lg font-black text-black break-all">{sessionUser.discordId || userData?.discord?.id || "Not available"}</p>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>

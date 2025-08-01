@@ -2,7 +2,7 @@
 
 import type { JSX } from "react";
 
-import { Calendar, Check, Copy, FileText, User } from "lucide-react";
+import { Calendar, Check, Copy, FileText, User, Volume2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 
@@ -23,7 +23,34 @@ export default function ProfilePage(): JSX.Element {
   const { data: session } = useSession();
   const { user: userData, isLoading } = useUser();
   const [isCopied, setIsCopied] = useState(false);
+  const [isReading, setIsReading] = useState(false);
   const sessionUser = session?.user;
+
+  const handleReadBiography = (): void => {
+    if (!userData?.autobiography) {
+      return;
+    }
+
+    if (isReading) {
+      // Stop reading
+      speechSynthesis.cancel();
+      setIsReading(false);
+    }
+    else {
+      // Start reading
+      const utterance = new SpeechSynthesisUtterance(userData.autobiography);
+
+      utterance.rate = 0.8;
+      utterance.pitch = 1;
+      utterance.volume = 0.8;
+
+      utterance.onstart = () => setIsReading(true);
+      utterance.onend = () => setIsReading(false);
+      utterance.onerror = () => setIsReading(false);
+
+      speechSynthesis.speak(utterance);
+    }
+  };
 
   if (isLoading) {
     return <ProfileSkeleton />;
@@ -139,10 +166,19 @@ export default function ProfilePage(): JSX.Element {
       {userData?.autobiography && (
         <Card className="bg-green-300 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
           <CardHeader className="border-b-2 border-black bg-green-400">
-            <CardTitle className="text-3xl font-black text-black uppercase tracking-wider text-center flex items-center justify-center gap-3">
-              <FileText className="h-8 w-8" />
-              Biography
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-3xl font-black text-black uppercase tracking-wider flex items-center gap-3">
+                <FileText className="h-8 w-8" />
+                Biography
+              </CardTitle>
+              <button
+                onClick={handleReadBiography}
+                className={`bg-pink-400 hover:bg-pink-500 border-2 border-black p-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 transform rotate-1 hover:rotate-0 ${isReading ? "animate-pulse bg-pink-600" : ""}`}
+                title={isReading ? "Stop Reading" : "Read Biography Aloud"}
+              >
+                <Volume2 className={`h-6 w-6 ${isReading ? "animate-bounce" : ""}`} />
+              </button>
+            </div>
           </CardHeader>
           <CardContent className="p-6">
             <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">

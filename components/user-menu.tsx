@@ -3,7 +3,8 @@
 import type { Session } from "next-auth";
 import type { JSX } from "react";
 
-import { LogOut } from "lucide-react";
+import { LogOut, User } from "lucide-react";
+import Link from "next/link";
 import { useTransition } from "react";
 
 import { handleSignOut } from "@/app/actions/auth";
@@ -15,6 +16,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui";
+import { useUser } from "@/lib/hooks/use-user";
 
 
 
@@ -32,10 +34,15 @@ type TUserMenuProps = {
  */
 export function UserMenu({ session }: TUserMenuProps): JSX.Element {
   const [isPending, startTransition] = useTransition();
+  const { user: userData } = useUser();
   const user = session.user;
   const displayName = user?.name ?? "Anonymous";
   const avatarUrl = user?.image;
-  const initials = displayName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+  const initials = displayName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
+
+  // Determine if user is wanted or saint
+  const wantedStatus = userData?.wanted ? "Wanted" : "Saint";
+  const statusColor = userData?.wanted ? "text-red-600" : "text-green-600";
 
   const handleLogout = (): void => {
     startTransition(() => {
@@ -64,9 +71,16 @@ export function UserMenu({ session }: TUserMenuProps): JSX.Element {
       >
         <div className="px-4 py-3 bg-pink-300 border-b-2 border-black">
           <p className="text-base font-black text-black uppercase">{displayName}</p>
-          <p className="text-sm font-bold text-black/70">{user?.email ?? "No email"}</p>
+          <p className={`text-sm font-bold ${statusColor} uppercase tracking-wide`}>{wantedStatus}</p>
         </div>
-        <div className="p-2">
+        <div className="p-2 space-y-2">
+          <Link
+            href="/profile"
+            className="w-full bg-cyan-400 hover:bg-cyan-500 text-cyan-900 hover:text-cyan-950 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 flex items-center px-4 py-3 text-sm font-black rounded-none cursor-pointer uppercase tracking-wide block"
+          >
+            <User className="mr-3 h-5 w-5" />
+            <span>View Profile</span>
+          </Link>
           <button
             onClick={handleLogout}
             disabled={isPending}

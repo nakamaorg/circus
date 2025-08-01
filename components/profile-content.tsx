@@ -2,7 +2,7 @@
 
 import type { JSX } from "react";
 
-import { Calendar, Eye, FileText, User } from "lucide-react";
+import { Calendar, Eye, FileText, Loader2, User } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 
@@ -39,7 +39,6 @@ export function ProfileContent(): JSX.Element {
     }
 
     setLoadingBountyImage(true);
-    setShowBountyPoster(true);
     setImageLoading(true);
 
     try {
@@ -48,6 +47,7 @@ export function ProfileContent(): JSX.Element {
 
       if (data.success && data.imageUrl) {
         setBountyImageUrl(data.imageUrl);
+        setShowBountyPoster(true);
       }
       else {
         throw new Error("No bounty poster found");
@@ -55,7 +55,6 @@ export function ProfileContent(): JSX.Element {
     }
     catch (error) {
       console.error("Failed to load bounty image:", error);
-      setShowBountyPoster(false);
       // TODO: Add proper toast notification instead of alert
       // eslint-disable-next-line no-alert
       alert("No bounty poster found for this user");
@@ -141,11 +140,23 @@ export function ProfileContent(): JSX.Element {
                   {userData?.wanted && (
                     <Button
                       onClick={handleViewBounty}
+                      disabled={loadingBountyImage}
                       size="sm"
-                      className="bg-red-500 hover:bg-red-600 text-white font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 transform rotate-1 hover:rotate-0"
+                      className="bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 transform rotate-1 hover:rotate-0 disabled:translate-x-0 disabled:translate-y-0 disabled:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
                     >
-                      <Eye className="w-4 h-4 mr-2" />
-                      VIEW BOUNTY
+                      {loadingBountyImage
+                        ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              LOADING...
+                            </>
+                          )
+                        : (
+                            <>
+                              <Eye className="w-4 h-4 mr-2" />
+                              VIEW BOUNTY
+                            </>
+                          )}
                     </Button>
                   )}
                 </div>
@@ -234,36 +245,27 @@ export function ProfileContent(): JSX.Element {
             </button>
 
             {/* Bounty Poster Content */}
-            {loadingBountyImage
-              ? (
-                  <div className="bg-white border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                    <div className="w-64 h-64 bg-gray-200 border-2 border-black flex items-center justify-center">
-                      <div className="w-8 h-8 animate-spin rounded-full border-4 border-black border-t-transparent" />
-                    </div>
-                    <p className="text-lg font-bold text-black mt-4">Loading bounty poster...</p>
+            {bountyImageUrl && (
+              <div className="animate__animated animate__jackInTheBox relative border-4 border-black bg-white overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                {/* Image Loading Skeleton */}
+                {imageLoading && (
+                  <div className="absolute inset-0 bg-gray-200 flex items-center justify-center animate-pulse">
+                    <div className="w-16 h-16 bg-gray-300 rounded-full animate-pulse" />
                   </div>
-                )
-              : bountyImageUrl && (
-                <div className="animate__animated animate__jackInTheBox relative border-4 border-black bg-white overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                  {/* Image Loading Skeleton */}
-                  {imageLoading && (
-                    <div className="absolute inset-0 bg-gray-200 flex items-center justify-center animate-pulse">
-                      <div className="w-16 h-16 bg-gray-300 rounded-full animate-pulse" />
-                    </div>
-                  )}
+                )}
 
-                  {/* Actual Image */}
-                  <img
-                    alt={`${sessionUser?.name}'s bounty poster`}
-                    className={`w-full h-auto object-contain transition-opacity duration-300 ${
-                      imageLoading ? "opacity-0" : "opacity-100"
-                    }`}
-                    src={bountyImageUrl}
-                    onLoad={() => setImageLoading(false)}
-                    onError={() => setImageLoading(false)}
-                  />
-                </div>
-              )}
+                {/* Actual Image */}
+                <img
+                  alt={`${sessionUser?.name}'s bounty poster`}
+                  className={`w-full h-auto object-contain transition-opacity duration-300 ${
+                    imageLoading ? "opacity-0" : "opacity-100"
+                  }`}
+                  src={bountyImageUrl}
+                  onLoad={() => setImageLoading(false)}
+                  onError={() => setImageLoading(false)}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}

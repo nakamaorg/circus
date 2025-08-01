@@ -131,7 +131,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps): JSX.El
       <div className="absolute inset-0 bg-black/30" />
 
       {/* Command Palette Container */}
-      <div className="animate__animated animate__jackInTheBox relative w-full max-w-2xl mx-4 bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] z-10">
+      <div className="animate__animated animate__bounceIn relative w-full max-w-2xl mx-4 bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] z-10">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b-2 border-black bg-cyan-400">
           <div className="flex items-center gap-3">

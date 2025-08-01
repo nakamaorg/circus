@@ -76,7 +76,7 @@ export function UserMenu({ session }: TUserMenuProps): JSX.Element {
         <div className="p-2 space-y-2">
           <Link
             href="/profile"
-            className="w-full bg-cyan-400 hover:bg-cyan-500 text-cyan-900 hover:text-cyan-950 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 flex items-center px-4 py-3 text-sm font-black rounded-none cursor-pointer uppercase tracking-wide block"
+            className="w-full bg-cyan-400 hover:bg-cyan-500 text-cyan-900 hover:text-cyan-950 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 flex items-center px-4 py-3 text-sm font-black rounded-none cursor-pointer uppercase tracking-wide block transform rotate-[-1deg] hover:rotate-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px]"
           >
             <User className="mr-3 h-5 w-5" />
             <span>View Profile</span>
@@ -84,7 +84,7 @@ export function UserMenu({ session }: TUserMenuProps): JSX.Element {
           <button
             onClick={handleLogout}
             disabled={isPending}
-            className="w-full bg-red-400 hover:bg-red-500 text-red-900 hover:text-red-950 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 flex items-center px-4 py-3 text-sm font-black rounded-none cursor-pointer uppercase tracking-wide disabled:opacity-50"
+            className="w-full bg-red-400 hover:bg-red-500 text-red-900 hover:text-red-950 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 flex items-center px-4 py-3 text-sm font-black rounded-none cursor-pointer uppercase tracking-wide disabled:opacity-50 transform rotate-[1deg] hover:rotate-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] disabled:transform-none disabled:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
           >
             <LogOut className="mr-3 h-5 w-5" />
             <span>{isPending ? "Signing out..." : "Sign out"}</span>

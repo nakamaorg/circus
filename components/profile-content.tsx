@@ -258,7 +258,7 @@ export function ProfileContent(): JSX.Element {
           {/* Close Button - Fixed at top right of screen */}
           <button
             onClick={() => setShowBountyPoster(false)}
-            className="animate__animated animate__bounceIn animate__delay-1s fixed top-4 right-4 w-10 h-10 bg-red-500 text-white font-black border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 z-[60]"
+            className="animate__animated animate__bounceIn animate__delay-1s fixed top-4 right-4 w-10 h-10 bg-red-500 hover:bg-red-600 text-white font-black border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100 z-[60] flex items-center justify-center"
           >
             ×
           </button>

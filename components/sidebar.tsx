@@ -2,7 +2,7 @@
 
 import type { JSX } from "react";
 
-import { Home } from "lucide-react";
+import { Home, User } from "lucide-react";
 import Link from "next/link";
 
 import { CircusLogo } from "@/components/circus-logo";
@@ -42,6 +42,16 @@ export function Sidebar({ isOpen = true }: SidebarProps): JSX.Element {
             >
               <Home className="mr-3 h-5 w-5" />
               HOME
+            </Button>
+          </Link>
+
+          <Link href="/profile" className="block">
+            <Button
+              variant="outline"
+              className="w-full justify-start font-black text-lg px-6 py-4 bg-white hover:bg-cyan-300 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 transform rotate-[1deg] hover:rotate-0"
+            >
+              <User className="mr-3 h-5 w-5" />
+              PROFILE
             </Button>
           </Link>
         </div>

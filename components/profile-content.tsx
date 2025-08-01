@@ -255,6 +255,14 @@ export function ProfileContent(): JSX.Element {
             />
           </div>
 
+          {/* Close Button - Fixed at top right of screen */}
+          <button
+            onClick={() => setShowBountyPoster(false)}
+            className="animate__animated animate__bounceIn animate__delay-1s fixed top-4 right-4 w-10 h-10 bg-red-500 text-white font-black border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 z-[60]"
+          >
+            ×
+          </button>
+
           <div className="animate__animated animate__jackInTheBox relative z-10">
             {/* Bounty Poster Content */}
             {bountyImageUrl && (
@@ -268,39 +276,25 @@ export function ProfileContent(): JSX.Element {
                 glareEnable={true}
                 glareMaxOpacity={0.45}
               >
-                <div className="relative p-4">
-                  {/* Close Button with Parallax Effect - Outside the main container */}
-                  <button
-                    onClick={() => setShowBountyPoster(false)}
-                    className="animate__animated animate__bounceIn animate__delay-1s absolute -top-1 -right-1 w-8 h-8 bg-red-500 text-white font-black border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 z-20"
-                    data-tilt-depth="50"
-                  >
-                    ×
-                  </button>
+                {/* Main poster container */}
+                <div className="animate__animated animate__jackInTheBox relative border-4 border-black bg-white overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                  {/* Image Loading Skeleton */}
+                  {imageLoading && (
+                    <div className="absolute inset-0 bg-gray-200 flex items-center justify-center animate-pulse">
+                      <div className="w-16 h-16 bg-gray-300 rounded-full animate-pulse" />
+                    </div>
+                  )}
 
-                  {/* Main poster container */}
-                  <div
-                    className="animate__animated animate__jackInTheBox relative border-4 border-black bg-white overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
-                    data-tilt-depth="0"
-                  >
-                    {/* Image Loading Skeleton */}
-                    {imageLoading && (
-                      <div className="absolute inset-0 bg-gray-200 flex items-center justify-center animate-pulse">
-                        <div className="w-16 h-16 bg-gray-300 rounded-full animate-pulse" />
-                      </div>
-                    )}
-
-                    {/* Actual Image */}
-                    <img
-                      alt={`${sessionUser?.name}'s bounty poster`}
-                      className={`w-full h-auto object-contain transition-opacity duration-300 ${
-                        imageLoading ? "opacity-0" : "opacity-100"
-                      }`}
-                      src={bountyImageUrl}
-                      onLoad={() => setImageLoading(false)}
-                      onError={() => setImageLoading(false)}
-                    />
-                  </div>
+                  {/* Actual Image */}
+                  <img
+                    alt={`${sessionUser?.name}'s bounty poster`}
+                    className={`w-full h-auto object-contain transition-opacity duration-300 ${
+                      imageLoading ? "opacity-0" : "opacity-100"
+                    }`}
+                    src={bountyImageUrl}
+                    onLoad={() => setImageLoading(false)}
+                    onError={() => setImageLoading(false)}
+                  />
                 </div>
               </Tilt>
             )}

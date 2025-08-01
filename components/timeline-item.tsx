@@ -77,8 +77,8 @@ export function TimelineItem({ event, index, isLeft }: TTimelineItemProps): JSX.
       <div
         className={`
           absolute top-1/2 transform -translate-y-1/2 h-0.5 bg-black transition-all duration-1000 ease-out
-          ${isVisible ? "w-24" : "w-0"}
-          ${isLeft ? "right-1/2 mr-1" : "left-1/2 ml-1"}
+          ${isVisible ? "w-80" : "w-0"}
+          ${isLeft ? "right-1/2 mr-0" : "left-1/2 ml-0"}
         `}
       />
 
@@ -100,7 +100,7 @@ export function TimelineItem({ event, index, isLeft }: TTimelineItemProps): JSX.
         className={`
           relative w-80 ${colorClass}
           border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-          transform transition-all duration-1000 ease-out overflow-hidden
+          transform transition-all duration-1000 ease-out overflow-hidden z-20
           ${isVisible
       ? "translate-x-0 translate-y-0 rotate-0 opacity-100"
       : `${isLeft ? "-translate-x-16" : "translate-x-16"} translate-y-8 ${isLeft ? "rotate-6" : "-rotate-6"} opacity-0`

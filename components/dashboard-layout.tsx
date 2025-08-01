@@ -40,7 +40,7 @@ export function DashboardLayout({ children, session }: TDashboardLayoutProps): J
           transition-transform duration-300 ease-in-out
         `}
         >
-          <Sidebar />
+          <Sidebar isOpen={sidebarOpen} />
         </div>
 
         {/* Sidebar - Desktop */}
@@ -50,7 +50,7 @@ export function DashboardLayout({ children, session }: TDashboardLayoutProps): J
           transition-transform duration-300 ease-in-out
         `}
         >
-          <Sidebar />
+          <Sidebar isOpen={sidebarOpen} />
         </div>
 
         {/* Overlay for mobile */}

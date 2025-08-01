@@ -2,17 +2,17 @@
 
 import type { JSX } from "react";
 
-import { Home, User } from "lucide-react";
 import Link from "next/link";
-
+import { usePathname } from "next/navigation";
 import { CircusLogo } from "@/components/circus-logo";
 import { Button } from "@/components/ui";
+import { MENU_ITEMS } from "@/lib/consts/menu.const";
 
 
 
-interface SidebarProps {
+type TSidebarProps = {
   isOpen?: boolean;
-}
+};
 
 /**
  * @description
@@ -22,7 +22,9 @@ interface SidebarProps {
  * @param props.isOpen - Whether the sidebar is open/visible
  * @returns The sidebar component
  */
-export function Sidebar({ isOpen = true }: SidebarProps): JSX.Element {
+export function Sidebar({ isOpen = true }: TSidebarProps): JSX.Element {
+  const pathname = usePathname();
+
   return (
     <aside className="h-screen w-64 bg-yellow-300 border-r-2 border-black flex flex-col shadow-[4px_0px_0px_0px_rgba(0,0,0,1)] relative">
       {/* Logo Section */}
@@ -35,25 +37,24 @@ export function Sidebar({ isOpen = true }: SidebarProps): JSX.Element {
       {/* Navigation */}
       <nav className="flex-1 p-6">
         <div className="space-y-4">
-          <Link href="/" className="block">
-            <Button
-              variant="outline"
-              className="w-full justify-start font-black text-lg px-6 py-4 bg-white hover:bg-pink-300 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 transform rotate-[-1deg] hover:rotate-0"
-            >
-              <Home className="mr-3 h-5 w-5" />
-              HOME
-            </Button>
-          </Link>
+          {MENU_ITEMS.map((item, index) => {
+            const isActive = pathname === item.link;
+            const Icon = item.icon;
+            const hoverColors = ["hover:bg-pink-300", "hover:bg-cyan-300"];
+            const rotations = ["rotate-[-1deg]", "rotate-[1deg]"];
 
-          <Link href="/profile" className="block">
-            <Button
-              variant="outline"
-              className="w-full justify-start font-black text-lg px-6 py-4 bg-white hover:bg-cyan-300 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 transform rotate-[1deg] hover:rotate-0"
-            >
-              <User className="mr-3 h-5 w-5" />
-              PROFILE
-            </Button>
-          </Link>
+            return (
+              <Link key={item.link} href={item.link} className="block">
+                <Button
+                  variant="outline"
+                  className={`w-full justify-start font-black text-lg px-6 py-4 bg-yellow-200 ${hoverColors[index % 2]} border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 transform ${rotations[index % 2]} hover:rotate-0 ${isActive ? "bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" : ""}`}
+                >
+                  <Icon className="mr-3 h-5 w-5" />
+                  {item.label.toUpperCase()}
+                </Button>
+              </Link>
+            );
+          })}
         </div>
       </nav>
 

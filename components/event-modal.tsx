@@ -74,7 +74,7 @@ export function EventModal({ event, isOpen, onClose }: TEventModalProps): JSX.El
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm animate-in fade-in duration-300">
+    <div className="animate__animated animate__fadeIn animate__fast fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
       {/* NeoBrutalism themed backdrop */}
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
@@ -97,15 +97,15 @@ export function EventModal({ event, isOpen, onClose }: TEventModalProps): JSX.El
       {/* Close Button */}
       <button
         onClick={onClose}
-        className="fixed top-4 right-4 w-12 h-12 bg-red-500 hover:bg-red-600 text-white font-black border-4 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 z-[60] flex items-center justify-center"
+        className="animate__animated animate__bounceIn animate__delay-1s fixed top-4 right-4 w-12 h-12 bg-red-500 hover:bg-red-600 text-white font-black border-4 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100 z-[60] flex items-center justify-center"
         aria-label="Close modal"
       >
         <X className="w-6 h-6" />
       </button>
 
       {/* Modal Content */}
-      <div className="relative z-10 max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden">
-        <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col md:flex-row animate-in zoom-in-95 duration-300 max-h-[90vh]">
+      <div className="animate__animated animate__jackInTheBox relative z-10 max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden">
+        <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col md:flex-row max-h-[90vh]">
           {/* Left Side - Full Image */}
           <div className="md:w-1/2 relative bg-gray-100 border-r-4 border-black min-h-[300px] md:min-h-[400px] flex-shrink-0">
             {imageLoading

@@ -1,6 +1,9 @@
 export { CircusLogo } from "./circus-logo";
+export { CopyButton } from "./copy-button";
 export { DashboardHeader } from "./dashboard-header";
 export { DashboardLayout } from "./dashboard-layout";
 export { DiscordLoginButton } from "./discord-login-button";
+export { ProfileContent } from "./profile-content";
 export { Sidebar } from "./sidebar";
+export { SpeakButton } from "./speak-button";
 export { UserMenu } from "./user-menu";

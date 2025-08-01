@@ -76,7 +76,7 @@ export function UserMenu({ session }: TUserMenuProps): JSX.Element {
         <div className="p-2 space-y-2">
           <Link
             href="/profile"
-            className="w-full bg-cyan-400 hover:bg-cyan-500 text-cyan-900 hover:text-cyan-950 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 flex items-center px-4 py-3 text-sm font-black rounded-none cursor-pointer uppercase tracking-wide block transform rotate-[-1deg] hover:rotate-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px]"
+            className="w-full bg-cyan-400 hover:bg-cyan-500 text-cyan-900 hover:text-cyan-950 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 flex items-center px-4 py-3 text-sm font-black rounded-none cursor-pointer uppercase tracking-wide block transform hover:rotate-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px]"
           >
             <User className="mr-3 h-5 w-5" />
             <span>View Profile</span>

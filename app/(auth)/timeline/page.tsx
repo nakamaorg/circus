@@ -74,7 +74,7 @@ export default function TimelinePage(): JSX.Element {
   }
 
   return (
-    <div className="space-y-8 overflow-x-hidden">
+    <div className="space-y-8">
       {/* Hero Section */}
       <div className="text-center space-y-4 mb-16 px-4">
         <h1 className="text-4xl sm:text-6xl font-black text-black uppercase tracking-wider transform rotate-2 bg-purple-400 inline-block px-6 sm:px-8 py-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">

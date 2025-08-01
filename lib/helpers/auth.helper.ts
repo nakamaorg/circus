@@ -15,6 +15,10 @@ declare module "next-auth" {
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: env.AUTH_SECRET,
   session: { strategy: "jwt" },
+  pages: {
+    signIn: "/login",
+    error: "/login",
+  },
   providers: [
     Discord({
       clientId: env.AUTH_DISCORD_ID,

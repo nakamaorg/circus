@@ -4,9 +4,9 @@ import type { Session } from "next-auth";
 import type { JSX } from "react";
 
 import { LogOut, User } from "lucide-react";
+import { signOut } from "next-auth/react";
 import { useState, useTransition } from "react";
 
-import { handleSignOut } from "@/app/actions/auth";
 import { NavigationLink } from "@/components/navigation-link";
 import {
   Avatar,
@@ -48,7 +48,7 @@ export function UserMenu({ session }: TUserMenuProps): JSX.Element {
 
   const handleLogout = (): void => {
     startTransition(() => {
-      handleSignOut();
+      signOut();
     });
   };
 

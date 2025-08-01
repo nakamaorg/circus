@@ -67,8 +67,7 @@ export function CopyButton({
   return (
     <button
       onClick={handleCopy}
-      className={`${colorClasses[variant]} border-2 border-black ${sizeClasses[size]} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100 rounded-[5px] flex items-center justify-center ${className}`}
-      title={isCopied ? "Copied!" : label}
+      className={`relative ${colorClasses[variant]} border-2 border-black ${sizeClasses[size]} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100 rounded-[5px] flex items-center justify-center group/tooltip ${className}`}
     >
       {isCopied
         ? (
@@ -77,6 +76,12 @@ export function CopyButton({
         : (
             <Copy className={`animate__animated animate__fadeIn ${iconSizes[size]}`} />
           )}
+      {/* Tooltip */}
+      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 whitespace-nowrap z-[9999] pointer-events-none">
+        {isCopied ? "Copied!" : label}
+        {/* Tooltip arrow */}
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+      </div>
     </button>
   );
 }

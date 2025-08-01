@@ -2,6 +2,9 @@
 
 import type { JSX } from "react";
 
+import { ChevronUp } from "lucide-react";
+import { useEffect, useState } from "react";
+
 import { TimelineItem } from "@/components/timeline-item";
 import { useEvents } from "@/lib/hooks/use-events";
 import { usePageReady } from "@/lib/hooks/use-page-ready";
@@ -17,6 +20,31 @@ import { usePageReady } from "@/lib/hooks/use-page-ready";
 export default function TimelinePage(): JSX.Element {
   usePageReady();
   const { data: events, isLoading, error } = useEvents();
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  // Handle scroll to show/hide back to top button
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 200; // Reduced threshold
+
+      setShowBackToTop(scrolled);
+    };
+
+    // Initial check
+    handleScroll();
+    
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Scroll to top function
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   // Sort events from newest to oldest by timestamp
   const sortedEvents = events?.slice().sort((a, b) => b.timestamp - a.timestamp);
@@ -88,7 +116,7 @@ export default function TimelinePage(): JSX.Element {
               </div>
 
               {/* Decorative bottom circle */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 translate-y-6 w-10 h-10 bg-cyan-400 border-4 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-20">
+              <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0 translate-y-6 w-10 h-10 bg-cyan-400 border-4 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-20">
                 <div className="w-full h-full bg-white rounded-full animate-ping opacity-30"></div>
               </div>
             </div>
@@ -105,6 +133,17 @@ export default function TimelinePage(): JSX.Element {
               </div>
             </div>
           )}
+
+      {/* Back to Top Button */}
+      {showBackToTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 w-14 h-14 bg-purple-400 border-4 border-black rounded-full shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 z-50 flex items-center justify-center animate-pulse"
+          aria-label="Back to top"
+        >
+          <ChevronUp className="w-7 h-7 text-black font-bold" />
+        </button>
+      )}
     </div>
   );
 }

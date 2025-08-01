@@ -75,7 +75,7 @@ export function Sidebar({ isOpen = true }: TSidebarProps): JSX.Element {
         <>
           <div className="animate__animated animate__bounceInDown absolute top-15 -right-2 w-6 h-18 bg-pink-400 border-3 border-black transform rotate-12 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"></div>
           <div className="animate__animated animate__bounceInLeft animate__faster absolute top-35 -right-0 w-8 h-8 bg-cyan-400 border-3 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"></div>
-          <div className="animate__animated animate__bounceInUp animate__sl absolute bottom-32 -right-2 w-7 h-12 bg-yellow-400 border-3 border-black transform -rotate-12 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"></div>
+          <div className="animate__animated animate__bounceInUp animate__fast absolute bottom-32 -right-2 w-7 h-12 bg-yellow-400 border-3 border-black transform -rotate-12 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"></div>
         </>
       )}
     </aside>

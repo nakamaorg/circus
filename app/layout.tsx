@@ -4,6 +4,7 @@ import type { JSX } from "react";
 import { SessionProvider } from "next-auth/react";
 import localFont from "next/font/local";
 import { NavigationLoader } from "@/components/navigation-loader";
+import { CommandPaletteProvider } from "@/components/providers/command-palette-provider";
 import { NavigationProvider } from "@/components/providers/navigation-provider";
 import { ReactQueryProvider } from "@/components/providers/react-query-provider";
 
@@ -42,14 +43,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NavigationProvider>
-          <NavigationLoader />
-          <SessionProvider>
-            <ReactQueryProvider>
-              {children}
-            </ReactQueryProvider>
-          </SessionProvider>
-        </NavigationProvider>
+        <CommandPaletteProvider>
+          <NavigationProvider>
+            <NavigationLoader />
+            <SessionProvider>
+              <ReactQueryProvider>
+                {children}
+              </ReactQueryProvider>
+            </SessionProvider>
+          </NavigationProvider>
+        </CommandPaletteProvider>
       </body>
     </html>
   );

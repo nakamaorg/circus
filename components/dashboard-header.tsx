@@ -11,11 +11,11 @@ import { UserMenu } from "@/components/user-menu";
 
 
 
-interface DashboardHeaderProps {
+type TDashboardHeaderProps = {
   session: Session;
   onMenuToggle: () => void;
   sidebarOpen?: boolean;
-}
+};
 
 /**
  * @description
@@ -26,7 +26,7 @@ interface DashboardHeaderProps {
  * @param props.onMenuToggle - Menu toggle handler
  * @returns The dashboard header component
  */
-export function DashboardHeader({ session, onMenuToggle }: DashboardHeaderProps): JSX.Element {
+export function DashboardHeader({ session, onMenuToggle }: TDashboardHeaderProps): JSX.Element {
   const breadcrumbItems = [
     { label: "HOME" },
   ];

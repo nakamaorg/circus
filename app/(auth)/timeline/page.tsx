@@ -32,7 +32,7 @@ export default function TimelinePage(): JSX.Element {
 
     // Initial check
     handleScroll();
-    
+
     window.addEventListener("scroll", handleScroll);
 
     return () => window.removeEventListener("scroll", handleScroll);

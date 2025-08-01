@@ -7,6 +7,7 @@ import { Calendar, Clock } from "lucide-react";
 
 import { useEffect, useRef, useState } from "react";
 
+import { EventModal } from "@/components/event-modal";
 import { EventThumbnail } from "@/components/event-thumbnail";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -30,6 +31,7 @@ type TTimelineItemProps = {
  */
 export function TimelineItem({ event, index, isLeft }: TTimelineItemProps): JSX.Element {
   const [isVisible, setIsVisible] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const itemRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -101,12 +103,15 @@ export function TimelineItem({ event, index, isLeft }: TTimelineItemProps): JSX.
           relative w-80 ${colorClass}
           border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
           transform transition-all duration-1000 ease-out overflow-hidden z-20
+          hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px]
+          cursor-pointer
           ${isVisible
       ? "translate-x-0 translate-y-0 rotate-0 opacity-100"
       : `${isLeft ? "-translate-x-16" : "translate-x-16"} translate-y-8 ${isLeft ? "rotate-6" : "-rotate-6"} opacity-0`
     }
           ${isLeft ? "mr-1" : "ml-1"}
         `}
+        onClick={() => setShowModal(true)}
         style={{
           transitionDelay: isVisible ? "0.2s" : "0s",
         }}
@@ -164,6 +169,13 @@ export function TimelineItem({ event, index, isLeft }: TTimelineItemProps): JSX.
           )}
         </CardContent>
       </Card>
+
+      {/* Event Modal */}
+      <EventModal
+        event={event}
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+      />
     </div>
   );
 }

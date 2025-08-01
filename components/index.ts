@@ -4,6 +4,7 @@ export { CopyButton } from "./copy-button";
 export { DashboardHeader } from "./dashboard-header";
 export { DashboardLayout } from "./dashboard-layout";
 export { DiscordLoginButton } from "./discord-login-button";
+export { EventModal } from "./event-modal";
 export { ProfileContent } from "./profile-content";
 export { Sidebar } from "./sidebar";
 export { SpeakButton } from "./speak-button";

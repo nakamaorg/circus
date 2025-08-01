@@ -11,6 +11,7 @@ import { ProfileSkeleton } from "@/components/profile-skeleton";
 import { SpeakButton } from "@/components/speak-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { usePageReady } from "@/lib/hooks/use-page-ready";
 import { useUser } from "@/lib/hooks/use-user";
 
 
@@ -22,6 +23,8 @@ import { useUser } from "@/lib/hooks/use-user";
  * @returns The profile content component
  */
 export function ProfileContent(): JSX.Element {
+  usePageReady();
+
   const { data: session } = useSession();
   const { user: userData, isLoading } = useUser();
   const sessionUser = session?.user;

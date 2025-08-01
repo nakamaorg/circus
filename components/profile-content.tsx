@@ -40,10 +40,10 @@ export function ProfileContent(): JSX.Element {
     <div className="space-y-8">
       {/* Page Header */}
       <div className="text-center space-y-4">
-        <h1 className="text-6xl font-black text-black uppercase tracking-wider transform -rotate-2 bg-cyan-400 inline-block px-8 py-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <h1 className="text-4xl md:text-6xl font-black text-black uppercase tracking-wider transform -rotate-2 bg-cyan-400 inline-block px-8 py-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
           User Profile
         </h1>
-        <p className="text-2xl font-bold text-black bg-white inline-block px-6 py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
+        <p className="text-xl md:text-2xl font-bold text-black bg-white inline-block px-6 py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
           Your account information
         </p>
       </div>
@@ -51,7 +51,7 @@ export function ProfileContent(): JSX.Element {
       {/* Profile Information */}
       <div className="w-full relative">
         {/* Floating Avatar */}
-        <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 z-10">
+        <div className="absolute -top-8 md:-top-12 left-1/2 transform -translate-x-1/2 z-10">
           <div className="relative">
             <div className="w-24 h-24 border-4 border-black bg-white rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
               {sessionUser.image
@@ -78,7 +78,7 @@ export function ProfileContent(): JSX.Element {
         </div>
 
         {/* User Information Card */}
-        <Card className="bg-purple-300 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] pt-16">
+        <Card className="bg-purple-300 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] pt-12 md:pt-16">
           <CardContent className="p-8">
             <div className="grid gap-6 md:grid-cols-2">
               <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">

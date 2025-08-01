@@ -2,9 +2,10 @@
 
 import type { JSX } from "react";
 
-import { Calendar, Clock, Tag } from "lucide-react";
+import { Clock } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EventThumbnail } from "@/components/event-thumbnail";
+import { Card, CardContent } from "@/components/ui/card";
 import { useEvents } from "@/lib/hooks/use-events";
 import { usePageReady } from "@/lib/hooks/use-page-ready";
 
@@ -62,55 +63,74 @@ export default function TimelinePage(): JSX.Element {
       {/* Timeline Content */}
       {sortedEvents && sortedEvents.length > 0
         ? (
-            <div className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {sortedEvents.map((event, index) => (
                 <Card
                   key={event.id}
                   className={`
-                    bg-gradient-to-r border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]
-                    transform transition-all duration-300
+                    bg-white border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]
+                    transform transition-all duration-300 overflow-hidden
                     hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px]
-                    ${index % 4 === 0 ? "from-pink-300 to-pink-400 rotate-1" : ""}
-                    ${index % 4 === 1 ? "from-cyan-300 to-cyan-400 -rotate-1" : ""}
-                    ${index % 4 === 2 ? "from-yellow-300 to-yellow-400 rotate-1" : ""}
-                    ${index % 4 === 3 ? "from-green-300 to-green-400 -rotate-1" : ""}
+                    ${index % 4 === 0 ? "rotate-1" : ""}
+                    ${index % 4 === 1 ? "-rotate-1" : ""}
+                    ${index % 4 === 2 ? "rotate-1" : ""}
+                    ${index % 4 === 3 ? "-rotate-1" : ""}
                   `}
                 >
-                  <CardHeader className="border-b-2 border-black bg-black/10">
-                    <CardTitle className="text-2xl font-black text-black uppercase tracking-wide flex items-center gap-3">
-                      <Calendar className="h-6 w-6" />
+                  {/* Thumbnail */}
+                  <EventThumbnail
+                    eventId={event.id}
+                    title={event.title}
+                    colorIndex={index}
+                  />
+
+                  <CardContent className="p-4 space-y-3">
+                    {/* Title */}
+                    <h3 className="text-lg font-black text-black uppercase tracking-wide line-clamp-2">
                       {event.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6 space-y-4">
-                    <p className="text-base font-bold text-black leading-relaxed">
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-sm font-bold text-black leading-relaxed line-clamp-3">
                       {event.description}
                     </p>
 
-                    <div className="flex items-center gap-4 text-sm font-bold text-black">
-                      <div className="flex items-center gap-2 bg-white px-3 py-1 border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
-                        <Clock className="h-4 w-4" />
+                    {/* Date */}
+                    <div className="flex items-center gap-2 text-xs font-bold text-black">
+                      <div className="flex items-center gap-1 bg-gray-100 px-2 py-1 border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+                        <Clock className="h-3 w-3" />
                         {new Date(event.timestamp * 1000).toLocaleDateString("en-US", {
                           year: "numeric",
-                          month: "long",
+                          month: "short",
                           day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
                         })}
                       </div>
                     </div>
 
+                    {/* Keywords */}
                     {event.keywords && event.keywords.length > 0 && (
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <Tag className="h-4 w-4 text-black" />
-                        {event.keywords.map((keyword, keywordIndex) => (
+                      <div className="flex items-center gap-1 flex-wrap">
+                        {event.keywords.slice(0, 3).map((keyword, keywordIndex) => (
                           <span
                             key={keywordIndex}
-                            className="bg-white text-black px-2 py-1 text-xs font-bold border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] uppercase tracking-wide"
+                            className={`
+                              text-black px-1.5 py-0.5 text-xs font-bold border border-black 
+                              shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] uppercase tracking-wide
+                              ${index % 4 === 0 ? "bg-pink-200" : ""}
+                              ${index % 4 === 1 ? "bg-cyan-200" : ""}
+                              ${index % 4 === 2 ? "bg-yellow-200" : ""}
+                              ${index % 4 === 3 ? "bg-green-200" : ""}
+                            `}
                           >
                             {keyword}
                           </span>
                         ))}
+                        {event.keywords.length > 3 && (
+                          <span className="text-xs font-bold text-gray-600">
+                            +
+                            {event.keywords.length - 3}
+                          </span>
+                        )}
                       </div>
                     )}
                   </CardContent>

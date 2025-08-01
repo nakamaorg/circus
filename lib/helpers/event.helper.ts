@@ -38,8 +38,7 @@ export async function getEvents(): Promise<TEvent[]> {
 
     return events.map(event => eventSchema.parse(event));
   }
-  catch (error) {
-    console.error("Failed to fetch events:", error);
+  catch {
     throw new Error("Failed to fetch events.");
   }
 }

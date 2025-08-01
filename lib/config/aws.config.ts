@@ -23,6 +23,7 @@ const s3Client = new S3Client({
 
 export const AWS_TABLES = {
   USERS: "nakamaorg-users",
+  EVENTS: "nakamaorg-events",
 } as const;
 
 export const AWS_BUCKETS = {
@@ -30,4 +31,5 @@ export const AWS_BUCKETS = {
 } as const;
 
 export const docClient = DynamoDBDocumentClient.from(dynamoDBClient);
+export const dynamodb = dynamoDBClient;
 export const s3 = s3Client;

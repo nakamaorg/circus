@@ -4,10 +4,12 @@ import type { Session } from "next-auth";
 import type { JSX } from "react";
 
 import { Menu } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 import { Breadcrumb } from "@/components/breadcrumb";
 import { Button } from "@/components/ui";
 import { UserMenu } from "@/components/user-menu";
+import { MENU_ITEMS } from "@/lib/consts/menu.const";
 
 
 
@@ -27,9 +29,20 @@ type TDashboardHeaderProps = {
  * @returns The dashboard header component
  */
 export function DashboardHeader({ session, onMenuToggle }: TDashboardHeaderProps): JSX.Element {
-  const breadcrumbItems = [
-    { label: "HOME" },
-  ];
+  const pathname = usePathname();
+
+  // Generate breadcrumb items based on current path
+  const getBreadcrumbItems = () => {
+    const currentMenuItem = MENU_ITEMS.find(item => item.link === pathname);
+
+    if (currentMenuItem && pathname !== "/") {
+      return [{ label: currentMenuItem.label.toUpperCase() }];
+    }
+
+    return [{ label: "HOME" }];
+  };
+
+  const breadcrumbItems = getBreadcrumbItems();
 
   return (
     <header className="bg-white border-b-2 border-black shadow-[0px_2px_0px_0px_rgba(0,0,0,1)] relative z-20">

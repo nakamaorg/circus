@@ -8,7 +8,7 @@ import { signIn } from "@/lib/helpers/auth.helper";
 
 
 type TLoginPageProps = {
-  searchParams: { error?: string };
+  searchParams: Promise<{ error?: string }>;
 };
 
 /**
@@ -20,8 +20,9 @@ type TLoginPageProps = {
  * @param props.searchParams - URL search parameters
  * @returns {JSX.Element} The login page component.
  */
-export default function LoginPage({ searchParams }: TLoginPageProps): JSX.Element {
-  const hasError = searchParams.error;
+export default async function LoginPage({ searchParams }: TLoginPageProps): Promise<JSX.Element> {
+  const resolvedSearchParams = await searchParams;
+  const hasError = resolvedSearchParams.error;
   const handleDiscordSignIn = async (): Promise<void> => {
     "use server";
 

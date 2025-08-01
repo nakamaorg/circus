@@ -1,4 +1,5 @@
 export { CircusLogo } from "./circus-logo";
+export { CommandPalette } from "./command-palette";
 export { CopyButton } from "./copy-button";
 export { DashboardHeader } from "./dashboard-header";
 export { DashboardLayout } from "./dashboard-layout";

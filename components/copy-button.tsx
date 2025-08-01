@@ -39,9 +39,9 @@ export function CopyButton({
 
   // Size variants
   const sizeClasses = {
-    sm: "p-1.5",
-    md: "p-2",
-    lg: "p-3",
+    sm: "w-8 h-8 p-0",
+    md: "w-10 h-10 p-0",
+    lg: "w-12 h-12 p-0",
   };
 
   const iconSizes = {
@@ -72,7 +72,7 @@ export function CopyButton({
   return (
     <button
       onClick={handleCopy}
-      className={`${colorClasses[variant]} border-2 border-black ${sizeClasses[size]} shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 ${className}`}
+      className={`${colorClasses[variant]} border-2 border-black ${sizeClasses[size]} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100 rounded-[5px] flex items-center justify-center ${className}`}
       title={isCopied ? "Copied!" : label}
     >
       {isCopied

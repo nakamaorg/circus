@@ -39,8 +39,8 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps): JSX.El
   const commands: CommandItem[] = [
     {
       id: "home",
-      title: "Go to Dashboard",
-      description: "Navigate to the main dashboard",
+      title: "Go to Home",
+      description: "Navigate to the main page",
       icon: <Home className="w-4 h-4" />,
       action: () => {
         router.push("/");

@@ -7,14 +7,21 @@ import { signIn } from "@/lib/helpers/auth.helper";
 
 
 
+type TLoginPageProps = {
+  searchParams: { error?: string };
+};
+
 /**
  * @description
  * Main login page for the Circus application.
  * Features a NeoBrutalism design with Discord-only authentication.
  *
+ * @param props - The component props
+ * @param props.searchParams - URL search parameters
  * @returns {JSX.Element} The login page component.
  */
-export default function LoginPage(): JSX.Element {
+export default function LoginPage({ searchParams }: TLoginPageProps): JSX.Element {
+  const hasError = searchParams.error;
   const handleDiscordSignIn = async (): Promise<void> => {
     "use server";
 
@@ -44,6 +51,15 @@ export default function LoginPage(): JSX.Element {
           </CardHeader>
 
           <CardContent>
+            {/* Error Message */}
+            {hasError && (
+              <div className="mb-6 bg-red-100 border-2 border-red-400 p-4 shadow-[2px_2px_0px_0px_rgba(220,38,38,1)] transform -rotate-1">
+                <p className="text-red-900 font-black text-center uppercase tracking-wide">
+                  Login was cancelled or failed. Please try again.
+                </p>
+              </div>
+            )}
+
             {/* Discord Login */}
             <div className="space-y-6">
               <DiscordLoginButton signIn={handleDiscordSignIn} />

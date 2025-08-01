@@ -223,49 +223,47 @@ export function ProfileContent(): JSX.Element {
 
       {/* Bounty Poster Modal */}
       {showBountyPoster && (
-        <div className="animate__animated animate__fadeIn animate__faster fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4">
-          <div className="animate__animated animate__bounceIn relative max-w-2xl w-full bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+          <div className="animate__animated animate__jackInTheBox relative">
             {/* Close Button */}
             <button
               onClick={() => setShowBountyPoster(false)}
-              className="absolute -top-3 -right-3 w-8 h-8 bg-red-500 text-white font-black border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 z-10"
+              className="animate__animated animate__bounceIn animate__delay-1s absolute -top-3 -right-3 w-8 h-8 bg-red-500 text-white font-black border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 z-10"
             >
               ×
             </button>
 
             {/* Bounty Poster Content */}
-            <div className="p-8 text-center">
-              {loadingBountyImage
-                ? (
-                    <div className="space-y-4">
-                      <div className="w-full h-64 bg-gray-200 border-2 border-black flex items-center justify-center">
-                        <div className="w-8 h-8 animate-spin rounded-full border-4 border-black border-t-transparent" />
-                      </div>
-                      <p className="text-lg font-bold text-black">Loading bounty poster...</p>
+            {loadingBountyImage
+              ? (
+                  <div className="bg-white border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                    <div className="w-64 h-64 bg-gray-200 border-2 border-black flex items-center justify-center">
+                      <div className="w-8 h-8 animate-spin rounded-full border-4 border-black border-t-transparent" />
                     </div>
-                  )
-                : bountyImageUrl && (
-                  <div className="animate__animated animate__jackInTheBox relative w-full max-w-md mx-auto border-4 border-black bg-white overflow-hidden">
-                    {/* Image Loading Skeleton */}
-                    {imageLoading && (
-                      <div className="absolute inset-0 bg-gray-200 flex items-center justify-center animate-pulse">
-                        <div className="w-16 h-16 bg-gray-300 rounded-full animate-pulse" />
-                      </div>
-                    )}
-
-                    {/* Actual Image */}
-                    <img
-                      alt={`${sessionUser?.name}'s bounty poster`}
-                      className={`w-full h-auto object-contain transition-opacity duration-300 ${
-                        imageLoading ? "opacity-0" : "opacity-100"
-                      }`}
-                      src={bountyImageUrl}
-                      onLoad={() => setImageLoading(false)}
-                      onError={() => setImageLoading(false)}
-                    />
+                    <p className="text-lg font-bold text-black mt-4">Loading bounty poster...</p>
                   </div>
-                )}
-            </div>
+                )
+              : bountyImageUrl && (
+                <div className="animate__animated animate__jackInTheBox relative border-4 border-black bg-white overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                  {/* Image Loading Skeleton */}
+                  {imageLoading && (
+                    <div className="absolute inset-0 bg-gray-200 flex items-center justify-center animate-pulse">
+                      <div className="w-16 h-16 bg-gray-300 rounded-full animate-pulse" />
+                    </div>
+                  )}
+
+                  {/* Actual Image */}
+                  <img
+                    alt={`${sessionUser?.name}'s bounty poster`}
+                    className={`w-full h-auto object-contain transition-opacity duration-300 ${
+                      imageLoading ? "opacity-0" : "opacity-100"
+                    }`}
+                    src={bountyImageUrl}
+                    onLoad={() => setImageLoading(false)}
+                    onError={() => setImageLoading(false)}
+                  />
+                </div>
+              )}
           </div>
         </div>
       )}

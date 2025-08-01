@@ -34,7 +34,8 @@ type TUserMenuProps = {
  * @returns The user menu component
  */
 export function UserMenu({ session }: TUserMenuProps): JSX.Element {
-  const [isPending, startTransition] = useTransition();
+  const [_, startTransition] = useTransition();
+  const [isLogingOut, setIsLogingOut] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const { user: userData, isLoading } = useUser();
   const user = session.user;
@@ -47,6 +48,7 @@ export function UserMenu({ session }: TUserMenuProps): JSX.Element {
   const statusColor = userData?.wanted ? "text-red-600" : "text-green-600";
 
   const handleLogout = (): void => {
+    setIsLogingOut(true);
     startTransition(() => {
       signOut();
     });
@@ -110,15 +112,12 @@ export function UserMenu({ session }: TUserMenuProps): JSX.Element {
                     <span>View Profile</span>
                   </NavigationLink>
                   <button
-                    onClick={() => {
-                      setIsOpen(false);
-                      handleLogout();
-                    }}
-                    disabled={isPending}
+                    onClick={handleLogout}
+                    disabled={isLogingOut}
                     className="w-full h-10 bg-red-400 hover:bg-red-500 text-red-900 hover:text-red-950 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 flex items-center px-4 py-2 text-sm font-black cursor-pointer uppercase tracking-wide disabled:opacity-50 transform rotate-[1deg] hover:rotate-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] disabled:transform-none disabled:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-[5px]"
                   >
                     <LogOut className="mr-3 h-5 w-5" />
-                    <span>{isPending ? "Signing out..." : "Sign out"}</span>
+                    <span>{isLogingOut ? "Signing out..." : "Sign out"}</span>
                   </button>
                 </div>
               </>

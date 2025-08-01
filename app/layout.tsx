@@ -43,16 +43,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <CommandPaletteProvider>
-          <NavigationProvider>
-            <NavigationLoader />
-            <SessionProvider>
-              <ReactQueryProvider>
+        <NavigationProvider>
+          <NavigationLoader />
+          <SessionProvider>
+            <ReactQueryProvider>
+              <CommandPaletteProvider>
                 {children}
-              </ReactQueryProvider>
-            </SessionProvider>
-          </NavigationProvider>
-        </CommandPaletteProvider>
+              </CommandPaletteProvider>
+            </ReactQueryProvider>
+          </SessionProvider>
+        </NavigationProvider>
       </body>
     </html>
   );

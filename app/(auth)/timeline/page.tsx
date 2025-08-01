@@ -74,13 +74,13 @@ export default function TimelinePage(): JSX.Element {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 overflow-x-hidden">
       {/* Hero Section */}
-      <div className="text-center space-y-4 mb-16">
-        <h1 className="text-6xl font-black text-black uppercase tracking-wider transform rotate-2 bg-purple-400 inline-block px-8 py-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      <div className="text-center space-y-4 mb-16 px-4">
+        <h1 className="text-4xl sm:text-6xl font-black text-black uppercase tracking-wider transform rotate-2 bg-purple-400 inline-block px-6 sm:px-8 py-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
           Timeline
         </h1>
-        <p className="text-xl font-bold text-black bg-white inline-block px-6 py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
+        <p className="text-lg sm:text-xl font-bold text-black bg-white inline-block px-4 sm:px-6 py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
           Journey through events in chronological order
         </p>
       </div>
@@ -88,7 +88,7 @@ export default function TimelinePage(): JSX.Element {
       {/* Timeline Content */}
       {sortedEvents && sortedEvents.length > 0
         ? (
-            <div className="relative max-w-6xl mx-auto">
+            <div className="relative max-w-6xl mx-auto px-4">
               {/* Central timeline line with solid color */}
               <div className="absolute left-1/2 transform -translate-x-1/2 w-2 bg-black h-full shadow-lg"></div>
 

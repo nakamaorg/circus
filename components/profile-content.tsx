@@ -54,12 +54,6 @@ export function ProfileContent(): JSX.Element {
         throw new Error("No bounty poster found");
       }
     }
-    catch (error) {
-      console.error("Failed to load bounty image:", error);
-      // TODO: Add proper toast notification instead of alert
-      // eslint-disable-next-line no-alert
-      alert("No bounty poster found for this user");
-    }
     finally {
       setLoadingBountyImage(false);
     }

@@ -230,11 +230,11 @@ export function ProfileContent(): JSX.Element {
       {/* Bounty Poster Modal */}
       {showBountyPoster && (
         <div className="animate__animated animate__fadeIn animate__fast fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
-          {/* NeoBrutalism themed backdrop with blur effect */}
-          <div className="absolute inset-0 bg-gradient-to-br from-pink-400 via-cyan-400 to-yellow-400 opacity-50" />
+          {/* NeoBrutalism themed backdrop */}
+          <div className="absolute inset-0 bg-black/50" />
 
           {/* NeoBrutalism pattern overlay */}
-          <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0 opacity-10">
             <div
               className="w-full h-full bg-black"
               style={{
@@ -242,8 +242,8 @@ export function ProfileContent(): JSX.Element {
                   45deg,
                   transparent,
                   transparent 20px,
-                  rgba(0,0,0,0.3) 20px,
-                  rgba(0,0,0,0.3) 40px
+                  rgba(255,255,255,0.1) 20px,
+                  rgba(255,255,255,0.1) 40px
                 )`,
               }}
             />

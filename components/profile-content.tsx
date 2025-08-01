@@ -28,6 +28,7 @@ export function ProfileContent(): JSX.Element {
   const [showBountyPoster, setShowBountyPoster] = useState(false);
   const [bountyImageUrl, setBountyImageUrl] = useState<string | null>(null);
   const [loadingBountyImage, setLoadingBountyImage] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
 
   const handleViewBounty = async () => {
     if (!userData?.id) {
@@ -36,6 +37,7 @@ export function ProfileContent(): JSX.Element {
 
     setLoadingBountyImage(true);
     setShowBountyPoster(true);
+    setImageLoading(true);
 
     try {
       const response = await fetch(`/api/bounty-image?userId=${userData.id}`);
@@ -240,11 +242,23 @@ export function ProfileContent(): JSX.Element {
                     </div>
                   )
                 : bountyImageUrl && (
-                  <div className="animate__animated animate__jackInTheBox w-full max-w-md mx-auto border-4 border-black bg-white overflow-hidden">
+                  <div className="animate__animated animate__jackInTheBox relative w-full max-w-md mx-auto border-4 border-black bg-white overflow-hidden">
+                    {/* Image Loading Skeleton */}
+                    {imageLoading && (
+                      <div className="absolute inset-0 bg-gray-200 flex items-center justify-center animate-pulse">
+                        <div className="w-16 h-16 bg-gray-300 rounded-full animate-pulse" />
+                      </div>
+                    )}
+
+                    {/* Actual Image */}
                     <img
                       alt={`${sessionUser?.name}'s bounty poster`}
-                      className="w-full h-auto object-contain"
+                      className={`w-full h-auto object-contain transition-opacity duration-300 ${
+                        imageLoading ? "opacity-0" : "opacity-100"
+                      }`}
                       src={bountyImageUrl}
+                      onLoad={() => setImageLoading(false)}
+                      onError={() => setImageLoading(false)}
                     />
                   </div>
                 )}

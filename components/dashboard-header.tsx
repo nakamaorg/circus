@@ -53,9 +53,15 @@ export function DashboardHeader({ session, onMenuToggle }: TDashboardHeaderProps
         <Button
           variant="outline"
           onClick={onMenuToggle}
-          className="w-10 h-10 p-0 bg-pink-300 hover:bg-pink-400 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 font-black"
+          className="relative w-10 h-10 p-0 bg-pink-300 hover:bg-pink-400 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 font-black group/tooltip"
         >
           <Menu className="h-5 w-5 transition-transform duration-300 rotate-0" />
+          {/* Tooltip */}
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-black text-white text-xs rounded border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 whitespace-nowrap z-[9999] pointer-events-none">
+            Toggle Menu
+            {/* Tooltip arrow */}
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-black"></div>
+          </div>
         </Button>
 
         {/* Breadcrumb */}
@@ -71,10 +77,15 @@ export function DashboardHeader({ session, onMenuToggle }: TDashboardHeaderProps
           <Button
             variant="outline"
             onClick={openCommandPalette}
-            className="w-10 h-10 p-0 bg-cyan-300 hover:bg-cyan-400 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100 font-black"
-            title="Open Command Palette (Ctrl+K)"
+            className="relative w-10 h-10 p-0 bg-cyan-300 hover:bg-cyan-400 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100 font-black group/tooltip"
           >
             <Command className="h-5 w-5" />
+            {/* Tooltip */}
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-black text-white text-xs rounded border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 whitespace-nowrap z-[9999] pointer-events-none">
+              Open Command Palette (Ctrl+K)
+              {/* Tooltip arrow */}
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-black"></div>
+            </div>
           </Button>
         )}
 

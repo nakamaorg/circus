@@ -9,14 +9,22 @@ import packageJson from "@/package.json";
 
 
 
+type TCircusLogoProps = {
+  variant?: "sidebar" | "login";
+  showTitle?: boolean;
+};
+
 /**
  * @description
  * Interactive Circus logo component with confetti animation.
  * Triggers colorful confetti animation when clicked.
  *
+ * @param props - The component props
+ * @param props.variant - The variant of the logo ("sidebar" or "login")
+ * @param props.showTitle - Whether to show the title text
  * @returns {JSX.Element} The interactive logo component.
  */
-export function CircusLogo(): JSX.Element {
+export function CircusLogo({ variant = "sidebar", showTitle = true }: TCircusLogoProps): JSX.Element {
   const [isExploding, setIsExploding] = useState(false);
 
   const handleLogoClick = (): void => {
@@ -43,12 +51,21 @@ export function CircusLogo(): JSX.Element {
     }, 1000);
   };
 
+  // Variant-specific styling
+  const logoSize = variant === "login" ? { width: 80, height: 80 } : { width: 60, height: 60 };
+  const containerClasses = variant === "login"
+    ? "flex flex-col items-center justify-center space-y-4 relative"
+    : "flex flex-col items-center justify-center space-y-3 relative";
+  const titleClasses = variant === "login"
+    ? "text-4xl font-black text-foreground transform rotate-1 cursor-default text-center"
+    : "text-3xl font-black text-foreground transform rotate-1 cursor-default text-center";
+
   return (
-    <div className="flex flex-col items-center justify-center space-y-3 relative">
+    <div className={containerClasses}>
       <div className="relative">
         <Image
-          width={60}
-          height={60}
+          width={logoSize.width}
+          height={logoSize.height}
           src="/logo.png"
           alt="Circus Logo"
           className={`transform -rotate-2 cursor-pointer rounded-xl border-2 border-black transition-transform duration-200 hover:scale-105 ${
@@ -57,9 +74,11 @@ export function CircusLogo(): JSX.Element {
           onClick={handleLogoClick}
         />
       </div>
-      <h1 className="text-3xl font-black text-foreground transform rotate-1 cursor-default text-center">
-        {packageJson.name.toUpperCase()}
-      </h1>
+      {showTitle && (
+        <h1 className={titleClasses}>
+          {packageJson.name.toUpperCase()}
+        </h1>
+      )}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Home, User } from "lucide-react";
+import { GanttChartSquare, Home, User } from "lucide-react";
 
 
 
@@ -14,6 +14,11 @@ export const MENU_ITEMS: Array<TMenuItemType> = [
     icon: Home,
     label: "Home",
     link: "/",
+  },
+  {
+    icon: GanttChartSquare,
+    label: "Timeline",
+    link: "/timeline",
   },
   {
     icon: User,

@@ -112,11 +112,13 @@ export function TimelineItem({ event, index, isLeft }: TTimelineItemProps): JSX.
         }}
       >
         {/* Thumbnail */}
-        <EventThumbnail
-          eventId={event.id}
-          title={event.title}
-          colorIndex={index}
-        />
+        <div className="relative z-30">
+          <EventThumbnail
+            eventId={event.id}
+            title={event.title}
+            colorIndex={index}
+          />
+        </div>
 
         <CardContent className="p-4 space-y-3">
           {/* Title */}

@@ -71,7 +71,7 @@ export function TimelineItem({ event, index, isLeft }: TTimelineItemProps): JSX.
     <div
       ref={itemRef}
       className={`
-        relative flex items-center w-full mb-12
+        relative flex items-center w-full mb-12 px-4 sm:px-0
         ${isLeft ? "justify-start" : "justify-end"}
       `}
     >
@@ -79,7 +79,7 @@ export function TimelineItem({ event, index, isLeft }: TTimelineItemProps): JSX.
       <div
         className={`
           absolute top-1/2 transform -translate-y-1/2 h-0.5 bg-black transition-all duration-1000 ease-out
-          ${isVisible ? "w-80" : "w-0"}
+          ${isVisible ? "w-40 sm:w-60 md:w-80" : "w-0"}
           ${isLeft ? "right-1/2 mr-0" : "left-1/2 ml-0"}
         `}
       />
@@ -100,7 +100,7 @@ export function TimelineItem({ event, index, isLeft }: TTimelineItemProps): JSX.
       {/* Event Card */}
       <Card
         className={`
-          relative w-80 ${colorClass}
+          relative w-64 sm:w-72 md:w-80 max-w-[calc(50vw-2rem)] ${colorClass}
           border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
           transform transition-all duration-1000 ease-out overflow-hidden z-20
           hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px]

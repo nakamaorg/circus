@@ -5,7 +5,7 @@ import type { JSX } from "react";
 
 import { LogOut, User } from "lucide-react";
 import Link from "next/link";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 
 import { handleSignOut } from "@/app/actions/auth";
 import {
@@ -34,6 +34,7 @@ type TUserMenuProps = {
  */
 export function UserMenu({ session }: TUserMenuProps): JSX.Element {
   const [isPending, startTransition] = useTransition();
+  const [isOpen, setIsOpen] = useState(false);
   const { user: userData, isLoading } = useUser();
   const user = session.user;
   const displayName = user?.name ?? "Anonymous";
@@ -51,7 +52,7 @@ export function UserMenu({ session }: TUserMenuProps): JSX.Element {
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild disabled={isLoading}>
         <div className="group">
           <button
@@ -102,13 +103,17 @@ export function UserMenu({ session }: TUserMenuProps): JSX.Element {
                 <div className="p-2 space-y-2">
                   <Link
                     href="/profile"
+                    onClick={() => setIsOpen(false)}
                     className="w-full h-10 bg-cyan-400 hover:bg-cyan-500 text-cyan-900 hover:text-cyan-950 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 flex items-center px-4 py-2 text-sm font-black cursor-pointer uppercase tracking-wide block transform hover:rotate-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] rounded-[5px]"
                   >
                     <User className="mr-3 h-5 w-5" />
                     <span>View Profile</span>
                   </Link>
                   <button
-                    onClick={handleLogout}
+                    onClick={() => {
+                      setIsOpen(false);
+                      handleLogout();
+                    }}
                     disabled={isPending}
                     className="w-full h-10 bg-red-400 hover:bg-red-500 text-red-900 hover:text-red-950 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 flex items-center px-4 py-2 text-sm font-black cursor-pointer uppercase tracking-wide disabled:opacity-50 transform rotate-[1deg] hover:rotate-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] disabled:transform-none disabled:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-[5px]"
                   >

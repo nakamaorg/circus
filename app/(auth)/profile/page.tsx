@@ -6,6 +6,7 @@ import { Calendar, Check, Copy, FileText, User } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 
+import { ProfileSkeleton } from "@/components/profile-skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@/lib/hooks/use-user";
 
@@ -24,18 +25,14 @@ export default function ProfilePage(): JSX.Element {
   const [isCopied, setIsCopied] = useState(false);
   const sessionUser = session?.user;
 
+  if (isLoading) {
+    return <ProfileSkeleton />;
+  }
+
   if (!session || !sessionUser) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <p className="text-xl font-black text-black">No user session found</p>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-xl font-black text-black">Loading user data...</p>
       </div>
     );
   }

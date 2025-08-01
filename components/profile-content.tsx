@@ -26,6 +26,39 @@ export function ProfileContent(): JSX.Element {
   const { user: userData, isLoading } = useUser();
   const sessionUser = session?.user;
   const [showBountyPoster, setShowBountyPoster] = useState(false);
+  const [bountyImageUrl, setBountyImageUrl] = useState<string | null>(null);
+  const [loadingBountyImage, setLoadingBountyImage] = useState(false);
+
+  const handleViewBounty = async () => {
+    if (!userData?.id) {
+      return;
+    }
+
+    setLoadingBountyImage(true);
+    setShowBountyPoster(true);
+
+    try {
+      const response = await fetch(`/api/bounty-image?userId=${userData.id}`);
+      const data = await response.json();
+
+      if (data.success && data.imageUrl) {
+        setBountyImageUrl(data.imageUrl);
+      }
+      else {
+        throw new Error("No bounty poster found");
+      }
+    }
+    catch (error) {
+      console.error("Failed to load bounty image:", error);
+      setShowBountyPoster(false);
+      // TODO: Add proper toast notification instead of alert
+      // eslint-disable-next-line no-alert
+      alert("No bounty poster found for this user");
+    }
+    finally {
+      setLoadingBountyImage(false);
+    }
+  };
 
   if (isLoading) {
     return <ProfileSkeleton />;
@@ -102,7 +135,7 @@ export function ProfileContent(): JSX.Element {
                   </div>
                   {userData?.wanted && (
                     <Button
-                      onClick={() => setShowBountyPoster(true)}
+                      onClick={handleViewBounty}
                       size="sm"
                       className="bg-red-500 hover:bg-red-600 text-white font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 transform rotate-1 hover:rotate-0"
                     >
@@ -185,8 +218,8 @@ export function ProfileContent(): JSX.Element {
 
       {/* Bounty Poster Modal */}
       {showBountyPoster && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4">
-          <div className="relative max-w-2xl w-full bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
+        <div className="animate__animated animate__fadeIn animate__faster fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4">
+          <div className="animate__animated animate__bounceIn relative max-w-2xl w-full bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
             {/* Close Button */}
             <button
               onClick={() => setShowBountyPoster(false)}
@@ -197,51 +230,24 @@ export function ProfileContent(): JSX.Element {
 
             {/* Bounty Poster Content */}
             <div className="p-8 text-center">
-              <h2 className="text-4xl font-black text-red-600 mb-6 uppercase tracking-wider">
-                WANTED DEAD OR ALIVE
-              </h2>
-
-              {/* Mock Bounty Poster */}
-              <div className="bg-yellow-100 border-2 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
-                <div className="space-y-4">
-                  {/* User Avatar */}
-                  <div className="w-32 h-32 mx-auto border-4 border-black bg-white overflow-hidden">
-                    {sessionUser?.image
-                      ? (
-                          <img
-                            alt={`${sessionUser.name}'s bounty photo`}
-                            className="w-full h-full object-cover grayscale"
-                            src={sessionUser.image}
-                          />
-                        )
-                      : (
-                          <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-                            <User className="w-16 h-16 text-gray-600" />
-                          </div>
-                        )}
+              {loadingBountyImage
+                ? (
+                    <div className="space-y-4">
+                      <div className="w-full h-64 bg-gray-200 border-2 border-black flex items-center justify-center">
+                        <div className="w-8 h-8 animate-spin rounded-full border-4 border-black border-t-transparent" />
+                      </div>
+                      <p className="text-lg font-bold text-black">Loading bounty poster...</p>
+                    </div>
+                  )
+                : bountyImageUrl && (
+                  <div className="animate__animated animate__jackInTheBox w-full max-w-md mx-auto border-4 border-black bg-white overflow-hidden">
+                    <img
+                      alt={`${sessionUser?.name}'s bounty poster`}
+                      className="w-full h-auto object-contain"
+                      src={bountyImageUrl}
+                    />
                   </div>
-
-                  {/* Bounty Details */}
-                  <div className="space-y-3">
-                    <h3 className="text-3xl font-black text-black uppercase">
-                      {sessionUser?.name || "Unknown Criminal"}
-                    </h3>
-                    <p className="text-xl font-bold text-red-600">
-                      REWARD: 10,000 COINS
-                    </p>
-                    <p className="text-lg font-bold text-black">
-                      CRIMES: Being too awesome at coding
-                    </p>
-                    <p className="text-sm font-bold text-gray-600">
-                      Last seen in the Circus Discord server
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-sm font-bold text-gray-600 mt-4">
-                Contact the Circus Sheriff for more information
-              </p>
+                )}
             </div>
           </div>
         </div>

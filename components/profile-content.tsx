@@ -234,8 +234,27 @@ export function ProfileContent(): JSX.Element {
 
       {/* Bounty Poster Modal */}
       {showBountyPoster && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
-          <div className="animate__animated animate__jackInTheBox relative">
+        <div className="animate__animated animate__fadeIn animate__fast fixed inset-0 z-50 flex items-center justify-center">
+          {/* NeoBrutalism themed backdrop */}
+          <div className="absolute inset-0 bg-gradient-to-br from-pink-400 via-cyan-400 to-yellow-400 opacity-75" />
+
+          {/* NeoBrutalism pattern overlay */}
+          <div className="absolute inset-0 opacity-20">
+            <div
+              className="w-full h-full bg-black"
+              style={{
+                backgroundImage: `repeating-linear-gradient(
+                  45deg,
+                  transparent,
+                  transparent 20px,
+                  rgba(0,0,0,0.3) 20px,
+                  rgba(0,0,0,0.3) 40px
+                )`,
+              }}
+            />
+          </div>
+
+          <div className="animate__animated animate__jackInTheBox relative z-10">
             {/* Close Button */}
             <button
               onClick={() => setShowBountyPoster(false)}

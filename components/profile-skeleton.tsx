@@ -27,31 +27,57 @@ export function ProfileSkeleton(): JSX.Element {
       {/* Profile Information Skeleton */}
       <div className="w-full relative">
         {/* Floating Avatar Skeleton */}
-        <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 z-10">
+        <div className="absolute -top-8 md:-top-12 left-1/2 transform -translate-x-1/2 z-10">
           <div className="relative">
-            <div className="w-32 h-32 bg-gray-300 border-4 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
-              <div className="w-full h-full rounded-full bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-pulse"></div>
+            <div className="w-24 h-24 border-4 border-black bg-white rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+              <div className="w-full h-full bg-purple-300 flex items-center justify-center">
+                <User className="w-12 h-12 text-white animate-pulse" />
+              </div>
+            </div>
+            {/* Status Badge Skeleton */}
+            <div className="absolute -top-2 -right-2 bg-gray-300 text-transparent text-xs font-black px-2 py-1 border-2 border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transform rotate-12 animate-pulse">
+              LOADING
             </div>
           </div>
         </div>
 
-        {/* User Info Card Skeleton */}
-        <Card className="bg-pink-300 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] pt-20">
-          <CardHeader className="border-b-2 border-black bg-pink-400 pt-8">
-            <CardTitle className="text-3xl font-black text-black uppercase tracking-wide text-center flex items-center justify-center gap-3">
-              <User className="h-8 w-8" />
-              User Information
-            </CardTitle>
-          </CardHeader>
+        {/* User Information Card Skeleton */}
+        <Card className="bg-purple-300 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] pt-12 md:pt-16">
           <CardContent className="p-8">
-            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-              {/* Skeleton Fields */}
-              {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <div className="h-4 bg-gray-300 rounded mb-2 w-1/2 animate-pulse"></div>
-                  <div className="h-6 bg-gray-400 rounded w-3/4 animate-pulse"></div>
+            <div className="grid gap-6 md:grid-cols-2">
+              {/* Display Name Field */}
+              <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
+                <h3 className="text-lg font-black text-black mb-2 uppercase">Display Name</h3>
+                <div className="h-6 bg-purple-200 rounded w-3/4 animate-pulse"></div>
+              </div>
+
+              {/* Discord Username Field */}
+              <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
+                <h3 className="text-lg font-black text-black mb-2 uppercase">Discord Username</h3>
+                <div className="h-6 bg-purple-200 rounded w-2/3 animate-pulse"></div>
+              </div>
+
+              {/* Status Field with Button */}
+              <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-black text-black mb-2 uppercase">Status</h3>
+                    <div className="h-6 bg-gray-200 rounded w-16 animate-pulse"></div>
+                  </div>
+                  <div className="w-24 h-8 bg-red-200 border-2 border-black rounded shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] animate-pulse"></div>
                 </div>
-              ))}
+              </div>
+
+              {/* Discord ID Field with Copy Button */}
+              <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-black text-black mb-2 uppercase">Discord ID</h3>
+                    <div className="h-6 bg-purple-200 rounded w-32 animate-pulse font-mono"></div>
+                  </div>
+                  <div className="w-10 h-10 bg-cyan-200 border-2 border-black rounded-[5px] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] animate-pulse"></div>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>

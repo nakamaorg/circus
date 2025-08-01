@@ -34,10 +34,17 @@ export default async function LoginPage({ searchParams }: TLoginPageProps): Prom
       <div className="w-full max-w-md">
         {/* Logo/Header Section */}
         <div className="text-center mb-12 animate__animated animate__fadeInUp animate__faster relative">
-          <CircusLogo variant="login" />
-          <p className="text-2xl font-bold text-foreground transform rotate-1 cursor-default">
-            Where all the clowns belong!
-          </p>
+          <div className="inline-block">
+            <div className="flex items-center gap-3 mb-3">
+              <CircusLogo variant="login" showTitle={false} />
+              <h1 className="text-5xl font-black text-foreground transform rotate-1 cursor-default leading-none">
+                CIRCUS
+              </h1>
+            </div>
+            <p className="text-lg font-bold text-foreground cursor-default">
+              Where all the clowns belong!
+            </p>
+          </div>
         </div>
 
         {/* Login Card */}

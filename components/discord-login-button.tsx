@@ -31,7 +31,7 @@ export function DiscordLoginButton({ signIn }: TDiscordLoginButtonProps): JSX.El
       onClick={handleSignIn}
       disabled={isLoading}
       aria-label="Sign in with Discord"
-      className="pulse w-full bg-[hsl(235,86%,65%)] hover:bg-[hsl(235,86%,60%)] text-white font-black text-xl py-6 px-6 border-2 border-black shadow-shadow active:translate-x-2 active:translate-y-2 active:shadow-none transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-x-0 disabled:translate-y-0"
+      className="pulse w-full bg-[hsl(235,86%,65%)] hover:bg-[hsl(235,86%,60%)] text-white font-black text-xl py-6 px-6 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all duration-100 transform rotate-1 hover:rotate-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:hover:rotate-1"
     >
       {isLoading
         ? (

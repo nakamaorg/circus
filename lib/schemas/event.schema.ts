@@ -2,7 +2,7 @@ import { z } from "zod";
 
 
 
-export const EventSchema = z.object({
+export const eventSchema = z.object({
   id: z.string(),
   timestamp: z.number(),
   description: z.string(),

@@ -12,6 +12,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
@@ -54,28 +55,27 @@ export function UserMenu({ session }: TUserMenuProps): JSX.Element {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild disabled={isLoading}>
-        <div className="group">
-          <button
-            className={`flex items-center space-x-3 h-10 px-4 py-2 bg-cyan-300 hover:bg-cyan-400 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 font-black text-black rounded-[5px] ${isLoading ? "animate-pulse cursor-not-allowed" : ""}`}
-            disabled={isLoading}
-          >
-            <Avatar className="h-8 w-8 border-2 border-black">
-              <AvatarImage src={avatarUrl || undefined} alt={displayName} />
-              <AvatarFallback className="bg-yellow-300 text-black font-black">
-                {initials}
-              </AvatarFallback>
-            </Avatar>
-            {isLoading
-              ? (
-                  <div className="hidden md:block">
-                    <div className="h-4 w-20 bg-gray-300 rounded animate-pulse"></div>
-                  </div>
-                )
-              : (
-                  <span className="font-black text-sm hidden md:block">{displayName}</span>
-                )}
-          </button>
-        </div>
+        <Button
+          variant="outline"
+          className="w-10 h-10 p-0 md:w-auto md:px-4 md:py-2 md:justify-start bg-cyan-300 hover:bg-cyan-400 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100 font-black"
+          disabled={isLoading}
+        >
+          <Avatar className="h-6 w-6 md:h-8 md:w-8 flex-shrink-0">
+            <AvatarImage src={avatarUrl || undefined} alt={displayName} />
+            <AvatarFallback className="bg-yellow-300 text-black font-black text-xs md:text-sm">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          {isLoading
+            ? (
+                <div className="hidden md:block md:ml-3">
+                  <div className="h-4 w-20 bg-gray-300 rounded animate-pulse"></div>
+                </div>
+              )
+            : (
+                <span className="font-black text-sm hidden md:block md:ml-3">{displayName}</span>
+              )}
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"

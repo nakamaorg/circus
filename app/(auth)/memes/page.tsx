@@ -2,7 +2,7 @@
 
 import type { JSX } from "react";
 
-import { ArrowUp, Eye, Play } from "lucide-react";
+import { ArrowUp, Eye, Play, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -139,6 +139,10 @@ export default function MemesPage(): JSX.Element {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<MediaItem | null>(null);
 
+  // Search and filter state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedType, setSelectedType] = useState<"all" | "image" | "video">("all");
+
   // Fetch media items from S3
   useEffect(() => {
     const fetchMediaItems = async () => {
@@ -190,6 +194,53 @@ export default function MemesPage(): JSX.Element {
     setSelectedMedia(null);
   };
 
+  // Fuzzy search function
+  const fuzzySearch = (query: string, text: string): boolean => {
+    if (!query) {
+      return true;
+    }
+
+    const queryLower = query.toLowerCase();
+    const textLower = text.toLowerCase();
+
+    // Direct substring match (highest priority)
+    if (textLower.includes(queryLower)) {
+      return true;
+    }
+
+    // Fuzzy matching - check if all characters exist in order
+    let queryIndex = 0;
+
+    for (let i = 0; i < textLower.length && queryIndex < queryLower.length; i++) {
+      if (textLower[i] === queryLower[queryIndex]) {
+        queryIndex++;
+      }
+    }
+
+    return queryIndex === queryLower.length;
+  };
+
+  // Filter and search media items
+  const filteredMediaItems = mediaItems.filter((item) => {
+    // Type filter
+    if (selectedType !== "all" && item.type !== selectedType) {
+      return false;
+    }
+
+    // Search filter
+    if (searchQuery && !fuzzySearch(searchQuery, item.name)) {
+      return false;
+    }
+
+    return true;
+  });
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSearchQuery("");
+    setSelectedType("all");
+  };
+
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* Content */}
@@ -200,9 +251,113 @@ export default function MemesPage(): JSX.Element {
             Memes Gallery
           </h1>
           <p className="text-lg sm:text-xl font-bold text-black bg-white inline-block px-4 sm:px-6 py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
-            {isLoading ? "Loading..." : `${mediaItems.length} lore items from the circus collection`}
+            {isLoading
+              ? "Loading..."
+              : filteredMediaItems.length !== mediaItems.length
+                ? `${filteredMediaItems.length} of ${mediaItems.length} lore items`
+                : `${mediaItems.length} lore items from the circus collection`}
           </p>
         </div>
+
+        {/* Search and Filter Controls */}
+        {!isLoading && !error && mediaItems.length > 0 && (
+          <div className="mb-8">
+            {/* Compact Search and Filter Bar */}
+            <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-4">
+              <div className="flex flex-col sm:flex-row gap-4 items-center">
+                {/* Search Input */}
+                <div className="relative flex-1 min-w-0">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-600" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    placeholder="Search by filename..."
+                    className="w-full h-10 pl-10 pr-4 text-sm font-bold text-black bg-gray-50 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none placeholder-gray-500"
+                  />
+                </div>
+
+                {/* Type Filter - Pill Style */}
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <span className="text-sm font-black text-black uppercase whitespace-nowrap">Type:</span>
+                  <div className="flex border-2 border-black bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <button
+                      onClick={() => setSelectedType("all")}
+                      className={`h-10 px-4 text-sm font-black transition-all duration-200 border-r border-black ${
+                        selectedType === "all"
+                          ? "bg-green-400 text-black shadow-inner"
+                          : "bg-white hover:bg-gray-200 text-black"
+                      }`}
+                    >
+                      ALL
+                    </button>
+                    <button
+                      onClick={() => setSelectedType("image")}
+                      className={`h-10 px-4 text-sm font-black transition-all duration-200 border-r border-black ${
+                        selectedType === "image"
+                          ? "bg-blue-400 text-black shadow-inner"
+                          : "bg-white hover:bg-gray-200 text-black"
+                      }`}
+                    >
+                      IMAGES
+                    </button>
+                    <button
+                      onClick={() => setSelectedType("video")}
+                      className={`h-10 px-4 text-sm font-black transition-all duration-200 ${
+                        selectedType === "video"
+                          ? "bg-red-400 text-white shadow-inner"
+                          : "bg-white hover:bg-gray-200 text-black"
+                      }`}
+                    >
+                      VIDEOS
+                    </button>
+                  </div>
+                </div>
+
+                {/* Clear Filters Button */}
+                {(searchQuery || selectedType !== "all") && (
+                  <Button
+                    onClick={clearFilters}
+                    className="h-10 px-4 bg-yellow-400 hover:bg-yellow-500 text-black font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-200 flex items-center gap-2 flex-shrink-0"
+                  >
+                    <X className="w-3 h-3" />
+                    Clear
+                  </Button>
+                )}
+              </div>
+
+              {/* Filter Summary */}
+              <div className="mt-3 pt-3 border-t-2 border-black">
+                <div className="flex flex-wrap items-center gap-4 text-xs font-bold text-gray-700">
+                  <span>
+                    Showing:
+                    <span className="text-black font-black ml-1">
+                      {filteredMediaItems.length}
+                      {" "}
+                      of
+                      {" "}
+                      {mediaItems.length}
+                    </span>
+                  </span>
+                  <span className="text-gray-400">•</span>
+                  <span>
+                    Images:
+                    <span className="text-blue-600 font-black ml-1">
+                      {mediaItems.filter(item => item.type === "image").length}
+                    </span>
+                  </span>
+                  <span className="text-gray-400">•</span>
+                  <span>
+                    Videos:
+                    <span className="text-red-600 font-black ml-1">
+                      {mediaItems.filter(item => item.type === "video").length}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {isLoading
           ? (
@@ -237,70 +392,87 @@ export default function MemesPage(): JSX.Element {
                     </div>
                   </div>
                 )
-              : (
-                  <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 gap-8 space-y-8">
-                    {mediaItems.map((item, index) => {
-                      // Generate random heights for masonry effect
-                      const heights = [
-                        "h-48",
-                        "h-56",
-                        "h-64",
-                        "h-72",
-                        "h-80",
-                        "h-96",
-                      ];
-                      const randomHeight = heights[index % heights.length];
-
-                      return (
-                        <div
-                          key={item.key}
-                          className={`bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 overflow-hidden group cursor-pointer break-inside-avoid mb-8 ${randomHeight}`}
-                          onClick={() => openMedia(item)}
+              : filteredMediaItems.length === 0
+                ? (
+                    <div className="flex items-center justify-center min-h-[400px]">
+                      <div className="text-center bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8">
+                        <p className="text-2xl font-black text-gray-700 mb-4">No matching memes found</p>
+                        <p className="text-lg font-bold text-gray-600 mb-6">
+                          Try adjusting your search or filter settings
+                        </p>
+                        <Button
+                          onClick={clearFilters}
+                          className="bg-blue-500 hover:bg-blue-600 text-white font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100"
                         >
-                          {/* Media Preview */}
-                          <div className="relative w-full h-full bg-gray-100">
-                            {item.type === "video"
-                              ? (
-                                  <>
-                                    <video
-                                      src={item.url}
-                                      className="w-full h-full object-cover"
-                                      muted
-                                      onMouseEnter={e => e.currentTarget.play()}
-                                      onMouseLeave={e => e.currentTarget.pause()}
-                                    />
-                                    <div className="absolute top-2 right-2 w-8 h-8 bg-red-500 border-2 border-black rounded-full flex items-center justify-center">
-                                      <Play className="w-4 h-4 text-white" />
-                                    </div>
-                                  </>
-                                )
-                              : (
-                                  <img
-                                    src={item.url}
-                                    alt={item.name}
-                                    className="w-full h-full object-cover"
-                                    loading="lazy"
-                                  />
-                                )}
+                          Clear Filters
+                        </Button>
+                      </div>
+                    </div>
+                  )
+                : (
+                    <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 gap-8 space-y-8">
+                      {filteredMediaItems.map((item, index) => {
+                        // Generate random heights for masonry effect
+                        const heights = [
+                          "h-48",
+                          "h-56",
+                          "h-64",
+                          "h-72",
+                          "h-80",
+                          "h-96",
+                        ];
+                        const randomHeight = heights[index % heights.length];
 
-                            {/* Hover Overlay */}
-                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                              <div className="w-12 h-12 bg-white border-2 border-black rounded-full flex items-center justify-center">
-                                <Eye className="w-6 h-6 text-black" />
+                        return (
+                          <div
+                            key={item.key}
+                            className={`bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 overflow-hidden group cursor-pointer break-inside-avoid mb-8 ${randomHeight}`}
+                            onClick={() => openMedia(item)}
+                          >
+                            {/* Media Preview */}
+                            <div className="relative w-full h-full bg-gray-100">
+                              {item.type === "video"
+                                ? (
+                                    <>
+                                      <video
+                                        src={item.url}
+                                        className="w-full h-full object-cover"
+                                        muted
+                                        onMouseEnter={e => e.currentTarget.play()}
+                                        onMouseLeave={e => e.currentTarget.pause()}
+                                      />
+                                      <div className="absolute top-2 right-2 w-8 h-8 bg-red-500 border-2 border-black rounded-full flex items-center justify-center">
+                                        <Play className="w-4 h-4 text-white" />
+                                      </div>
+                                    </>
+                                  )
+                                : (
+                                    <img
+                                      src={item.url}
+                                      alt={item.name}
+                                      className="w-full h-full object-cover"
+                                      loading="lazy"
+                                    />
+                                  )}
+
+                              {/* Hover Overlay */}
+                              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                                <div className="w-12 h-12 bg-white border-2 border-black rounded-full flex items-center justify-center">
+                                  <Eye className="w-6 h-6 text-black" />
+                                </div>
+                              </div>
+
+                              {/* Media Info Overlay */}
+                              <div className="absolute bottom-0 left-0 right-0 bg-black/80 text-white p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-200">
+                                <p className="text-sm font-black truncate">{item.name}</p>
+                                <p className="text-xs font-bold uppercase opacity-80">{item.type}</p>
                               </div>
                             </div>
-
-                            {/* Media Info Overlay */}
-                            <div className="absolute bottom-0 left-0 right-0 bg-black/80 text-white p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-200">
-                              <p className="text-sm font-black truncate">{item.name}</p>
-                              <p className="text-xs font-bold uppercase opacity-80">{item.type}</p>
-                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+                        );
+                      })}
+                    </div>
+                  )}
       </div>
 
       {/* Back to Top Button */}

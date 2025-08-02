@@ -66,10 +66,10 @@ function MediaModal({ item, isOpen, onClose }: MediaModalProps): JSX.Element | n
       </button>
 
       {/* Modal Content */}
-      <div className="animate__animated animate__jackInTheBox relative z-10 max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden">
+      <div className="animate__animated animate__jackInTheBox relative z-10 max-w-7xl w-full mx-4 max-h-[95vh] overflow-hidden">
         <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">
           {/* Media Display */}
-          <div className="relative bg-gray-100 flex items-center justify-center min-h-[60vh]">
+          <div className="relative bg-gray-900 flex items-center justify-center" style={{ minHeight: "70vh", maxHeight: "80vh" }}>
             {item.type === "video"
               ? (
                   <video
@@ -78,6 +78,7 @@ function MediaModal({ item, isOpen, onClose }: MediaModalProps): JSX.Element | n
                     controls
                     autoPlay
                     loop
+                    style={{ maxHeight: "75vh", width: "auto" }}
                   />
                 )
               : (
@@ -85,6 +86,7 @@ function MediaModal({ item, isOpen, onClose }: MediaModalProps): JSX.Element | n
                     src={item.url}
                     alt={item.name}
                     className="max-w-full max-h-full object-contain"
+                    style={{ maxHeight: "75vh", width: "auto" }}
                   />
                 )}
           </div>
@@ -173,7 +175,7 @@ export default function MemesPage(): JSX.Element {
   };
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden">
       {/* Content */}
       <div className="container mx-auto px-6 py-12">
         {/* Hero Section */}

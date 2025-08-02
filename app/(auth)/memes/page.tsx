@@ -222,54 +222,67 @@ export default function MemesPage(): JSX.Element {
                   </div>
                 )
               : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                    {mediaItems.map(item => (
-                      <div
-                        key={item.key}
-                        className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 overflow-hidden group cursor-pointer"
-                        onClick={() => openMedia(item)}
-                      >
-                        {/* Media Preview */}
-                        <div className="relative aspect-square bg-gray-100">
-                          {item.type === "video"
-                            ? (
-                                <>
-                                  <video
-                                    src={item.url}
-                                    className="w-full h-full object-cover"
-                                    muted
-                                    onMouseEnter={e => e.currentTarget.play()}
-                                    onMouseLeave={e => e.currentTarget.pause()}
-                                  />
-                                  <div className="absolute top-2 right-2 w-8 h-8 bg-red-500 border-2 border-black rounded-full flex items-center justify-center">
-                                    <Play className="w-4 h-4 text-white" />
-                                  </div>
-                                </>
-                              )
-                            : (
-                                <img
-                                  src={item.url}
-                                  alt={item.name}
-                                  className="w-full h-full object-cover"
-                                  loading="lazy"
-                                />
-                              )}
+                  <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-6 space-y-6">
+                    {mediaItems.map((item, index) => {
+                      // Generate random heights for masonry effect
+                      const heights = [
+                        "h-48",
+                        "h-56",
+                        "h-64",
+                        "h-72",
+                        "h-80",
+                        "h-96",
+                      ];
+                      const randomHeight = heights[index % heights.length];
 
-                          {/* Hover Overlay */}
-                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                            <div className="w-12 h-12 bg-white border-2 border-black rounded-full flex items-center justify-center">
-                              <Eye className="w-6 h-6 text-black" />
+                      return (
+                        <div
+                          key={item.key}
+                          className={`bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 overflow-hidden group cursor-pointer break-inside-avoid mb-6 ${randomHeight}`}
+                          onClick={() => openMedia(item)}
+                        >
+                          {/* Media Preview */}
+                          <div className="relative w-full h-full bg-gray-100">
+                            {item.type === "video"
+                              ? (
+                                  <>
+                                    <video
+                                      src={item.url}
+                                      className="w-full h-full object-cover"
+                                      muted
+                                      onMouseEnter={e => e.currentTarget.play()}
+                                      onMouseLeave={e => e.currentTarget.pause()}
+                                    />
+                                    <div className="absolute top-2 right-2 w-8 h-8 bg-red-500 border-2 border-black rounded-full flex items-center justify-center">
+                                      <Play className="w-4 h-4 text-white" />
+                                    </div>
+                                  </>
+                                )
+                              : (
+                                  <img
+                                    src={item.url}
+                                    alt={item.name}
+                                    className="w-full h-full object-cover"
+                                    loading="lazy"
+                                  />
+                                )}
+
+                            {/* Hover Overlay */}
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                              <div className="w-12 h-12 bg-white border-2 border-black rounded-full flex items-center justify-center">
+                                <Eye className="w-6 h-6 text-black" />
+                              </div>
+                            </div>
+
+                            {/* Media Info Overlay */}
+                            <div className="absolute bottom-0 left-0 right-0 bg-black/80 text-white p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-200">
+                              <p className="text-sm font-black truncate">{item.name}</p>
+                              <p className="text-xs font-bold uppercase opacity-80">{item.type}</p>
                             </div>
                           </div>
                         </div>
-
-                        {/* Media Info */}
-                        <div className="p-3 border-t-2 border-black bg-yellow-200">
-                          <p className="text-sm font-black text-black truncate">{item.name}</p>
-                          <p className="text-xs font-bold text-gray-600 uppercase">{item.type}</p>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
       </div>

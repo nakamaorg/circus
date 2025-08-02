@@ -238,7 +238,7 @@ export default function MemesPage(): JSX.Element {
                   </div>
                 )
               : (
-                  <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-6 space-y-6">
+                  <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 gap-8 space-y-8">
                     {mediaItems.map((item, index) => {
                       // Generate random heights for masonry effect
                       const heights = [
@@ -254,7 +254,7 @@ export default function MemesPage(): JSX.Element {
                       return (
                         <div
                           key={item.key}
-                          className={`bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 overflow-hidden group cursor-pointer break-inside-avoid mb-6 ${randomHeight}`}
+                          className={`bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 overflow-hidden group cursor-pointer break-inside-avoid mb-8 ${randomHeight}`}
                           onClick={() => openMedia(item)}
                         >
                           {/* Media Preview */}

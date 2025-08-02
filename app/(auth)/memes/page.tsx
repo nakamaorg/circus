@@ -47,8 +47,24 @@ function MediaModal({ item, isOpen, onClose }: MediaModalProps): JSX.Element | n
 
   return (
     <div className="animate__animated animate__fadeIn animate__fast fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-sm">
-      {/* Backdrop */}
+      {/* NeoBrutalism themed backdrop */}
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+
+      {/* NeoBrutalism pattern overlay */}
+      <div className="absolute inset-0 opacity-10">
+        <div
+          className="w-full h-full bg-black"
+          style={{
+            backgroundImage: `repeating-linear-gradient(
+              45deg,
+              transparent,
+              transparent 20px,
+              rgba(255,255,255,0.1) 20px,
+              rgba(255,255,255,0.1) 40px
+            )`,
+          }}
+        />
+      </div>
 
       {/* Close Button */}
       <button

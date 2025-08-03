@@ -2,7 +2,7 @@
 
 import type { JSX } from "react";
 
-import { Command, GanttChartSquare, Home, ImageIcon, LogOut, Search, User, X } from "lucide-react";
+import { Command, GanttChartSquare, Home, ImageIcon, LogOut, Search, Trophy, User, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -67,6 +67,17 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps): JSX.El
       icon: <ImageIcon className="w-4 h-4" />,
       action: () => {
         router.push("/memes");
+        onClose();
+      },
+      category: "Navigation",
+    },
+    {
+      id: "reputation",
+      title: "View Reputation",
+      description: "Track your Ls and Ws - received and given",
+      icon: <Trophy className="w-4 h-4" />,
+      action: () => {
+        router.push("/reputation");
         onClose();
       },
       category: "Navigation",

@@ -107,9 +107,29 @@ function ReputationTable({ title, data, type, icon, bgColor, borderColor, users 
   const filteredData = sortedData.filter((record) => {
     const searchLower = searchQuery.toLowerCase();
 
+    // Get the user names for both giver and taker
+    const giverName = users[record.giver_id] || `User ${record.giver_id}`;
+    const takerName = users[record.taker_id] || `User ${record.taker_id}`;
+
+    // Check for self-own messages
+    const isSelfOwn = record.giver_id === record.taker_id;
+    let selfOwnMessage = "";
+
+    if (isSelfOwn) {
+      if (title.includes("Received Ws") || title.includes("Given Ws")) {
+        selfOwnMessage = "Self Praise";
+      }
+      else {
+        selfOwnMessage = "Self Own";
+      }
+    }
+
     return (
       record.giver_id.toLowerCase().includes(searchLower)
       || record.taker_id.toLowerCase().includes(searchLower)
+      || giverName.toLowerCase().includes(searchLower)
+      || takerName.toLowerCase().includes(searchLower)
+      || selfOwnMessage.toLowerCase().includes(searchLower)
       || new Date(record.timestamp * 1000).toLocaleDateString().includes(searchLower)
     );
   });

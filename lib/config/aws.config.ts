@@ -24,6 +24,8 @@ const s3Client = new S3Client({
 export const AWS_TABLES = {
   USERS: "nakamaorg-users",
   EVENTS: "nakamaorg-events",
+  L_HISTORY: "nakamaorg-l-history",
+  W_HISTORY: "nakamaorg-w-history",
 } as const;
 
 export const AWS_BUCKETS = {

@@ -30,27 +30,21 @@ interface Game {
 interface EndorsementsTableProps {
   endorsements: EndorsementData[];
   games: Game[];
+}
+
+interface EndorsementTypeFilterProps {
   endorsementType: "my" | "game" | "global";
   selectedGameId?: number;
   onTypeChange: (type: "my" | "game" | "global") => void;
   onGameIdChange: (gameId?: number) => void;
 }
 
-function EndorsementsTable({
-  endorsements,
-  games,
+function EndorsementTypeFilter({
   endorsementType,
   selectedGameId,
   onTypeChange,
   onGameIdChange,
-}: EndorsementsTableProps): JSX.Element {
-  const [sortConfig, setSortConfig] = useState<{
-    key: "rank" | "game_name" | "endorsements";
-    direction: "asc" | "desc";
-  }>({
-    key: "endorsements",
-    direction: "desc",
-  });
+}: EndorsementTypeFilterProps): JSX.Element {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -64,27 +58,8 @@ function EndorsementsTable({
 
     document.addEventListener("mousedown", handleClickOutside);
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const handleSort = (key: "rank" | "game_name" | "endorsements") => {
-    setSortConfig(prev => ({
-      key,
-      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
-    }));
-  };
-
-  const getSortIcon = (columnKey: "rank" | "game_name" | "endorsements") => {
-    if (sortConfig.key !== columnKey) {
-      return <ArrowUp className="w-4 h-4 text-gray-400" />;
-    }
-
-    return sortConfig.direction === "asc"
-      ? <ArrowUp className="w-4 h-4 text-white" />
-      : <ArrowDown className="w-4 h-4 text-white" />;
-  };
 
   const getEndorsementTypeName = () => {
     switch (endorsementType) {
@@ -108,6 +83,91 @@ function EndorsementsTable({
     if (type !== "game") {
       onGameIdChange(undefined);
     }
+  };
+
+  return (
+    <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      <div className="bg-blue-400 border-b-4 border-black p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Crown className="w-6 h-6 text-yellow-600" />
+            <h3 className="text-2xl font-black text-black uppercase tracking-wider">Game Endorsements Leaderboard</h3>
+          </div>
+
+          {/* Endorsement Type Filter */}
+          <div className="relative" ref={dropdownRef}>
+            <Filter className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="pl-10 pr-8 py-2 text-black bg-white border-2 border-black font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none min-w-[200px] cursor-pointer flex items-center justify-between"
+            >
+              <span className="truncate">{getEndorsementTypeName()}</span>
+              <ChevronDown className={`w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {/* Custom Dropdown */}
+            {isDropdownOpen && (
+              <div className="animate__animated animate__bounceIn animate__faster absolute top-full left-0 right-0 mt-1 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50">
+                <div
+                  onClick={() => handleTypeSelect("my")}
+                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 hover:bg-purple-100 transition-colors ${
+                    endorsementType === "my" ? "bg-purple-200" : ""
+                  }`}
+                >
+                  My Endorsements
+                </div>
+                <div
+                  onClick={() => handleTypeSelect("global")}
+                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 hover:bg-purple-100 transition-colors ${
+                    endorsementType === "global" ? "bg-purple-200" : ""
+                  }`}
+                >
+                  Global Endorsements
+                </div>
+                <div
+                  onClick={() => handleTypeSelect("game")}
+                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 last:border-b-0 hover:bg-purple-100 transition-colors ${
+                    endorsementType === "game" ? "bg-purple-200" : ""
+                  }`}
+                >
+                  Endorsements by Game
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EndorsementsTable({
+  endorsements,
+  games,
+}: EndorsementsTableProps): JSX.Element {
+  const [sortConfig, setSortConfig] = useState<{
+    key: "rank" | "game_name" | "endorsements";
+    direction: "asc" | "desc";
+  }>({
+    key: "endorsements",
+    direction: "desc",
+  });
+
+  const handleSort = (key: "rank" | "game_name" | "endorsements") => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
+    }));
+  };
+
+  const getSortIcon = (columnKey: "rank" | "game_name" | "endorsements") => {
+    if (sortConfig.key !== columnKey) {
+      return <ArrowUp className="w-4 h-4 text-gray-400" />;
+    }
+
+    return sortConfig.direction === "asc"
+      ? <ArrowUp className="w-4 h-4 text-white" />
+      : <ArrowDown className="w-4 h-4 text-white" />;
   };
 
   // Create leaderboard data with game info
@@ -156,56 +216,12 @@ function EndorsementsTable({
   return (
     <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <div className="bg-blue-400 border-b-4 border-black p-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <Crown className="w-6 h-6 text-yellow-600" />
-            <h3 className="text-2xl font-black text-black uppercase tracking-wider">Game Endorsements Leaderboard</h3>
-            <span className="bg-black text-white px-3 py-1 rounded-full text-sm font-black">
-              {rankedData.length}
-            </span>
-          </div>
-
-          {/* Endorsement Type Filter */}
-          <div className="relative" ref={dropdownRef}>
-            <Filter className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="pl-10 pr-8 py-2 text-black bg-white border-2 border-black font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none min-w-[200px] cursor-pointer flex items-center justify-between"
-            >
-              <span className="truncate">{getEndorsementTypeName()}</span>
-              <ChevronDown className={`w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
-            </button>
-
-            {/* Custom Dropdown */}
-            {isDropdownOpen && (
-              <div className="animate__animated animate__bounceIn animate__faster absolute top-full left-0 right-0 mt-1 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50">
-                <div
-                  onClick={() => handleTypeSelect("my")}
-                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 hover:bg-purple-100 transition-colors ${
-                    endorsementType === "my" ? "bg-purple-200" : ""
-                  }`}
-                >
-                  My Endorsements
-                </div>
-                <div
-                  onClick={() => handleTypeSelect("global")}
-                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 hover:bg-purple-100 transition-colors ${
-                    endorsementType === "global" ? "bg-purple-200" : ""
-                  }`}
-                >
-                  Global Endorsements
-                </div>
-                <div
-                  onClick={() => handleTypeSelect("game")}
-                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 last:border-b-0 hover:bg-purple-100 transition-colors ${
-                    endorsementType === "game" ? "bg-purple-200" : ""
-                  }`}
-                >
-                  Endorsements by Game
-                </div>
-              </div>
-            )}
-          </div>
+        <div className="flex items-center gap-3">
+          <Trophy className="w-6 h-6 text-yellow-600" />
+          <h3 className="text-xl font-black text-black uppercase tracking-wider">Results</h3>
+          <span className="bg-black text-white px-3 py-1 rounded-full text-sm font-black">
+            {rankedData.length}
+          </span>
         </div>
       </div>
 
@@ -375,7 +391,7 @@ export default function GamingPage(): JSX.Element {
             }`}
           >
             <Trophy className="h-5 w-5 mr-2 inline" />
-            Game Endorsements
+            Endorsements
           </button>
           <div className="w-0.5 bg-black"></div>
           <button
@@ -387,7 +403,7 @@ export default function GamingPage(): JSX.Element {
             }`}
           >
             <Gamepad2 className="h-5 w-5 mr-2 inline" />
-            Tracked Games
+            Games
           </button>
         </div>
       </div>
@@ -418,30 +434,40 @@ export default function GamingPage(): JSX.Element {
             </div>
           )}
 
-          {!isLoadingEndorsements && !endorsementsError && endorsements && Object.keys(endorsements).length > 0 && (
-            <EndorsementsTable
-              endorsements={Object.entries(endorsements).map(([game_id, endorsements]) => ({
-                game_id: Number.parseInt(game_id),
-                endorsements,
-              }))}
-              games={games || []}
-              endorsementType={endorsementType}
-              selectedGameId={selectedGameId}
-              onTypeChange={setEndorsementType}
-              onGameIdChange={setSelectedGameId}
-            />
-          )}
+          {!isLoadingEndorsements && !endorsementsError && (
+            <>
+              {/* Always show the dropdown filter */}
+              <div className="mb-6">
+                <EndorsementTypeFilter
+                  endorsementType={endorsementType}
+                  selectedGameId={selectedGameId}
+                  onTypeChange={setEndorsementType}
+                  onGameIdChange={setSelectedGameId}
+                />
+              </div>
 
-          {!isLoadingEndorsements && !endorsementsError && (!endorsements || Object.keys(endorsements).length === 0) && (
-            <div className="text-center py-12">
-              <Trophy className="h-16 w-16 mx-auto mb-4 text-yellow-600" />
-              <p className="text-xl font-bold text-black">
-                No endorsements yet!
-              </p>
-              <p className="text-base font-semibold text-gray-700 mt-2">
-                Start endorsing games to see them here
-              </p>
-            </div>
+              {endorsements && Object.keys(endorsements).length > 0
+                ? (
+                    <EndorsementsTable
+                      endorsements={Object.entries(endorsements).map(([game_id, endorsements]) => ({
+                        game_id: Number.parseInt(game_id),
+                        endorsements,
+                      }))}
+                      games={games || []}
+                    />
+                  )
+                : (
+                    <div className="text-center py-12">
+                      <Trophy className="h-16 w-16 mx-auto mb-4 text-yellow-600" />
+                      <p className="text-xl font-bold text-black">
+                        No endorsements yet!
+                      </p>
+                      <p className="text-base font-semibold text-gray-700 mt-2">
+                        Start endorsing games to see them here
+                      </p>
+                    </div>
+                  )}
+            </>
           )}
         </div>
       )}

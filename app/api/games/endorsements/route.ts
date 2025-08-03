@@ -14,7 +14,7 @@ interface LambdaResponse {
 }
 
 interface LambdaPayload {
-  discord_id?: number;
+  discord_id?: string;
   game_id?: number;
 }
 
@@ -37,12 +37,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Parse discord ID as number
-    const discordId = Number.parseInt(session.user.discordId, 10);
-
-    if (Number.isNaN(discordId)) {
-      return NextResponse.json({ error: "Invalid discord ID" }, { status: 400 });
-    }
+    // Keep discord ID as string to preserve precision for very long numbers
+    const discordId = session.user.discordId;
 
     const { searchParams } = new URL(request.url);
     const type = searchParams.get("type") || "my";

@@ -136,19 +136,19 @@ function ReputationTable({ title, data, type, icon, bgColor, borderColor, users 
 
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) {
-      return <ArrowDown className="w-3 h-3 opacity-50" />;
+      return <ArrowUp className="w-4 h-4 text-gray-400" />;
     }
 
     return sortDirection === "asc"
-      ? <ArrowUp className="w-3 h-3" />
-      : <ArrowDown className="w-3 h-3" />;
+      ? <ArrowUp className="w-4 h-4 text-white" />
+      : <ArrowDown className="w-4 h-4 text-white" />;
   };
 
   return (
     <div className={`${bgColor} border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
       {/* Header */}
       <div className={`${borderColor} border-b-4 border-black p-4`}>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             {icon}
             <h3 className="text-2xl font-black text-black uppercase tracking-wider">{title}</h3>
@@ -157,14 +157,14 @@ function ReputationTable({ title, data, type, icon, bgColor, borderColor, users 
             </span>
           </div>
           {data.length > 0 && (
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-600" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search records..."
-                className="w-64 h-10 pl-10 pr-4 text-sm font-bold text-black bg-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none placeholder-gray-500"
+                className="w-full sm:w-64 h-10 pl-10 pr-4 text-sm font-bold text-black bg-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none placeholder-gray-500"
               />
             </div>
           )}
@@ -186,23 +186,23 @@ function ReputationTable({ title, data, type, icon, bgColor, borderColor, users 
               <table className="w-full">
                 <thead>
                   <tr className="bg-black text-white">
-                    <th className="px-4 py-3 text-left font-black uppercase tracking-wide">
-                      <button
-                        onClick={() => handleSort("timestamp")}
-                        className="flex items-center gap-2 hover:text-yellow-300 transition-colors"
-                      >
+                    <th
+                      className="px-4 py-3 text-left font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
+                      onClick={() => handleSort("timestamp")}
+                    >
+                      <div className="flex items-center gap-2">
                         Date
                         <SortIcon field="timestamp" />
-                      </button>
+                      </div>
                     </th>
-                    <th className="px-4 py-3 text-left font-black uppercase tracking-wide">
-                      <button
-                        onClick={() => handleSort(type === "received" ? "giver_id" : "taker_id")}
-                        className="flex items-center gap-2 hover:text-yellow-300 transition-colors"
-                      >
+                    <th
+                      className="px-4 py-3 text-left font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
+                      onClick={() => handleSort(type === "received" ? "giver_id" : "taker_id")}
+                    >
+                      <div className="flex items-center gap-2">
                         {type === "received" ? "From" : "To"}
                         <SortIcon field={type === "received" ? "giver_id" : "taker_id"} />
-                      </button>
+                      </div>
                     </th>
                   </tr>
                 </thead>

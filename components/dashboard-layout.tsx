@@ -39,6 +39,13 @@ export function DashboardLayout({ children, session }: TDashboardLayoutProps): J
     setSidebarOpen(!sidebarOpen);
   };
 
+  const handleLinkClick = (): void => {
+    // Close sidebar on mobile screens when a link is clicked
+    if (window.innerWidth < 1024) { // Below lg breakpoint
+      setSidebarOpen(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-yellow-100 to-cyan-100">
       <div className="flex h-screen">
@@ -49,7 +56,7 @@ export function DashboardLayout({ children, session }: TDashboardLayoutProps): J
           transition-transform duration-300 ease-in-out
         `}
         >
-          <Sidebar isOpen={sidebarOpen} />
+          <Sidebar isOpen={sidebarOpen} onLinkClick={handleLinkClick} />
         </div>
 
         {/* Close Button for Mobile - Fixed to window */}
@@ -70,7 +77,7 @@ export function DashboardLayout({ children, session }: TDashboardLayoutProps): J
           transition-transform duration-300 ease-in-out
         `}
         >
-          <Sidebar isOpen={sidebarOpen} />
+          <Sidebar isOpen={sidebarOpen} onLinkClick={handleLinkClick} />
         </div>
 
         {/* Overlay for mobile */}

@@ -40,8 +40,8 @@ export default function GamingPage(): JSX.Element {
     <div className="space-y-8">
       {/* Hero Section */}
       <div className="text-center space-y-4">
-        <h1 className="text-6xl font-black text-black uppercase tracking-wider transform -rotate-2 bg-green-400 inline-block px-8 py-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          Gaming Hub
+        <h1 className="text-6xl font-black text-black uppercase tracking-wider transform -rotate-2 bg-red-400 inline-block px-8 py-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          Gaming
         </h1>
         <p className="text-2xl font-bold text-black bg-white inline-block px-6 py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
           Track games and view endorsements leaderboard
@@ -181,30 +181,33 @@ export default function GamingPage(): JSX.Element {
                   className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200"
                 >
                   <div className="p-6">
-                    {game.cover_url && (
-                      <div className="w-full h-48 mb-4 overflow-hidden border-2 border-black">
-                        <img
-                          src={`https:${game.cover_url}`}
-                          alt={game.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
-                    <div className="flex items-center gap-3 mb-4">
-                      <Gamepad2 className="w-6 h-6 text-purple-600" />
-                      <h3 className="text-xl font-black text-black uppercase tracking-wide">{game.name}</h3>
-                    </div>
-
-                    <div className="space-y-2 mb-4">
-                      <div className="text-sm font-bold text-gray-700">
-                        Release Date:
-                        {" "}
-                        {new Date(game.first_release_date * 1000).getFullYear()}
-                      </div>
-                      <div className="text-sm font-bold text-gray-700">
-                        Game ID:
-                        {" "}
-                        {game.id}
+                    <div className="flex gap-4 mb-4">
+                      {game.cover_url && (
+                        <div className="w-16 h-16 flex-shrink-0 overflow-hidden border-2 border-black">
+                          <img
+                            src={`https:${game.cover_url}`}
+                            alt={game.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Gamepad2 className="w-5 h-5 text-purple-600 flex-shrink-0" />
+                          <h3 className="text-lg font-black text-black uppercase tracking-wide truncate">{game.name}</h3>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="text-xs font-bold text-gray-700">
+                            Release:
+                            {" "}
+                            {new Date(game.first_release_date * 1000).getFullYear()}
+                          </div>
+                          <div className="text-xs font-bold text-gray-700">
+                            ID:
+                            {" "}
+                            {game.id}
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -213,7 +216,7 @@ export default function GamingPage(): JSX.Element {
                         href={game.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 flex items-center justify-center gap-2 px-4 py-2"
+                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 flex items-center justify-center gap-2 px-4 py-2 text-sm"
                       >
                         View on IGDB
                       </a>

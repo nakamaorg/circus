@@ -281,8 +281,8 @@ function MatchesTable({ matches, fields }: { matches: MatchWithField[]; fields: 
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="pl-10 pr-8 py-2 text-black bg-white border-2 border-black font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none min-w-[150px] cursor-pointer flex items-center justify-between"
             >
-              <span>{getSelectedFieldName()}</span>
-              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
+              <span className="truncate">{getSelectedFieldName()}</span>
+              <ChevronDown className={`w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
             </button>
 
             {/* Custom Dropdown */}

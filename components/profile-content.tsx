@@ -34,23 +34,6 @@ export function ProfileContent(): JSX.Element {
   const [loadingBountyImage, setLoadingBountyImage] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
 
-  // Handle escape key to close bounty modal
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && showBountyPoster) {
-        setShowBountyPoster(false);
-      }
-    };
-
-    if (showBountyPoster) {
-      document.addEventListener("keydown", handleEscape);
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [showBountyPoster]);
-
   const handleViewBounty = async () => {
     if (!userData?.id) {
       return;
@@ -106,6 +89,41 @@ export function ProfileContent(): JSX.Element {
       console.error("Failed to download bounty poster:", error);
     }
   };
+
+  // Handle escape key to close bounty modal
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && showBountyPoster) {
+        setShowBountyPoster(false);
+      }
+    };
+
+    if (showBountyPoster) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [showBountyPoster]);
+
+  // Handle Ctrl+S to download bounty poster
+  useEffect(() => {
+    const handleDownloadShortcut = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === "s" && showBountyPoster && bountyImageUrl) {
+        e.preventDefault();
+        handleDownloadBounty();
+      }
+    };
+
+    if (showBountyPoster) {
+      document.addEventListener("keydown", handleDownloadShortcut);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleDownloadShortcut);
+    };
+  }, [showBountyPoster, bountyImageUrl]);
 
   if (isLoading) {
     return <ProfileSkeleton />;
@@ -304,7 +322,7 @@ export function ProfileContent(): JSX.Element {
           >
             <X className="h-6 w-6" />
             {/* Tooltip */}
-            <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2 px-2 py-1 bg-black text-white text-xs rounded border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 whitespace-nowrap z-[70] pointer-events-none">
+            <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2 px-2 py-1 bg-black text-white text-xs rounded border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 whitespace-nowrap z-[80] pointer-events-none">
               Close bounty poster (Esc)
               {/* Tooltip arrow */}
               <div className="absolute left-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-l-4 border-t-4 border-b-4 border-transparent border-l-black"></div>
@@ -318,8 +336,8 @@ export function ProfileContent(): JSX.Element {
           >
             <Download className="h-6 w-6" />
             {/* Tooltip */}
-            <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2 px-2 py-1 bg-black text-white text-xs rounded border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 whitespace-nowrap z-[70] pointer-events-none">
-              Download bounty poster
+            <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2 px-2 py-1 bg-black text-white text-xs rounded border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 whitespace-nowrap z-[80] pointer-events-none">
+              Download bounty poster (Ctrl+S)
               {/* Tooltip arrow */}
               <div className="absolute left-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-l-4 border-t-4 border-b-4 border-transparent border-l-black"></div>
             </div>

@@ -42,7 +42,7 @@ export function DiscordLoginButton({ signIn }: TDiscordLoginButtonProps): JSX.El
           )
         : (
             <>
-              <DiscordIcon className="h-6 w-6" />
+              <DiscordIcon className="hidden sm:block h-6 w-6" />
               <span>LOGIN WITH DISCORD</span>
             </>
           )}

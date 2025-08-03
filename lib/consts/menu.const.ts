@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { GanttChartSquare, Home, ImageIcon, Trophy, User, Volleyball } from "lucide-react";
+import { Gamepad2, GanttChartSquare, Home, ImageIcon, Trophy, User, Volleyball } from "lucide-react";
 
 
 
@@ -14,6 +14,11 @@ export const MENU_ITEMS: Array<TMenuItemType> = [
     icon: Home,
     label: "Home",
     link: "/",
+  },
+  {
+    icon: Gamepad2,
+    label: "Gaming",
+    link: "/gaming",
   },
   {
     icon: Volleyball,

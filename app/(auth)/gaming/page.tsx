@@ -1,0 +1,172 @@
+"use client";
+
+import type { JSX } from "react";
+
+import { Crown, Gamepad2, Trophy } from "lucide-react";
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useGames } from "@/lib/hooks/use-games";
+import { usePageReady } from "@/lib/hooks/use-page-ready";
+
+
+
+type TabType = "endorsements" | "games";
+
+/**
+ * @description
+ * Gaming page with endorsements leaderboard and tracked games
+ *
+ * @returns {JSX.Element} The gaming page component.
+ */
+export default function GamingPage(): JSX.Element {
+  usePageReady();
+  const [activeTab, setActiveTab] = useState<TabType>("endorsements");
+  const { data: games, isLoading, error } = useGames();
+
+  return (
+    <div className="space-y-8">
+      {/* Hero Section */}
+      <div className="text-center space-y-4">
+        <h1 className="text-6xl font-black text-black uppercase tracking-wider transform -rotate-2 bg-green-400 inline-block px-8 py-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          Gaming Hub
+        </h1>
+        <p className="text-2xl font-bold text-black bg-white inline-block px-6 py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
+          Track games and view endorsements leaderboard
+        </p>
+      </div>
+
+      {/* Tab Navigation */}
+      <div className="flex gap-4 justify-center">
+        <Button
+          onClick={() => setActiveTab("endorsements")}
+          variant={activeTab === "endorsements" ? "default" : "outline"}
+          className={`font-bold text-lg px-6 py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all ${
+            activeTab === "endorsements"
+              ? "bg-blue-400 text-black hover:bg-blue-500"
+              : "bg-white text-black hover:bg-gray-100"
+          }`}
+        >
+          <Trophy className="h-5 w-5 mr-2" />
+          Game Endorsements
+        </Button>
+        <Button
+          onClick={() => setActiveTab("games")}
+          variant={activeTab === "games" ? "default" : "outline"}
+          className={`font-bold text-lg px-6 py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all ${
+            activeTab === "games"
+              ? "bg-purple-400 text-black hover:bg-purple-500"
+              : "bg-white text-black hover:bg-gray-100"
+          }`}
+        >
+          <Gamepad2 className="h-5 w-5 mr-2" />
+          Tracked Games
+        </Button>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === "endorsements" && (
+        <div className="space-y-6">
+          <Card className="bg-blue-300 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
+            <CardHeader className="border-b-2 border-black bg-blue-400">
+              <CardTitle className="text-2xl font-black text-black uppercase tracking-wide flex items-center gap-3">
+                <Crown className="h-6 w-6 text-yellow-600" />
+                Game Endorsements Leaderboard
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="text-center py-12">
+                <Trophy className="h-16 w-16 mx-auto mb-4 text-yellow-600" />
+                <p className="text-xl font-bold text-black">
+                  Leaderboard coming soon!
+                </p>
+                <p className="text-base font-semibold text-gray-700 mt-2">
+                  Track game endorsements and compete with other players
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {activeTab === "games" && (
+        <div className="space-y-6">
+          <Card className="bg-purple-300 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
+            <CardHeader className="border-b-2 border-black bg-purple-400">
+              <CardTitle className="text-2xl font-black text-black uppercase tracking-wide flex items-center gap-3">
+                <Gamepad2 className="h-6 w-6" />
+                Tracked Games
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              {isLoading && (
+                <div className="text-center py-12">
+                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-black border-t-transparent mx-auto mb-4"></div>
+                  <p className="text-xl font-bold text-black">
+                    Loading games...
+                  </p>
+                </div>
+              )}
+
+              {error && (
+                <div className="text-center py-12">
+                  <div className="text-red-600 mb-4">
+                    <Gamepad2 className="h-16 w-16 mx-auto" />
+                  </div>
+                  <p className="text-xl font-bold text-black">
+                    Failed to load games
+                  </p>
+                  <p className="text-base font-semibold text-gray-700 mt-2">
+                    {error instanceof Error ? error.message : "Unknown error occurred"}
+                  </p>
+                </div>
+              )}
+
+              {!isLoading && !error && games && games.length === 0 && (
+                <div className="text-center py-12">
+                  <Gamepad2 className="h-16 w-16 mx-auto mb-4 text-gray-600" />
+                  <p className="text-xl font-bold text-black">
+                    No games tracked yet
+                  </p>
+                  <p className="text-base font-semibold text-gray-700 mt-2">
+                    Start tracking games to see them here
+                  </p>
+                </div>
+              )}
+
+              {!isLoading && !error && games && games.length > 0 && (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {games.map(game => (
+                    <Card
+                      key={game.id}
+                      className="bg-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
+                    >
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-lg font-black text-black uppercase">
+                          {game.name || `Game ${game.id}`}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        {game.description && (
+                          <p className="text-sm font-semibold text-gray-700 mb-3">
+                            {game.description}
+                          </p>
+                        )}
+                        <div className="text-xs font-bold text-gray-500">
+                          ID:
+                          {" "}
+                          {game.id}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </div>
+  );
+}

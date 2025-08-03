@@ -193,7 +193,6 @@ export default function GamingPage(): JSX.Element {
                       )}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-2">
-                          <Gamepad2 className="w-5 h-5 text-purple-600 flex-shrink-0" />
                           <h3 className="text-lg font-black text-black uppercase tracking-wide truncate">{game.name}</h3>
                         </div>
                         <div className="space-y-1">
@@ -216,7 +215,7 @@ export default function GamingPage(): JSX.Element {
                         href={game.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 flex items-center justify-center gap-2 px-4 py-2 text-sm"
+                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 flex items-center justify-center gap-2 px-4 py-2 text-sm"
                       >
                         View on IGDB
                       </a>

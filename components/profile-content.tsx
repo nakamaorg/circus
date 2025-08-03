@@ -2,7 +2,7 @@
 
 import type { JSX } from "react";
 
-import { Calendar, Eye, FileText, Loader2, User, X } from "lucide-react";
+import { Calendar, Download, Eye, FileText, Loader2, User, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Tilt from "react-parallax-tilt";
@@ -73,6 +73,30 @@ export function ProfileContent(): JSX.Element {
     }
     finally {
       setLoadingBountyImage(false);
+    }
+  };
+
+  const handleDownloadBounty = async () => {
+    if (!bountyImageUrl || !sessionUser?.name) {
+      return;
+    }
+
+    try {
+      const response = await fetch(bountyImageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = `${sessionUser.name.replace(/\s+/g, "_")}_bounty_poster.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    }
+    catch (error) {
+      console.error("Failed to download bounty poster:", error);
     }
   };
 
@@ -269,12 +293,26 @@ export function ProfileContent(): JSX.Element {
           {/* Close Button - Fixed at top right of screen */}
           <button
             onClick={() => setShowBountyPoster(false)}
-            className="animate__animated animate__bounceIn animate__delay-1s fixed top-4 right-4 w-10 h-10 bg-red-500 hover:bg-red-600 text-white font-black border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100 z-[60] flex items-center justify-center group/tooltip"
+            className="animate__animated animate__bounceIn animate__delay-1s fixed top-4 right-4 w-12 h-12 bg-red-500 hover:bg-red-600 text-white font-black border-4 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100 z-[60] flex items-center justify-center group/tooltip"
           >
             <X className="h-6 w-6" />
             {/* Tooltip */}
-            <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2 px-2 py-1 bg-black text-white text-xs rounded border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 whitespace-nowrap z-[9999] pointer-events-none">
+            <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2 px-2 py-1 bg-black text-white text-xs rounded border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 whitespace-nowrap z-[70] pointer-events-none">
               Close bounty poster (Esc)
+              {/* Tooltip arrow */}
+              <div className="absolute left-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-l-4 border-t-4 border-b-4 border-transparent border-l-black"></div>
+            </div>
+          </button>
+
+          {/* Download Button - Fixed at top right, next to close button */}
+          <button
+            onClick={handleDownloadBounty}
+            className="animate__animated animate__bounceIn animate__delay-1s fixed top-4 right-20 w-12 h-12 bg-green-500 hover:bg-green-600 text-white font-black border-4 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100 z-[60] flex items-center justify-center group/tooltip"
+          >
+            <Download className="h-6 w-6" />
+            {/* Tooltip */}
+            <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2 px-2 py-1 bg-black text-white text-xs rounded border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 whitespace-nowrap z-[70] pointer-events-none">
+              Download bounty poster
               {/* Tooltip arrow */}
               <div className="absolute left-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-l-4 border-t-4 border-b-4 border-transparent border-l-black"></div>
             </div>

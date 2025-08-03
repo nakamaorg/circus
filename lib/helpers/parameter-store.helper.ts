@@ -6,6 +6,11 @@ import { env } from "../config/env.config";
 
 let ssmClient: SSMClient | null = null;
 
+// Cache for API configuration
+let apiConfigCache: { url: string; secret: string } | null = null;
+let cacheTimestamp: number = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+
 /**
  * Get SSM client instance (singleton)
  *
@@ -53,15 +58,32 @@ export async function getParameter(
 }
 
 /**
- * Get API configuration from Parameter Store
+ * Get API configuration from Parameter Store with caching
  *
  * @returns Object containing API URL and secret
  */
 export async function getAPIConfig(): Promise<{ url: string; secret: string }> {
-  const [url, secret] = await Promise.all([
-    getParameter(env.PARAM_API_URL),
-    getParameter(env.PARAM_API_SECRET),
-  ]);
+  const now = Date.now();
 
-  return { url, secret };
+  // Return cached config if it's still valid
+  if (apiConfigCache && (now - cacheTimestamp) < CACHE_DURATION) {
+    return apiConfigCache;
+  }
+
+  try {
+    const [url, secret] = await Promise.all([
+      getParameter(env.PARAM_API_URL),
+      getParameter(env.PARAM_API_SECRET),
+    ]);
+
+    // Update cache
+    apiConfigCache = { url, secret };
+    cacheTimestamp = now;
+
+    return apiConfigCache;
+  }
+  catch (error) {
+    console.error("Failed to fetch API config from Parameter Store:", error);
+    throw new Error("Failed to retrieve API configuration from Parameter Store");
+  }
 }

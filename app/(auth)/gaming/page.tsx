@@ -1,6 +1,7 @@
 "use client";
 
 import type { JSX } from "react";
+import type { EndorsementData, UserEndorsementData } from "@/lib/hooks/use-game-endorsements";
 
 import { ArrowDown, ArrowUp, ChevronDown, Crown, Filter, Gamepad2, Search, Trophy } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -13,16 +14,6 @@ import { useUsers } from "@/lib/hooks/use-users";
 
 
 type TabType = "endorsements" | "games";
-
-interface EndorsementData {
-  game_id: number;
-  endorsements: number;
-}
-
-interface UserEndorsementData {
-  discord_id: string;
-  endorsements: number;
-}
 
 interface Game {
   id: number;
@@ -56,14 +47,12 @@ interface EndorsementsTableProps {
 
 interface EndorsementTypeFilterProps {
   endorsementType: "my" | "game" | "global";
-  selectedGameId?: number;
   onTypeChange: (type: "my" | "game" | "global") => void;
   onGameIdChange: (gameId?: number) => void;
 }
 
 function EndorsementTypeFilter({
   endorsementType,
-  selectedGameId,
   onTypeChange,
   onGameIdChange,
 }: EndorsementTypeFilterProps): JSX.Element {
@@ -89,7 +78,7 @@ function EndorsementTypeFilter({
         return "My Endorsements";
 
       case "game":
-        return selectedGameId ? `Game ${selectedGameId} Endorsements` : "Select Game";
+        return "Game Endorsements";
 
       case "global":
         return "Global Endorsements";
@@ -152,7 +141,7 @@ function EndorsementTypeFilter({
                     endorsementType === "game" ? "bg-purple-200" : ""
                   }`}
                 >
-                  Endorsements by Game
+                  Game Endorsements
                 </div>
               </div>
             )}
@@ -208,18 +197,17 @@ function EndorsementsTable({
         key: userEndorsement.discord_id,
       };
     }
-    else {
-      // For my/game endorsements, we have game data
-      const gameEndorsement = endorsement as EndorsementData;
-      const game = games.find(g => g.id === gameEndorsement.game_id);
 
-      return {
-        ...gameEndorsement,
-        game,
-        name: game?.name || `Game ${gameEndorsement.game_id}`,
-        key: gameEndorsement.game_id.toString(),
-      };
-    }
+    // For my/game endorsements, we have game data
+    const gameEndorsement = endorsement as EndorsementData;
+    const game = games.find(g => g.id === gameEndorsement.game_id);
+
+    return {
+      ...gameEndorsement,
+      game,
+      name: game?.name || `Game ${gameEndorsement.game_id}`,
+      key: gameEndorsement.game_id.toString(),
+    };
   }).sort((a, b) => {
     switch (sortConfig.key) {
       case "endorsements": {
@@ -295,10 +283,10 @@ function EndorsementsTable({
                       </div>
                     </th>
                     <th
-                      className="px-4 py-3 text-left font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
+                      className="px-4 py-3 text-right font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
                       onClick={() => handleSort("endorsements")}
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-end gap-2">
                         Endorsements
                         {getSortIcon("endorsements")}
                       </div>
@@ -339,7 +327,7 @@ function EndorsementsTable({
                               </div>
                             )
                           : (
-                              // For game endorsements, show game info with cover
+                              // For my/game endorsements, show game info with cover
                               <div className="flex items-center gap-4">
                                 {(item as GameLeaderboardItem).game?.cover_url
                                   ? (
@@ -371,7 +359,7 @@ function EndorsementsTable({
                               </div>
                             )}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 text-right">
                         <div className="bg-purple-400 border-2 border-black px-3 py-1 inline-block">
                           <div className="text-lg font-black text-black">
                             {item.endorsements}
@@ -492,24 +480,15 @@ export default function GamingPage(): JSX.Element {
               <div className="mb-6">
                 <EndorsementTypeFilter
                   endorsementType={endorsementType}
-                  selectedGameId={selectedGameId}
                   onTypeChange={setEndorsementType}
                   onGameIdChange={setSelectedGameId}
                 />
               </div>
 
-              {endorsements && Object.keys(endorsements).length > 0
+              {endorsements && endorsements.length > 0
                 ? (
                     <EndorsementsTable
-                      endorsements={endorsementType === "global"
-                        ? Object.entries(endorsements).map(([discord_id, endorsements]) => ({
-                            discord_id,
-                            endorsements,
-                          }))
-                        : Object.entries(endorsements).map(([game_id, endorsements]) => ({
-                            game_id: Number.parseInt(game_id),
-                            endorsements,
-                          }))}
+                      endorsements={endorsements}
                       games={games || []}
                       users={users || []}
                       type={endorsementType}

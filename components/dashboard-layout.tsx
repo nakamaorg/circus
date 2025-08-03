@@ -3,6 +3,7 @@
 import type { Session } from "next-auth";
 import type { JSX, ReactNode } from "react";
 
+import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Sidebar } from "@/components/sidebar";
@@ -51,6 +52,17 @@ export function DashboardLayout({ children, session }: TDashboardLayoutProps): J
           <Sidebar isOpen={sidebarOpen} />
         </div>
 
+        {/* Close Button for Mobile - Fixed to window */}
+        {sidebarOpen && (
+          <button
+            onClick={toggleSidebar}
+            className="animate__animated animate__bounceIn animate__delay-1s fixed top-4 right-4 w-12 h-12 bg-red-500 hover:bg-red-600 text-white font-black border-4 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100 z-[60] flex items-center justify-center lg:hidden"
+            aria-label="Close sidebar"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        )}
+
         {/* Sidebar - Desktop */}
         <div className={`
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
@@ -63,10 +75,26 @@ export function DashboardLayout({ children, session }: TDashboardLayoutProps): J
 
         {/* Overlay for mobile */}
         {sidebarOpen && (
-          <div
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
-            onClick={toggleSidebar}
-          />
+          <div className="fixed inset-0 z-40 backdrop-blur-sm lg:hidden">
+            {/* NeoBrutalism themed backdrop */}
+            <div className="absolute inset-0 bg-black/50" onClick={toggleSidebar} />
+
+            {/* NeoBrutalism pattern overlay */}
+            <div className="absolute inset-0 opacity-10">
+              <div
+                className="w-full h-full bg-black"
+                style={{
+                  backgroundImage: `repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 20px,
+                    rgba(255,255,255,0.1) 20px,
+                    rgba(255,255,255,0.1) 40px
+                  )`,
+                }}
+              />
+            </div>
+          </div>
         )}
 
         {/* Main Content */}

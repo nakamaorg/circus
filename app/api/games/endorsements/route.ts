@@ -1,19 +1,35 @@
 import type { NextRequest } from "next/server";
 
+import { InvokeCommand } from "@aws-sdk/client-lambda";
 import { NextResponse } from "next/server";
 
+import { lambda } from "@/lib/config/aws.config";
 import { auth } from "@/lib/helpers/auth.helper";
 
 
 
+interface LambdaResponse {
+  body: Record<string, number>;
+  statusCode: number;
+}
+
+interface LambdaPayload {
+  discord_id?: number;
+  game_id?: number;
+}
+
 /**
  * @description
- * API route to get game endorsements leaderboard for the logged-in user
+ * API route to get game endorsements leaderboard
+ * Supports different types via query parameters:
+ * - type=my: Get user's game endorsements (default)
+ * - type=game&game_id=X: Get endorsements for specific game
+ * - type=global: Get global user endorsements
  *
- * @param _request - The NextRequest object (unused)
- * @returns A response with the user's game endorsements
+ * @param request - The NextRequest object
+ * @returns A response with endorsements data
  */
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const session = await auth();
 
@@ -28,45 +44,75 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ error: "Invalid discord ID" }, { status: 400 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get("type") || "my";
+    const gameId = searchParams.get("game_id");
+
+    let functionName: string;
+    let payload: LambdaPayload = {};
+
+    switch (type) {
+      case "my": {
+        functionName = "nakamaorg-core-game-get-gamer-leaderboard";
+        payload = { discord_id: discordId };
+        break;
+      }
+
+      case "game": {
+        if (!gameId) {
+          return NextResponse.json({ error: "game_id is required for type=game" }, { status: 400 });
+        }
+        const gameIdNum = Number.parseInt(gameId, 10);
+
+        if (Number.isNaN(gameIdNum)) {
+          return NextResponse.json({ error: "Invalid game_id" }, { status: 400 });
+        }
+        functionName = "nakamaorg-core-game-get-game-leaderboard";
+        payload = { game_id: gameIdNum };
+        break;
+      }
+
+      case "global": {
+        functionName = "nakamaorg-core-game-get-global-leaderboard";
+        payload = {};
+        break;
+      }
+
+      default: {
+        return NextResponse.json({ error: "Invalid type. Must be 'my', 'game', or 'global'" }, { status: 400 });
+      }
+    }
+
     try {
-      // Mock data for development - replace with actual lambda call
-      const mockEndorsements = {
-        121: 5,
-        732: 8,
-        3277: 3,
-        199038: 12,
-        1020: 7,
-        242408: 15,
-      };
+      const command = new InvokeCommand({
+        FunctionName: functionName,
+        Payload: new TextEncoder().encode(JSON.stringify(payload)),
+      });
 
-      // TODO: Replace with actual lambda call when environment variables are configured
-      // const lambdaResponse = await fetch(lambdaUrl, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     discord_id: discordId,
-      //   }),
-      // });
+      const response = await lambda.send(command);
+      const responsePayload = response.Payload;
 
-      return NextResponse.json(mockEndorsements);
+      if (!responsePayload) {
+        return NextResponse.json({ error: "No response from lambda" }, { status: 500 });
+      }
+
+      const result = JSON.parse(new TextDecoder().decode(responsePayload)) as LambdaResponse;
+
+      if (result.statusCode !== 200) {
+        return NextResponse.json({ error: "Lambda function failed" }, { status: 500 });
+      }
+
+      return NextResponse.json(result.body);
     }
     catch (lambdaError) {
-      console.error("Failed to fetch game endorsements from lambda:", lambdaError);
+      console.error("Lambda invocation failed:", lambdaError);
 
-      return NextResponse.json(
-        {
-          error: "Failed to fetch game endorsements",
-          details: lambdaError instanceof Error ? lambdaError.message : "Unknown error",
-        },
-        { status: 503 },
-      );
+      return NextResponse.json({ error: "Failed to get endorsements" }, { status: 500 });
     }
   }
   catch (error) {
-    console.error("Failed to get game endorsements:", error);
+    console.error("Failed to get endorsements:", error);
 
-    return NextResponse.json({ error: "Failed to get game endorsements" }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

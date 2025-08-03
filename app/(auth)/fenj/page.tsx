@@ -29,7 +29,7 @@ interface MatchWithField extends Match {
 
 type TabType = "fields" | "matches";
 
-function FieldCard({ field }: { field: Field }): JSX.Element {
+function FieldCard({ field, matchCount }: { field: Field; matchCount: number }): JSX.Element {
   const handleLocationClick = () => {
     window.open(field.location, "_blank");
   };
@@ -42,6 +42,20 @@ function FieldCard({ field }: { field: Field }): JSX.Element {
           <MapPin className="w-6 h-6 text-green-600" />
           <h3 className="text-xl font-black text-black uppercase tracking-wide">{field.name}</h3>
         </div>
+
+        {/* Match Count */}
+        <div className="flex items-center gap-2 mb-4">
+          <Trophy className="w-5 h-5 text-purple-600" />
+          <span className="text-lg font-bold text-gray-700">
+            {matchCount}
+            {" "}
+            match
+            {matchCount !== 1 ? "es" : ""}
+            {" "}
+            played
+          </span>
+        </div>
+
         <Button
           onClick={handleLocationClick}
           className="w-full bg-blue-500 hover:bg-blue-600 text-white font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 flex items-center gap-2"
@@ -475,6 +489,11 @@ export default function FenjPage(): JSX.Element {
     .filter(match => match.timestamp > Date.now() / 1000)
     .sort((a, b) => a.timestamp - b.timestamp)[0] || null;
 
+  // Helper function to get match count for a field
+  const getMatchCountForField = (fieldId: string): number => {
+    return matches.filter(match => match.field_id === fieldId).length;
+  };
+
   return (
     <div className="min-h-screen overflow-x-hidden">
       <div className="container mx-auto px-6 py-12">
@@ -572,7 +591,11 @@ export default function FenjPage(): JSX.Element {
                       : (
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {fields.map(field => (
-                              <FieldCard key={field.id} field={field} />
+                              <FieldCard
+                                key={field.id}
+                                field={field}
+                                matchCount={getMatchCountForField(field.id)}
+                              />
                             ))}
                             {fields.length === 0 && (
                               <div className="col-span-full text-center bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8">

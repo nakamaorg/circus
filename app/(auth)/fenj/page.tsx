@@ -34,8 +34,66 @@ function FieldCard({ field }: { field: Field }): JSX.Element {
     window.open(field.location, "_blank");
   };
 
+  // Generate static map image URL from Google Maps URL
+  const getMapThumbnailUrl = (url: string): string => {
+    // Try to extract coordinates from Google Maps URL
+    const coordsMatch = url.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
+
+    if (coordsMatch) {
+      const lat = coordsMatch[1];
+      const lng = coordsMatch[2];
+
+      // Use Google Static Maps API for thumbnail
+      return `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=15&size=400x300&maptype=roadmap&markers=color:red%7C${lat},${lng}&key=demo`;
+    }
+
+    // Try to extract place name from URL
+    const placeMatch = url.match(/place\/([^/]+)/);
+
+    if (placeMatch) {
+      const placeName = encodeURIComponent(placeMatch[1].replace(/\+/g, " "));
+
+      return `https://maps.googleapis.com/maps/api/staticmap?center=${placeName}&zoom=15&size=400x300&maptype=roadmap&markers=color:red%7C${placeName}&key=demo`;
+    }
+
+    // Fallback: use field name
+    const fieldName = encodeURIComponent(field.name);
+
+    return `https://maps.googleapis.com/maps/api/staticmap?center=${fieldName}&zoom=15&size=400x300&maptype=roadmap&markers=color:red%7C${fieldName}&key=demo`;
+  };
+
   return (
     <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200">
+      {/* Map Thumbnail */}
+      <div className="h-48 border-b-4 border-black overflow-hidden relative cursor-pointer" onClick={handleLocationClick}>
+        <img
+          src={getMapThumbnailUrl(field.location)}
+          alt={`Map of ${field.name}`}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            // Fallback to a placeholder if map fails to load
+            const target = e.target as HTMLImageElement;
+
+            target.src = `data:image/svg+xml;base64,${btoa(`
+              <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+                <rect width="400" height="300" fill="#f3f4f6"/>
+                <text x="200" y="150" text-anchor="middle" font-family="Arial" font-size="16" fill="#6b7280">
+                  Map Preview
+                </text>
+                <text x="200" y="180" text-anchor="middle" font-family="Arial" font-size="14" fill="#9ca3af">
+                  ${field.name}
+                </text>
+              </svg>
+            `)}`;
+          }}
+        />
+        {/* Map icon overlay */}
+        <div className="absolute top-3 right-3 bg-white border-2 border-black p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <MapPin className="w-4 h-4 text-green-600" />
+        </div>
+      </div>
+
+      {/* Field Info */}
       <div className="p-6">
         <div className="flex items-center gap-3 mb-4">
           <Trophy className="w-6 h-6 text-green-600" />

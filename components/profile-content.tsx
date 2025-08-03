@@ -82,7 +82,14 @@ export function ProfileContent(): JSX.Element {
     }
 
     try {
-      const response = await fetch(bountyImageUrl);
+      // Use the proxy endpoint to avoid CORS issues
+      const proxyUrl = `/api/download-bounty?url=${encodeURIComponent(bountyImageUrl)}`;
+      const response = await fetch(proxyUrl);
+
+      if (!response.ok) {
+        throw new Error("Failed to download image");
+      }
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
 

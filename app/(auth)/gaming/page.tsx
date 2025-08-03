@@ -143,20 +143,41 @@ export default function GamingPage(): JSX.Element {
                       className="bg-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
                     >
                       <CardHeader className="pb-3">
+                        {game.cover_url && (
+                          <div className="w-full h-32 mb-3 overflow-hidden border-2 border-black">
+                            <img
+                              src={`https:${game.cover_url}`}
+                              alt={game.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
                         <CardTitle className="text-lg font-black text-black uppercase">
-                          {game.name || `Game ${game.id}`}
+                          {game.name}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="pt-0">
-                        {game.description && (
-                          <p className="text-sm font-semibold text-gray-700 mb-3">
-                            {game.description}
-                          </p>
-                        )}
-                        <div className="text-xs font-bold text-gray-500">
-                          ID:
-                          {" "}
-                          {game.id}
+                        <div className="space-y-2">
+                          <div className="text-xs font-bold text-gray-500">
+                            Release Date:
+                            {" "}
+                            {new Date(game.first_release_date * 1000).getFullYear()}
+                          </div>
+                          <div className="text-xs font-bold text-gray-500">
+                            Game ID:
+                            {" "}
+                            {game.id}
+                          </div>
+                          {game.url && (
+                            <a
+                              href={game.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-block text-xs font-bold text-blue-600 hover:text-blue-800 underline"
+                            >
+                              View on IGDB
+                            </a>
+                          )}
                         </div>
                       </CardContent>
                     </Card>

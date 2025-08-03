@@ -42,9 +42,9 @@ export function useGames() {
         throw new Error("Failed to fetch game info");
       }
 
-      const infoData = await infoResponse.json();
+      const infoData: Game[] = await infoResponse.json();
 
-      return infoData.data || infoData.games || [];
+      return infoData;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,

@@ -68,7 +68,8 @@ export async function POST(request: NextRequest) {
 
       const data = await response.json();
 
-      return NextResponse.json(data);
+      // Return the data.data array directly since that contains the games
+      return NextResponse.json(data.data);
     }
     catch (apiError) {
       console.error("Failed to fetch game info from third-wheel API:", apiError);

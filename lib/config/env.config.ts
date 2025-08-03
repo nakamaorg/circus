@@ -16,6 +16,8 @@ export const env: TEnv = {
   AWS_REGION: ev.AWS_REGION!,
   AWS_ACCESS_KEY_ID: ev.AWS_ACCESS_KEY_ID!,
   AWS_SECRET_ACCESS_KEY: ev.AWS_SECRET_ACCESS_KEY!,
+  PARAM_API_URL: ev.PARAM_API_URL!,
+  PARAM_API_SECRET: ev.PARAM_API_SECRET!,
 } as const;
 
 envSchema.parse(env);

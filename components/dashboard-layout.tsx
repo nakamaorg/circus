@@ -3,7 +3,7 @@
 import type { Session } from "next-auth";
 import type { JSX, ReactNode } from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Sidebar } from "@/components/sidebar";
 
@@ -24,7 +24,15 @@ type TDashboardLayoutProps = {
  * @returns The dashboard layout component
  */
 export function DashboardLayout({ children, session }: TDashboardLayoutProps): JSX.Element {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  // Initialize sidebar state based on screen size
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    // Set initial sidebar state based on screen size (only once on mount)
+    const isDesktop = window.innerWidth >= 1024; // lg breakpoint
+
+    setSidebarOpen(isDesktop);
+  }, []);
 
   const toggleSidebar = (): void => {
     setSidebarOpen(!sidebarOpen);

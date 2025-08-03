@@ -8,6 +8,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useGameEndorsements } from "@/lib/hooks/use-game-endorsements";
 import { useGames } from "@/lib/hooks/use-games";
 import { usePageReady } from "@/lib/hooks/use-page-ready";
+import { useUsers } from "@/lib/hooks/use-users";
 
 
 
@@ -15,6 +16,11 @@ type TabType = "endorsements" | "games";
 
 interface EndorsementData {
   game_id: number;
+  endorsements: number;
+}
+
+interface UserEndorsementData {
+  discord_id: string;
   endorsements: number;
 }
 
@@ -27,9 +33,25 @@ interface Game {
   url?: string;
 }
 
+interface User {
+  discord_id: string;
+  username: string;
+}
+
+interface GameLeaderboardItem {
+  game_id: number;
+  endorsements: number;
+  game: Game | undefined;
+  name: string;
+  key: string;
+  rank: number;
+}
+
 interface EndorsementsTableProps {
-  endorsements: EndorsementData[];
+  endorsements: EndorsementData[] | UserEndorsementData[];
   games: Game[];
+  users: User[];
+  type: "my" | "game" | "global";
 }
 
 interface EndorsementTypeFilterProps {
@@ -144,23 +166,25 @@ function EndorsementTypeFilter({
 function EndorsementsTable({
   endorsements,
   games,
+  users,
+  type,
 }: EndorsementsTableProps): JSX.Element {
   const [sortConfig, setSortConfig] = useState<{
-    key: "rank" | "game_name" | "endorsements";
+    key: "rank" | "name" | "endorsements";
     direction: "asc" | "desc";
   }>({
     key: "endorsements",
     direction: "desc",
   });
 
-  const handleSort = (key: "rank" | "game_name" | "endorsements") => {
+  const handleSort = (key: "rank" | "name" | "endorsements") => {
     setSortConfig(prev => ({
       key,
       direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
     }));
   };
 
-  const getSortIcon = (columnKey: "rank" | "game_name" | "endorsements") => {
+  const getSortIcon = (columnKey: "rank" | "name" | "endorsements") => {
     if (sortConfig.key !== columnKey) {
       return <ArrowUp className="w-4 h-4 text-gray-400" />;
     }
@@ -170,14 +194,32 @@ function EndorsementsTable({
       : <ArrowDown className="w-4 h-4 text-white" />;
   };
 
-  // Create leaderboard data with game info
+  // Create leaderboard data with game/user info
   const leaderboardData = endorsements.map((endorsement) => {
-    const game = games.find(g => g.id === endorsement.game_id);
+    if (type === "global") {
+      // For global endorsements, we have user data
+      const userEndorsement = endorsement as UserEndorsementData;
+      const user = users.find(u => u.discord_id === userEndorsement.discord_id);
 
-    return {
-      ...endorsement,
-      game,
-    };
+      return {
+        ...userEndorsement,
+        user,
+        name: user?.username || `User ${userEndorsement.discord_id}`,
+        key: userEndorsement.discord_id,
+      };
+    }
+    else {
+      // For my/game endorsements, we have game data
+      const gameEndorsement = endorsement as EndorsementData;
+      const game = games.find(g => g.id === gameEndorsement.game_id);
+
+      return {
+        ...gameEndorsement,
+        game,
+        name: game?.name || `Game ${gameEndorsement.game_id}`,
+        key: gameEndorsement.game_id.toString(),
+      };
+    }
   }).sort((a, b) => {
     switch (sortConfig.key) {
       case "endorsements": {
@@ -186,13 +228,10 @@ function EndorsementsTable({
           : b.endorsements - a.endorsements;
       }
 
-      case "game_name": {
-        const aName = a.game?.name || `Game ${a.game_id}`;
-        const bName = b.game?.name || `Game ${b.game_id}`;
-
+      case "name": {
         return sortConfig.direction === "asc"
-          ? aName.localeCompare(bName)
-          : bName.localeCompare(aName);
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
       }
 
       case "rank": {
@@ -248,11 +287,11 @@ function EndorsementsTable({
                     </th>
                     <th
                       className="px-4 py-3 text-left font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
-                      onClick={() => handleSort("game_name")}
+                      onClick={() => handleSort("name")}
                     >
                       <div className="flex items-center gap-2">
-                        Game
-                        {getSortIcon("game_name")}
+                        {type === "global" ? "User" : "Game"}
+                        {getSortIcon("name")}
                       </div>
                     </th>
                     <th
@@ -269,7 +308,7 @@ function EndorsementsTable({
                 <tbody>
                   {rankedData.map((item, index) => (
                     <tr
-                      key={item.game_id}
+                      key={item.key}
                       className={`border-t-2 border-black ${
                         index % 2 === 0 ? "bg-white" : "bg-gray-50"
                       } hover:bg-yellow-100 transition-colors`}
@@ -290,35 +329,47 @@ function EndorsementsTable({
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-4">
-                          {item.game?.cover_url
-                            ? (
-                                <div className="w-12 h-12 overflow-hidden border-2 border-black flex-shrink-0">
-                                  <img
-                                    src={`https:${item.game.cover_url}`}
-                                    alt={item.game.name}
-                                    className="w-full h-full object-cover"
-                                  />
+                        {type === "global"
+                          ? (
+                              // For global endorsements, show user info (no avatar)
+                              <div className="flex-1 min-w-0">
+                                <div className="font-black text-black text-lg truncate">
+                                  {item.name}
                                 </div>
-                              )
-                            : (
-                                <div className="w-12 h-12 bg-gray-200 border-2 border-black flex items-center justify-center flex-shrink-0">
-                                  <Gamepad2 className="w-6 h-6 text-gray-500" />
+                              </div>
+                            )
+                          : (
+                              // For game endorsements, show game info with cover
+                              <div className="flex items-center gap-4">
+                                {(item as GameLeaderboardItem).game?.cover_url
+                                  ? (
+                                      <div className="w-12 h-12 overflow-hidden border-2 border-black flex-shrink-0">
+                                        <img
+                                          src={`https:${(item as GameLeaderboardItem).game!.cover_url}`}
+                                          alt={(item as GameLeaderboardItem).game!.name}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      </div>
+                                    )
+                                  : (
+                                      <div className="w-12 h-12 bg-gray-200 border-2 border-black flex items-center justify-center flex-shrink-0">
+                                        <Gamepad2 className="w-6 h-6 text-gray-500" />
+                                      </div>
+                                    )}
+                                <div className="flex-1 min-w-0">
+                                  <div className="font-black text-black text-lg truncate">
+                                    {item.name}
+                                  </div>
+                                  {(item as GameLeaderboardItem).game?.first_release_date && (
+                                    <div className="text-sm font-bold text-gray-600">
+                                      Released:
+                                      {" "}
+                                      {new Date((item as GameLeaderboardItem).game!.first_release_date! * 1000).getFullYear()}
+                                    </div>
+                                  )}
                                 </div>
-                              )}
-                          <div className="flex-1 min-w-0">
-                            <div className="font-black text-black text-lg truncate">
-                              {item.game?.name || `Game ${item.game_id}`}
-                            </div>
-                            {item.game?.first_release_date && (
-                              <div className="text-sm font-bold text-gray-600">
-                                Released:
-                                {" "}
-                                {new Date(item.game.first_release_date * 1000).getFullYear()}
                               </div>
                             )}
-                          </div>
-                        </div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="bg-purple-400 border-2 border-black px-3 py-1 inline-block">
@@ -351,6 +402,7 @@ export default function GamingPage(): JSX.Element {
   const [selectedGameId, setSelectedGameId] = useState<number | undefined>(undefined);
 
   const { data: games, isLoading, error } = useGames();
+  const { data: users } = useUsers();
   const { data: endorsements, isLoading: isLoadingEndorsements, error: endorsementsError } = useGameEndorsements({
     type: endorsementType,
     gameId: selectedGameId,
@@ -449,11 +501,18 @@ export default function GamingPage(): JSX.Element {
               {endorsements && Object.keys(endorsements).length > 0
                 ? (
                     <EndorsementsTable
-                      endorsements={Object.entries(endorsements).map(([game_id, endorsements]) => ({
-                        game_id: Number.parseInt(game_id),
-                        endorsements,
-                      }))}
+                      endorsements={endorsementType === "global"
+                        ? Object.entries(endorsements).map(([discord_id, endorsements]) => ({
+                            discord_id,
+                            endorsements,
+                          }))
+                        : Object.entries(endorsements).map(([game_id, endorsements]) => ({
+                            game_id: Number.parseInt(game_id),
+                            endorsements,
+                          }))}
                       games={games || []}
+                      users={users || []}
+                      type={endorsementType}
                     />
                   )
                 : (

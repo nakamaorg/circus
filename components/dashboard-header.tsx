@@ -3,7 +3,7 @@
 import type { Session } from "next-auth";
 import type { JSX } from "react";
 
-import { Command, Menu } from "lucide-react";
+import { Command, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
@@ -28,9 +28,10 @@ type TDashboardHeaderProps = {
  * @param props - The component props
  * @param props.session - The user session
  * @param props.onMenuToggle - Menu toggle handler
+ * @param props.sidebarOpen - Whether the sidebar is currently open
  * @returns The dashboard header component
  */
-export function DashboardHeader({ session, onMenuToggle }: TDashboardHeaderProps): JSX.Element {
+export function DashboardHeader({ session, onMenuToggle, sidebarOpen }: TDashboardHeaderProps): JSX.Element {
   const pathname = usePathname();
   const { openCommandPalette, isAuthenticated } = useCommandPalette();
 
@@ -70,12 +71,14 @@ export function DashboardHeader({ session, onMenuToggle }: TDashboardHeaderProps
         <Button
           variant="outline"
           onClick={onMenuToggle}
-          className="relative w-10 h-10 p-0 bg-pink-300 hover:bg-pink-400 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 font-black group/tooltip"
+          className={`relative w-10 h-10 p-0 ${sidebarOpen ? "bg-red-500 hover:bg-red-600" : "bg-pink-300 hover:bg-pink-400"} border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 font-black group/tooltip`}
         >
-          <Menu className="h-5 w-5 transition-transform duration-300 rotate-0" />
+          {sidebarOpen
+            ? <X className="h-5 w-5 transition-transform duration-300 text-white" />
+            : <Menu className="h-5 w-5 transition-transform duration-300 rotate-0" />}
           {/* Tooltip */}
           <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 px-2 py-1 bg-black text-white text-xs rounded border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 whitespace-nowrap z-[9999] pointer-events-none">
-            Toggle Menu (Ctrl+B)
+            {sidebarOpen ? "Close Menu (Ctrl+B)" : "Toggle Menu (Ctrl+B)"}
             {/* Tooltip arrow */}
             <div className="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-r-4 border-t-4 border-b-4 border-transparent border-r-black"></div>
           </div>

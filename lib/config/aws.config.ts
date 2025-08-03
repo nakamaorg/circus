@@ -26,6 +26,7 @@ export const AWS_TABLES = {
   EVENTS: "nakamaorg-events",
   L_HISTORY: "nakamaorg-l-history",
   W_HISTORY: "nakamaorg-w-history",
+  GAMES: "nakamaorg-games",
 } as const;
 
 export const AWS_BUCKETS = {

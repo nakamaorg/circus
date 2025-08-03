@@ -84,14 +84,13 @@ export async function GET(_request: NextRequest) {
     const wHistoryResult = await docClient.send(wHistoryCommand);
     const wHistory = (wHistoryResult.Items || []) as LWRecord[];
 
-    // Filter data - Only show records where current user is the taker (receiver)
+    // Filter and organize data correctly
     const receivedLs = lHistory.filter(record => record.taker_id === userId);
     const receivedWs = wHistory.filter(record => record.taker_id === userId);
 
-    // Note: Changed logic - "given" now also shows records where current user is taker
-    // This means both "received" and "given" show the same data filtered by taker_id
-    const givenLs = lHistory.filter(record => record.taker_id === userId);
-    const givenWs = wHistory.filter(record => record.taker_id === userId);
+    // Fixed: "given" should show records where current user is the giver
+    const givenLs = lHistory.filter(record => record.giver_id === userId);
+    const givenWs = wHistory.filter(record => record.giver_id === userId);
 
     // Collect all unique user IDs that we need to fetch names for
     const allRecords = [...receivedLs, ...receivedWs, ...givenLs, ...givenWs];

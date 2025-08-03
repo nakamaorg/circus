@@ -1,4 +1,5 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { LambdaClient } from "@aws-sdk/client-lambda";
 import { S3Client } from "@aws-sdk/client-s3";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { env } from "../config/env.config";
@@ -21,6 +22,14 @@ const s3Client = new S3Client({
   },
 });
 
+const lambdaClient = new LambdaClient({
+  region: env.AWS_REGION,
+  credentials: {
+    accessKeyId: env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+  },
+});
+
 export const AWS_TABLES = {
   USERS: "nakamaorg-users",
   EVENTS: "nakamaorg-events",
@@ -36,3 +45,4 @@ export const AWS_BUCKETS = {
 export const docClient = DynamoDBDocumentClient.from(dynamoDBClient);
 export const dynamodb = dynamoDBClient;
 export const s3 = s3Client;
+export const lambda = lambdaClient;

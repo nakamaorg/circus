@@ -9,6 +9,16 @@ interface UseGameEndorsementsOptions {
   gameId?: number;
 }
 
+export interface EndorsementData {
+  game_id: number;
+  endorsements: number;
+}
+
+export interface UserEndorsementData {
+  discord_id: string;
+  endorsements: number;
+}
+
 /**
  * @description
  * Hook to fetch game endorsements leaderboard
@@ -22,7 +32,7 @@ export function useGameEndorsements(options: UseGameEndorsementsOptions = {}) {
 
   return useQuery({
     queryKey: ["game-endorsements", type, gameId],
-    queryFn: async (): Promise<Record<string, number>> => {
+    queryFn: async (): Promise<EndorsementData[] | UserEndorsementData[]> => {
       const searchParams = new URLSearchParams();
 
       searchParams.set("type", type);
@@ -37,12 +47,25 @@ export function useGameEndorsements(options: UseGameEndorsementsOptions = {}) {
         throw new Error("Failed to fetch game endorsements");
       }
 
-      const data = await response.json();
+      const data: Record<string, number> = await response.json();
 
-      return data;
+      // Transform the data based on type
+      if (type === "global") {
+        // For global type, keys are discord_ids
+        return Object.entries(data).map(([discord_id, endorsements]) => ({
+          discord_id,
+          endorsements,
+        }));
+      }
+
+      // For "my" and "game" types, keys are game_ids
+      return Object.entries(data).map(([game_id, endorsements]) => ({
+        game_id: Number.parseInt(game_id, 10),
+        endorsements,
+      }));
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
-    enabled: type !== "game" || (type === "game" && gameId !== undefined),
+    enabled: true,
   });
 }

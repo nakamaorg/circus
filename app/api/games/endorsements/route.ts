@@ -1,9 +1,10 @@
 import type { NextRequest } from "next/server";
 
 import { InvokeCommand } from "@aws-sdk/client-lambda";
+import { ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { NextResponse } from "next/server";
 
-import { lambda } from "@/lib/config/aws.config";
+import { AWS_TABLES, docClient, lambda } from "@/lib/config/aws.config";
 import { auth } from "@/lib/helpers/auth.helper";
 
 
@@ -14,7 +15,7 @@ interface LambdaResponse {
 }
 
 interface LambdaPayload {
-  discord_id?: string;
+  discord_id?: string | number;
   game_id?: number;
 }
 
@@ -23,7 +24,7 @@ interface LambdaPayload {
  * API route to get game endorsements leaderboard
  * Supports different types via query parameters:
  * - type=my: Get user's game endorsements (default)
- * - type=game&game_id=X: Get endorsements for specific game
+ * - type=game: Get endorsements aggregated across all games by game
  * - type=global: Get global user endorsements
  *
  * @param request - The NextRequest object
@@ -42,7 +43,6 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const type = searchParams.get("type") || "my";
-    const gameId = searchParams.get("game_id");
 
     let functionName: string;
     let payload: LambdaPayload = {};
@@ -55,17 +55,61 @@ export async function GET(request: NextRequest) {
       }
 
       case "game": {
-        if (!gameId) {
-          return NextResponse.json({ error: "game_id is required for type=game" }, { status: 400 });
-        }
-        const gameIdNum = Number.parseInt(gameId, 10);
+        // For "game" type, we need to fetch all games and aggregate endorsements by game
+        try {
+          // First, fetch all games from database directly
+          const dbCommand = new ScanCommand({
+            TableName: AWS_TABLES.GAMES,
+          });
 
-        if (Number.isNaN(gameIdNum)) {
-          return NextResponse.json({ error: "Invalid game_id" }, { status: 400 });
+          const dbResult = await docClient.send(dbCommand);
+
+          if (!dbResult.Items) {
+            return NextResponse.json({});
+          }
+
+          // Extract game IDs from the items
+          const gameIds: number[] = dbResult.Items.map(item => item.id || item.game_id).filter(Boolean);
+
+          // Aggregate endorsements by game
+          const gameEndorsements: Record<string, number> = {};
+
+          for (const gameId of gameIds) {
+            try {
+              const gameCommand = new InvokeCommand({
+                FunctionName: "nakamaorg-core-game-get-game-leaderboard",
+                Payload: new TextEncoder().encode(JSON.stringify({ game_id: gameId })),
+              });
+
+              const gameResponse = await lambda.send(gameCommand);
+              const gamePayload = gameResponse.Payload;
+
+              if (gamePayload) {
+                const gameResult = JSON.parse(new TextDecoder().decode(gamePayload)) as LambdaResponse;
+
+                if (gameResult.statusCode === 200) {
+                  // Sum up all endorsements for this game
+                  const totalEndorsements = Object.values(gameResult.body).reduce((sum, count) => sum + count, 0);
+
+                  if (totalEndorsements > 0) {
+                    gameEndorsements[gameId.toString()] = totalEndorsements;
+                  }
+                }
+              }
+            }
+            catch (gameError) {
+              console.error(`Failed to get endorsements for game ${gameId}:`, gameError);
+              // Continue with other games even if one fails
+            }
+          }
+
+          return NextResponse.json(gameEndorsements);
         }
-        functionName = "nakamaorg-core-game-get-game-leaderboard";
-        payload = { game_id: gameIdNum };
-        break;
+        catch (error) {
+          console.error("Failed to aggregate game endorsements:", error);
+
+          return NextResponse.json({ error: "Failed to aggregate endorsements" }, { status: 500 });
+        }
       }
 
       case "global": {

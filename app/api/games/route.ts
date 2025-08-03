@@ -1,6 +1,8 @@
 import { ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { NextResponse } from "next/server";
 
+
+
 import { AWS_TABLES, docClient } from "@/lib/config/aws.config";
 import { auth } from "@/lib/helpers/auth.helper";
 
@@ -20,20 +22,33 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const dbCommand = new ScanCommand({
-      TableName: AWS_TABLES.GAMES,
-    });
+    try {
+      const dbCommand = new ScanCommand({
+        TableName: AWS_TABLES.GAMES,
+      });
 
-    const dbResult = await docClient.send(dbCommand);
+      const dbResult = await docClient.send(dbCommand);
 
-    if (!dbResult.Items) {
-      return NextResponse.json([]);
+      if (!dbResult.Items) {
+        return NextResponse.json({ gameIds: [] });
+      }
+
+      // Extract game IDs from the items
+      const gameIds = dbResult.Items.map(item => item.id || item.game_id);
+
+      return NextResponse.json({ gameIds });
     }
+    catch (dbError) {
+      console.error("Failed to fetch games from DynamoDB:", dbError);
 
-    // Extract game IDs from the items
-    const gameIds = dbResult.Items.map(item => item.id || item.game_id);
-
-    return NextResponse.json({ gameIds });
+      return NextResponse.json(
+        {
+          error: "Failed to fetch games from database",
+          details: dbError instanceof Error ? dbError.message : "Unknown database error",
+        },
+        { status: 503 },
+      );
+    }
   }
   catch (error) {
     console.error("Failed to fetch games:", error);

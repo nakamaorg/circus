@@ -195,13 +195,16 @@ function ReputationTable({ title, data, type, icon, bgColor, borderColor, users 
 
                     // Determine the self-own message based on the table type
                     let selfOwnMessage = "Self Own";
+                    let selfOwnColor = "text-orange-600"; // Default color for self-owns
 
                     if (isSelfOwn) {
-                      if (title.includes("Received Ws")) {
+                      if (title.includes("Received Ws") || title.includes("Given Ws")) {
                         selfOwnMessage = "Self Praise";
+                        selfOwnColor = "text-green-600"; // Green for self praise
                       }
                       else {
                         selfOwnMessage = "Self Own";
+                        selfOwnColor = "text-orange-600"; // Orange for self own
                       }
                     }
 
@@ -223,7 +226,7 @@ function ReputationTable({ title, data, type, icon, bgColor, borderColor, users 
                             minute: "2-digit",
                           })}
                         </td>
-                        <td className={`px-4 py-3 font-black ${isSelfOwn ? "text-orange-600 italic" : "text-purple-700"}`}>
+                        <td className={`px-4 py-3 font-black ${isSelfOwn ? `${selfOwnColor} italic` : "text-purple-700"}`}>
                           {userName}
                         </td>
                       </tr>

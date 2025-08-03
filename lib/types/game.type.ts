@@ -1,13 +1,20 @@
 export interface Game {
-  id: string;
+  id: number;
+  url: string;
   name: string;
-  description?: string;
-  image?: string;
-  [key: string]: unknown;
+  rating: number;
+  first_release_date: number;
+  cover_url?: string;
 }
 
-export interface GameInfo {
-  games: Game[];
+export interface ThirdWheelAPIResponse {
+  status: number;
+  success: boolean;
+  data: Game[];
+}
+
+export interface GameInfoResponse {
+  data: ThirdWheelAPIResponse;
 }
 
 export interface GamesResponse {

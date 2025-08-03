@@ -5,7 +5,6 @@ import type { JSX } from "react";
 import { Crown, Gamepad2, Trophy } from "lucide-react";
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGames } from "@/lib/hooks/use-games";
 import { usePageReady } from "@/lib/hooks/use-page-ready";
@@ -38,37 +37,38 @@ export default function GamingPage(): JSX.Element {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex gap-4 justify-center">
-        <Button
-          onClick={() => setActiveTab("endorsements")}
-          variant={activeTab === "endorsements" ? "default" : "outline"}
-          className={`font-bold text-lg px-6 py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all ${
-            activeTab === "endorsements"
-              ? "bg-blue-400 text-black hover:bg-blue-500"
-              : "bg-white text-black hover:bg-gray-100"
-          }`}
-        >
-          <Trophy className="h-5 w-5 mr-2" />
-          Game Endorsements
-        </Button>
-        <Button
-          onClick={() => setActiveTab("games")}
-          variant={activeTab === "games" ? "default" : "outline"}
-          className={`font-bold text-lg px-6 py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all ${
-            activeTab === "games"
-              ? "bg-purple-400 text-black hover:bg-purple-500"
-              : "bg-white text-black hover:bg-gray-100"
-          }`}
-        >
-          <Gamepad2 className="h-5 w-5 mr-2" />
-          Tracked Games
-        </Button>
+      <div className="flex justify-center mb-8">
+        <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-flex">
+          <button
+            onClick={() => setActiveTab("endorsements")}
+            className={`px-8 py-4 font-black text-lg uppercase tracking-wide transition-all duration-200 ${
+              activeTab === "endorsements"
+                ? "bg-blue-400 text-black"
+                : "bg-white text-gray-600 hover:bg-gray-100"
+            }`}
+          >
+            <Trophy className="h-5 w-5 mr-2 inline" />
+            Game Endorsements
+          </button>
+          <div className="w-0.5 bg-black"></div>
+          <button
+            onClick={() => setActiveTab("games")}
+            className={`px-8 py-4 font-black text-lg uppercase tracking-wide transition-all duration-200 ${
+              activeTab === "games"
+                ? "bg-purple-400 text-black"
+                : "bg-white text-gray-600 hover:bg-gray-100"
+            }`}
+          >
+            <Gamepad2 className="h-5 w-5 mr-2 inline" />
+            Tracked Games
+          </button>
+        </div>
       </div>
 
       {/* Tab Content */}
       {activeTab === "endorsements" && (
         <div className="space-y-6">
-          <Card className="bg-blue-300 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
+          <Card className="bg-blue-300 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
             <CardHeader className="border-b-2 border-black bg-blue-400">
               <CardTitle className="text-2xl font-black text-black uppercase tracking-wide flex items-center gap-3">
                 <Crown className="h-6 w-6 text-yellow-600" />
@@ -92,7 +92,7 @@ export default function GamingPage(): JSX.Element {
 
       {activeTab === "games" && (
         <div className="space-y-6">
-          <Card className="bg-purple-300 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
+          <Card className="bg-purple-300 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
             <CardHeader className="border-b-2 border-black bg-purple-400">
               <CardTitle className="text-2xl font-black text-black uppercase tracking-wide flex items-center gap-3">
                 <Gamepad2 className="h-6 w-6" />

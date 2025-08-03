@@ -36,18 +36,10 @@ function FieldCard({ field }: { field: Field }): JSX.Element {
 
   return (
     <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200">
-      {/* Map Thumbnail */}
-      <div className="h-48 border-b-4 border-black overflow-hidden relative cursor-pointer bg-gray-100 flex items-center justify-center" onClick={handleLocationClick}>
-        <div className="text-center">
-          <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-          <p className="text-lg font-black text-gray-600">Map Preview</p>
-        </div>
-      </div>
-
       {/* Field Info */}
       <div className="p-6">
         <div className="flex items-center gap-3 mb-4">
-          <Trophy className="w-6 h-6 text-green-600" />
+          <MapPin className="w-6 h-6 text-green-600" />
           <h3 className="text-xl font-black text-black uppercase tracking-wide">{field.name}</h3>
         </div>
         <Button

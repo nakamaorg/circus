@@ -2,8 +2,8 @@
 
 import type { JSX } from "react";
 
-import { ArrowDown, ArrowUp, Crown, Gamepad2, Search, Trophy } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowDown, ArrowUp, ChevronDown, Crown, Filter, Gamepad2, Search, Trophy } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useGameEndorsements } from "@/lib/hooks/use-game-endorsements";
 import { useGames } from "@/lib/hooks/use-games";
@@ -27,7 +27,23 @@ interface Game {
   url?: string;
 }
 
-function EndorsementsTable({ endorsements, games }: { endorsements: EndorsementData[]; games: Game[] }): JSX.Element {
+interface EndorsementsTableProps {
+  endorsements: EndorsementData[];
+  games: Game[];
+  endorsementType: "my" | "game" | "global";
+  selectedGameId?: number;
+  onTypeChange: (type: "my" | "game" | "global") => void;
+  onGameIdChange: (gameId?: number) => void;
+}
+
+function EndorsementsTable({
+  endorsements,
+  games,
+  endorsementType,
+  selectedGameId,
+  onTypeChange,
+  onGameIdChange,
+}: EndorsementsTableProps): JSX.Element {
   const [sortConfig, setSortConfig] = useState<{
     key: "rank" | "game_name" | "endorsements";
     direction: "asc" | "desc";
@@ -35,6 +51,23 @@ function EndorsementsTable({ endorsements, games }: { endorsements: EndorsementD
     key: "endorsements",
     direction: "desc",
   });
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleSort = (key: "rank" | "game_name" | "endorsements") => {
     setSortConfig(prev => ({
@@ -51,6 +84,30 @@ function EndorsementsTable({ endorsements, games }: { endorsements: EndorsementD
     return sortConfig.direction === "asc"
       ? <ArrowUp className="w-4 h-4 text-white" />
       : <ArrowDown className="w-4 h-4 text-white" />;
+  };
+
+  const getEndorsementTypeName = () => {
+    switch (endorsementType) {
+      case "my":
+        return "My Endorsements";
+
+      case "game":
+        return selectedGameId ? `Game ${selectedGameId} Endorsements` : "Select Game";
+
+      case "global":
+        return "Global Endorsements";
+
+      default:
+        return "My Endorsements";
+    }
+  };
+
+  const handleTypeSelect = (type: "my" | "game" | "global") => {
+    onTypeChange(type);
+    setIsDropdownOpen(false);
+    if (type !== "game") {
+      onGameIdChange(undefined);
+    }
   };
 
   // Create leaderboard data with game info
@@ -99,12 +156,56 @@ function EndorsementsTable({ endorsements, games }: { endorsements: EndorsementD
   return (
     <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <div className="bg-blue-400 border-b-4 border-black p-4">
-        <div className="flex items-center gap-3 mb-4">
-          <Crown className="w-6 h-6 text-yellow-600" />
-          <h3 className="text-2xl font-black text-black uppercase tracking-wider">Game Endorsements Leaderboard</h3>
-          <span className="bg-black text-white px-3 py-1 rounded-full text-sm font-black">
-            {rankedData.length}
-          </span>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <Crown className="w-6 h-6 text-yellow-600" />
+            <h3 className="text-2xl font-black text-black uppercase tracking-wider">Game Endorsements Leaderboard</h3>
+            <span className="bg-black text-white px-3 py-1 rounded-full text-sm font-black">
+              {rankedData.length}
+            </span>
+          </div>
+
+          {/* Endorsement Type Filter */}
+          <div className="relative" ref={dropdownRef}>
+            <Filter className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="pl-10 pr-8 py-2 text-black bg-white border-2 border-black font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none min-w-[200px] cursor-pointer flex items-center justify-between"
+            >
+              <span className="truncate">{getEndorsementTypeName()}</span>
+              <ChevronDown className={`w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {/* Custom Dropdown */}
+            {isDropdownOpen && (
+              <div className="animate__animated animate__bounceIn animate__faster absolute top-full left-0 right-0 mt-1 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50">
+                <div
+                  onClick={() => handleTypeSelect("my")}
+                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 hover:bg-purple-100 transition-colors ${
+                    endorsementType === "my" ? "bg-purple-200" : ""
+                  }`}
+                >
+                  My Endorsements
+                </div>
+                <div
+                  onClick={() => handleTypeSelect("global")}
+                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 hover:bg-purple-100 transition-colors ${
+                    endorsementType === "global" ? "bg-purple-200" : ""
+                  }`}
+                >
+                  Global Endorsements
+                </div>
+                <div
+                  onClick={() => handleTypeSelect("game")}
+                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 last:border-b-0 hover:bg-purple-100 transition-colors ${
+                    endorsementType === "game" ? "bg-purple-200" : ""
+                  }`}
+                >
+                  Endorsements by Game
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -129,15 +230,12 @@ function EndorsementsTable({ endorsements, games }: { endorsements: EndorsementD
                         {getSortIcon("rank")}
                       </div>
                     </th>
-                    <th className="px-4 py-3 text-left font-black uppercase tracking-wide">
-                      Game
-                    </th>
                     <th
                       className="px-4 py-3 text-left font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
                       onClick={() => handleSort("game_name")}
                     >
                       <div className="flex items-center gap-2">
-                        Name
+                        Game
                         {getSortIcon("game_name")}
                       </div>
                     </th>
@@ -176,34 +274,34 @@ function EndorsementsTable({ endorsements, games }: { endorsements: EndorsementD
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        {item.game?.cover_url
-                          ? (
-                              <div className="w-12 h-12 overflow-hidden border-2 border-black">
-                                <img
-                                  src={`https:${item.game.cover_url}`}
-                                  alt={item.game.name}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            )
-                          : (
-                              <div className="w-12 h-12 bg-gray-200 border-2 border-black flex items-center justify-center">
-                                <Gamepad2 className="w-6 h-6 text-gray-500" />
+                        <div className="flex items-center gap-4">
+                          {item.game?.cover_url
+                            ? (
+                                <div className="w-12 h-12 overflow-hidden border-2 border-black flex-shrink-0">
+                                  <img
+                                    src={`https:${item.game.cover_url}`}
+                                    alt={item.game.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                              )
+                            : (
+                                <div className="w-12 h-12 bg-gray-200 border-2 border-black flex items-center justify-center flex-shrink-0">
+                                  <Gamepad2 className="w-6 h-6 text-gray-500" />
+                                </div>
+                              )}
+                          <div className="flex-1 min-w-0">
+                            <div className="font-black text-black text-lg truncate">
+                              {item.game?.name || `Game ${item.game_id}`}
+                            </div>
+                            {item.game?.first_release_date && (
+                              <div className="text-sm font-bold text-gray-600">
+                                Released:
+                                {" "}
+                                {new Date(item.game.first_release_date * 1000).getFullYear()}
                               </div>
                             )}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div>
-                          <div className="font-black text-black text-lg">
-                            {item.game?.name || `Game ${item.game_id}`}
                           </div>
-                          {item.game?.first_release_date && (
-                            <div className="text-sm font-bold text-gray-600">
-                              Released:
-                              {" "}
-                              {new Date(item.game.first_release_date * 1000).getFullYear()}
-                            </div>
-                          )}
                         </div>
                       </td>
                       <td className="px-4 py-3">
@@ -233,8 +331,14 @@ export default function GamingPage(): JSX.Element {
   usePageReady();
   const [activeTab, setActiveTab] = useState<TabType>("endorsements");
   const [searchQuery, setSearchQuery] = useState("");
+  const [endorsementType, setEndorsementType] = useState<"my" | "game" | "global">("my");
+  const [selectedGameId, setSelectedGameId] = useState<number | undefined>(undefined);
+
   const { data: games, isLoading, error } = useGames();
-  const { data: endorsements, isLoading: isLoadingEndorsements, error: endorsementsError } = useGameEndorsements();
+  const { data: endorsements, isLoading: isLoadingEndorsements, error: endorsementsError } = useGameEndorsements({
+    type: endorsementType,
+    gameId: selectedGameId,
+  });
 
   // Filter games based on search query
   const filteredGames = useMemo(() => {
@@ -321,6 +425,10 @@ export default function GamingPage(): JSX.Element {
                 endorsements,
               }))}
               games={games || []}
+              endorsementType={endorsementType}
+              selectedGameId={selectedGameId}
+              onTypeChange={setEndorsementType}
+              onGameIdChange={setSelectedGameId}
             />
           )}
 
@@ -340,19 +448,21 @@ export default function GamingPage(): JSX.Element {
 
       {activeTab === "games" && (
         <div className="space-y-6">
-          {/* Search Input */}
-          <div className="mb-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-              <input
-                type="text"
-                placeholder="Search games..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border-2 border-black bg-white text-black font-bold placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400"
-              />
+          {/* Search Input - only show when not loading */}
+          {!isLoading && (
+            <div className="mb-6">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                <input
+                  type="text"
+                  placeholder="Search games..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border-2 border-black bg-white text-black font-bold placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400"
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           {isLoading && (
             <div className="flex items-center justify-center min-h-[400px]">

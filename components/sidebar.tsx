@@ -12,6 +12,7 @@ import { MENU_ITEMS } from "@/lib/consts/menu.const";
 
 type TSidebarProps = {
   isOpen?: boolean;
+  onLinkClick?: () => void;
 };
 
 /**
@@ -20,9 +21,10 @@ type TSidebarProps = {
  *
  * @param props - The component props
  * @param props.isOpen - Whether the sidebar is open/visible
+ * @param props.onLinkClick - Callback function called when a navigation link is clicked
  * @returns The sidebar component
  */
-export function Sidebar({ isOpen = true }: TSidebarProps): JSX.Element {
+export function Sidebar({ isOpen = true, onLinkClick }: TSidebarProps): JSX.Element {
   const pathname = usePathname();
 
   return (
@@ -44,7 +46,7 @@ export function Sidebar({ isOpen = true }: TSidebarProps): JSX.Element {
             const rotations = ["rotate-[-1deg]", "rotate-[1deg]"];
 
             return (
-              <NavigationLink key={item.link} href={item.link} className="block">
+              <NavigationLink key={item.link} href={item.link} className="block" onClick={onLinkClick}>
                 <Button
                   variant="outline"
                   className={`w-full justify-start font-black text-lg px-6 py-4 bg-yellow-200 ${hoverColors[index % 2]} border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 transform ${rotations[index % 2]} hover:rotate-0 ${isActive ? "bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" : ""}`}

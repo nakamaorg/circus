@@ -2,16 +2,226 @@
 
 import type { JSX } from "react";
 
-import { Crown, Gamepad2, Search, Trophy } from "lucide-react";
+import { ArrowDown, ArrowUp, Crown, Gamepad2, Search, Trophy } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useGameEndorsements } from "@/lib/hooks/use-game-endorsements";
 import { useGames } from "@/lib/hooks/use-games";
 import { usePageReady } from "@/lib/hooks/use-page-ready";
 
 
 
 type TabType = "endorsements" | "games";
+
+interface EndorsementData {
+  game_id: number;
+  endorsements: number;
+}
+
+interface Game {
+  id: number;
+  name: string;
+  cover_url?: string;
+  first_release_date?: number;
+  rating?: number;
+  url?: string;
+}
+
+function EndorsementsTable({ endorsements, games }: { endorsements: EndorsementData[]; games: Game[] }): JSX.Element {
+  const [sortConfig, setSortConfig] = useState<{
+    key: "rank" | "game_name" | "endorsements";
+    direction: "asc" | "desc";
+  }>({
+    key: "endorsements",
+    direction: "desc",
+  });
+
+  const handleSort = (key: "rank" | "game_name" | "endorsements") => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
+    }));
+  };
+
+  const getSortIcon = (columnKey: "rank" | "game_name" | "endorsements") => {
+    if (sortConfig.key !== columnKey) {
+      return <ArrowUp className="w-4 h-4 text-gray-400" />;
+    }
+
+    return sortConfig.direction === "asc"
+      ? <ArrowUp className="w-4 h-4 text-white" />
+      : <ArrowDown className="w-4 h-4 text-white" />;
+  };
+
+  // Create leaderboard data with game info
+  const leaderboardData = endorsements.map((endorsement) => {
+    const game = games.find(g => g.id === endorsement.game_id);
+
+    return {
+      ...endorsement,
+      game,
+    };
+  }).sort((a, b) => {
+    switch (sortConfig.key) {
+      case "endorsements": {
+        return sortConfig.direction === "asc"
+          ? a.endorsements - b.endorsements
+          : b.endorsements - a.endorsements;
+      }
+
+      case "game_name": {
+        const aName = a.game?.name || `Game ${a.game_id}`;
+        const bName = b.game?.name || `Game ${b.game_id}`;
+
+        return sortConfig.direction === "asc"
+          ? aName.localeCompare(bName)
+          : bName.localeCompare(aName);
+      }
+
+      case "rank": {
+        // For rank, we want to sort by endorsements (opposite of endorsements sort)
+        return sortConfig.direction === "asc"
+          ? b.endorsements - a.endorsements
+          : a.endorsements - b.endorsements;
+      }
+
+      default:
+        return 0;
+    }
+  });
+
+  // Add rank to sorted data
+  const rankedData = leaderboardData.map((item, index) => ({
+    ...item,
+    rank: index + 1,
+  }));
+
+  return (
+    <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      <div className="bg-blue-400 border-b-4 border-black p-4">
+        <div className="flex items-center gap-3 mb-4">
+          <Crown className="w-6 h-6 text-yellow-600" />
+          <h3 className="text-2xl font-black text-black uppercase tracking-wider">Game Endorsements Leaderboard</h3>
+          <span className="bg-black text-white px-3 py-1 rounded-full text-sm font-black">
+            {rankedData.length}
+          </span>
+        </div>
+      </div>
+
+      {rankedData.length === 0
+        ? (
+            <div className="p-8 text-center">
+              <p className="text-xl font-black text-gray-600">No endorsements found</p>
+              <p className="text-sm font-bold text-gray-500 mt-2">Start endorsing games to see them here</p>
+            </div>
+          )
+        : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-black text-white">
+                    <th
+                      className="px-4 py-3 text-left font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
+                      onClick={() => handleSort("rank")}
+                    >
+                      <div className="flex items-center gap-2">
+                        Rank
+                        {getSortIcon("rank")}
+                      </div>
+                    </th>
+                    <th className="px-4 py-3 text-left font-black uppercase tracking-wide">
+                      Game
+                    </th>
+                    <th
+                      className="px-4 py-3 text-left font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
+                      onClick={() => handleSort("game_name")}
+                    >
+                      <div className="flex items-center gap-2">
+                        Name
+                        {getSortIcon("game_name")}
+                      </div>
+                    </th>
+                    <th
+                      className="px-4 py-3 text-left font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
+                      onClick={() => handleSort("endorsements")}
+                    >
+                      <div className="flex items-center gap-2">
+                        Endorsements
+                        {getSortIcon("endorsements")}
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rankedData.map((item, index) => (
+                    <tr
+                      key={item.game_id}
+                      className={`border-t-2 border-black ${
+                        index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                      } hover:bg-yellow-100 transition-colors`}
+                    >
+                      <td className="px-4 py-3">
+                        <div
+                          className={`w-8 h-8 flex items-center justify-center border-2 border-black font-black text-sm ${
+                            item.rank === 1
+                              ? "bg-yellow-400"
+                              : item.rank === 2
+                                ? "bg-gray-300"
+                                : item.rank === 3
+                                  ? "bg-orange-300"
+                                  : "bg-white"
+                          }`}
+                        >
+                          {item.rank}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        {item.game?.cover_url
+                          ? (
+                              <div className="w-12 h-12 overflow-hidden border-2 border-black">
+                                <img
+                                  src={`https:${item.game.cover_url}`}
+                                  alt={item.game.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            )
+                          : (
+                              <div className="w-12 h-12 bg-gray-200 border-2 border-black flex items-center justify-center">
+                                <Gamepad2 className="w-6 h-6 text-gray-500" />
+                              </div>
+                            )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div>
+                          <div className="font-black text-black text-lg">
+                            {item.game?.name || `Game ${item.game_id}`}
+                          </div>
+                          {item.game?.first_release_date && (
+                            <div className="text-sm font-bold text-gray-600">
+                              Released:
+                              {" "}
+                              {new Date(item.game.first_release_date * 1000).getFullYear()}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="bg-purple-400 border-2 border-black px-3 py-1 inline-block">
+                          <div className="text-lg font-black text-black">
+                            {item.endorsements}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+    </div>
+  );
+}
 
 /**
  * @description
@@ -24,6 +234,7 @@ export default function GamingPage(): JSX.Element {
   const [activeTab, setActiveTab] = useState<TabType>("endorsements");
   const [searchQuery, setSearchQuery] = useState("");
   const { data: games, isLoading, error } = useGames();
+  const { data: endorsements, isLoading: isLoadingEndorsements, error: endorsementsError } = useGameEndorsements();
 
   // Filter games based on search query
   const filteredGames = useMemo(() => {
@@ -80,25 +291,50 @@ export default function GamingPage(): JSX.Element {
       {/* Tab Content */}
       {activeTab === "endorsements" && (
         <div className="space-y-6">
-          <Card className="bg-blue-300 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-            <CardHeader className="border-b-2 border-black bg-blue-400">
-              <CardTitle className="text-2xl font-black text-black uppercase tracking-wide flex items-center gap-3">
-                <Crown className="h-6 w-6 text-yellow-600" />
-                Game Endorsements Leaderboard
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="text-center py-12">
-                <Trophy className="h-16 w-16 mx-auto mb-4 text-yellow-600" />
-                <p className="text-xl font-bold text-black">
-                  Leaderboard coming soon!
-                </p>
-                <p className="text-base font-semibold text-gray-700 mt-2">
-                  Track game endorsements and compete with other players
-                </p>
+          {isLoadingEndorsements && (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-black border-t-transparent mx-auto mb-4"></div>
+              <p className="text-xl font-bold text-black">
+                Loading endorsements...
+              </p>
+            </div>
+          )}
+
+          {endorsementsError && (
+            <div className="text-center py-12">
+              <div className="text-red-600 mb-4">
+                <Trophy className="h-16 w-16 mx-auto" />
               </div>
-            </CardContent>
-          </Card>
+              <p className="text-xl font-bold text-black">
+                Failed to load endorsements
+              </p>
+              <p className="text-base font-semibold text-gray-700 mt-2">
+                {endorsementsError instanceof Error ? endorsementsError.message : "Unknown error occurred"}
+              </p>
+            </div>
+          )}
+
+          {!isLoadingEndorsements && !endorsementsError && endorsements && Object.keys(endorsements).length > 0 && (
+            <EndorsementsTable
+              endorsements={Object.entries(endorsements).map(([game_id, endorsements]) => ({
+                game_id: Number.parseInt(game_id),
+                endorsements,
+              }))}
+              games={games || []}
+            />
+          )}
+
+          {!isLoadingEndorsements && !endorsementsError && (!endorsements || Object.keys(endorsements).length === 0) && (
+            <div className="text-center py-12">
+              <Trophy className="h-16 w-16 mx-auto mb-4 text-yellow-600" />
+              <p className="text-xl font-bold text-black">
+                No endorsements yet!
+              </p>
+              <p className="text-base font-semibold text-gray-700 mt-2">
+                Start endorsing games to see them here
+              </p>
+            </div>
+          )}
         </div>
       )}
 

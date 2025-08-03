@@ -2,7 +2,7 @@
 
 import type { JSX } from "react";
 
-import { ArrowDown, ArrowUp, Search, ThumbsDown, ThumbsUp, Trophy, Users } from "lucide-react";
+import { ArrowDown, ArrowUp, MessageSquareWarning, Search, ThumbsDown, ThumbsUp, Trophy, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -192,7 +192,20 @@ function ReputationTable({ title, data, type, icon, bgColor, borderColor, users 
 
                     // Check if it's a self-own (giver_id === taker_id)
                     const isSelfOwn = record.giver_id === record.taker_id;
-                    const userName = isSelfOwn ? "Self Own" : (users[userId] || `User ${userId}`);
+
+                    // Determine the self-own message based on the table type
+                    let selfOwnMessage = "Self Own";
+
+                    if (isSelfOwn) {
+                      if (title.includes("Received Ws")) {
+                        selfOwnMessage = "Self Praise";
+                      }
+                      else {
+                        selfOwnMessage = "Self Own";
+                      }
+                    }
+
+                    const userName = isSelfOwn ? selfOwnMessage : (users[userId] || `User ${userId}`);
 
                     return (
                       <tr
@@ -371,7 +384,7 @@ export default function ReputationPage(): JSX.Element {
                     }`}
                   >
                     <div className="flex items-center gap-3 mb-2">
-                      <Users className="w-8 h-8 text-orange-600" />
+                      <MessageSquareWarning className="w-8 h-8 text-orange-600" />
                       <h3 className="text-xl font-black text-black uppercase">Given Ls</h3>
                     </div>
                     <p className="text-4xl font-black text-orange-700">{reputationData.summary.given_ls}</p>

@@ -2,8 +2,8 @@
 
 import type { JSX } from "react";
 
-import { ArrowDown, ArrowUp, Calendar, Clock, Filter, MapPin, Search, Trophy, Users } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowDown, ArrowUp, Calendar, ChevronDown, Clock, Filter, MapPin, Search, Trophy, Users } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { usePageReady } from "@/lib/hooks/use-page-ready";
@@ -131,6 +131,8 @@ function UpcomingMatch({ match }: { match: MatchWithField | null }): JSX.Element
 function MatchesTable({ matches, fields }: { matches: MatchWithField[]; fields: Field[] }): JSX.Element {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedField, setSelectedField] = useState<string>("all");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [sortConfig, setSortConfig] = useState<{
     key: "timestamp" | "field_name" | "message";
     direction: "asc" | "desc";
@@ -138,6 +140,21 @@ function MatchesTable({ matches, fields }: { matches: MatchWithField[]; fields: 
     key: "timestamp",
     direction: "desc",
   });
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Helper function to get field location by field_id
   const getFieldLocation = (fieldId: string): string | null => {
@@ -169,6 +186,20 @@ function MatchesTable({ matches, fields }: { matches: MatchWithField[]; fields: 
     return sortConfig.direction === "asc"
       ? <ArrowUp className="w-4 h-4 text-white" />
       : <ArrowDown className="w-4 h-4 text-white" />;
+  };
+
+  const handleFieldSelect = (fieldId: string) => {
+    setSelectedField(fieldId);
+    setIsDropdownOpen(false);
+  };
+
+  const getSelectedFieldName = () => {
+    if (selectedField === "all") {
+      return "All Fields";
+    }
+    const field = fields.find(f => f.id === selectedField);
+
+    return field?.name || "All Fields";
   };
 
   // Filter and sort matches
@@ -244,20 +275,40 @@ function MatchesTable({ matches, fields }: { matches: MatchWithField[]; fields: 
           </div>
 
           {/* Field Filter */}
-          <div className="relative">
+          <div className="relative" ref={dropdownRef}>
             <Filter className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
-            <select
-              value={selectedField}
-              onChange={e => setSelectedField(e.target.value)}
-              className="pl-10 pr-8 py-2 text-black bg-white border-2 border-black font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none min-w-[150px] cursor-pointer"
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="pl-10 pr-8 py-2 text-black bg-white border-2 border-black font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none min-w-[150px] cursor-pointer flex items-center justify-between"
             >
-              <option value="all">All Fields</option>
-              {fields.map(field => (
-                <option key={field.id} value={field.id}>
-                  {field.name}
-                </option>
-              ))}
-            </select>
+              <span>{getSelectedFieldName()}</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {/* Custom Dropdown */}
+            {isDropdownOpen && (
+              <div className="animate__animated animate__bounceIn animate__faster absolute top-full left-0 right-0 mt-1 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50">
+                <div
+                  onClick={() => handleFieldSelect("all")}
+                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 hover:bg-purple-100 transition-colors ${
+                    selectedField === "all" ? "bg-purple-200" : ""
+                  }`}
+                >
+                  All Fields
+                </div>
+                {fields.map(field => (
+                  <div
+                    key={field.id}
+                    onClick={() => handleFieldSelect(field.id)}
+                    className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 last:border-b-0 hover:bg-purple-100 transition-colors ${
+                      selectedField === field.id ? "bg-purple-200" : ""
+                    }`}
+                  >
+                    {field.name}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

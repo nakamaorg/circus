@@ -443,11 +443,13 @@ export default function GamingPage(): JSX.Element {
       {activeTab === "endorsements" && (
         <div className="space-y-6">
           {isLoadingEndorsements && (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-black border-t-transparent mx-auto mb-4"></div>
-              <p className="text-xl font-bold text-black">
-                Loading endorsements...
-              </p>
+            <div className="flex items-center justify-center min-h-[400px]">
+              <div className="text-center bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8">
+                <div className="animate-spin rounded-full h-16 w-16 border-4 border-black border-t-transparent mx-auto mb-4"></div>
+                <p className="text-2xl font-black text-black">
+                  Loading endorsements...
+                </p>
+              </div>
             </div>
           )}
 

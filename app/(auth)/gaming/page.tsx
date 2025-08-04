@@ -42,12 +42,12 @@ interface EndorsementsTableProps {
   endorsements: EndorsementData[] | UserEndorsementData[];
   games: Game[];
   users: User[];
-  type: "my" | "game" | "global";
+  type: "game" | "global";
 }
 
 interface EndorsementTypeFilterProps {
-  endorsementType: "my" | "game" | "global";
-  onTypeChange: (type: "my" | "game" | "global") => void;
+  endorsementType: "game" | "global";
+  onTypeChange: (type: "game" | "global") => void;
   onGameIdChange: (gameId?: number) => void;
 }
 
@@ -74,9 +74,6 @@ function EndorsementTypeFilter({
 
   const getEndorsementTypeName = () => {
     switch (endorsementType) {
-      case "my":
-        return "My Endorsements";
-
       case "game":
         return "Game Endorsements";
 
@@ -84,11 +81,11 @@ function EndorsementTypeFilter({
         return "Global Endorsements";
 
       default:
-        return "My Endorsements";
+        return "Game Endorsements";
     }
   };
 
-  const handleTypeSelect = (type: "my" | "game" | "global") => {
+  const handleTypeSelect = (type: "game" | "global") => {
     onTypeChange(type);
     setIsDropdownOpen(false);
     if (type !== "game") {
@@ -120,28 +117,20 @@ function EndorsementTypeFilter({
             {isDropdownOpen && (
               <div className="animate__animated animate__bounceIn animate__faster absolute top-full left-0 right-0 mt-1 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50">
                 <div
-                  onClick={() => handleTypeSelect("my")}
-                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 hover:bg-purple-100 transition-colors ${
-                    endorsementType === "my" ? "bg-purple-200" : ""
-                  }`}
-                >
-                  My Endorsements
-                </div>
-                <div
-                  onClick={() => handleTypeSelect("global")}
-                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 hover:bg-purple-100 transition-colors ${
-                    endorsementType === "global" ? "bg-purple-200" : ""
-                  }`}
-                >
-                  Global Endorsements
-                </div>
-                <div
                   onClick={() => handleTypeSelect("game")}
-                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 last:border-b-0 hover:bg-purple-100 transition-colors ${
+                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 hover:bg-purple-100 transition-colors ${
                     endorsementType === "game" ? "bg-purple-200" : ""
                   }`}
                 >
                   Game Endorsements
+                </div>
+                <div
+                  onClick={() => handleTypeSelect("global")}
+                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 last:border-b-0 hover:bg-purple-100 transition-colors ${
+                    endorsementType === "global" ? "bg-purple-200" : ""
+                  }`}
+                >
+                  Global Endorsements
                 </div>
               </div>
             )}
@@ -198,7 +187,7 @@ function EndorsementsTable({
       };
     }
 
-    // For my/game endorsements, we have game data
+    // For game endorsements, we have game data
     const gameEndorsement = endorsement as EndorsementData;
     const game = games.find(g => g.id === gameEndorsement.game_id);
 
@@ -332,7 +321,7 @@ function EndorsementsTable({
                               </div>
                             )
                           : (
-                              // For my/game endorsements, show game info with cover
+                              // For game endorsements, show game info with cover
                               <div className="flex items-center gap-4">
                                 {(item as GameLeaderboardItem).game?.cover_url
                                   ? (
@@ -391,7 +380,7 @@ export default function GamingPage(): JSX.Element {
   usePageReady();
   const [activeTab, setActiveTab] = useState<TabType>("endorsements");
   const [searchQuery, setSearchQuery] = useState("");
-  const [endorsementType, setEndorsementType] = useState<"my" | "game" | "global">("my");
+  const [endorsementType, setEndorsementType] = useState<"game" | "global">("game");
   const [selectedGameId, setSelectedGameId] = useState<number | undefined>(undefined);
 
   const { data: games, isLoading, error } = useGames();

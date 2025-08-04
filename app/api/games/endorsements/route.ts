@@ -23,8 +23,7 @@ interface LambdaPayload {
  * @description
  * API route to get game endorsements leaderboard
  * Supports different types via query parameters:
- * - type=my: Get user's game endorsements (default)
- * - type=game: Get endorsements aggregated across all games by game
+ * - type=game: Get endorsements aggregated across all games by game (default)
  * - type=global: Get global user endorsements
  *
  * @param request - The NextRequest object
@@ -38,22 +37,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Keep discord ID as string to preserve precision for very long numbers
-    const discordId = session.user.discordId;
-
     const { searchParams } = new URL(request.url);
-    const type = searchParams.get("type") || "my";
+    const type = searchParams.get("type") || "global";
 
     let functionName: string;
     let payload: LambdaPayload = {};
 
     switch (type) {
-      case "my": {
-        functionName = "nakamaorg-core-game-get-gamer-leaderboard";
-        payload = { discord_id: discordId };
-        break;
-      }
-
       case "game": {
         // For "game" type, we need to fetch all games and aggregate endorsements by game
         try {
@@ -119,7 +109,7 @@ export async function GET(request: NextRequest) {
       }
 
       default: {
-        return NextResponse.json({ error: "Invalid type. Must be 'my', 'game', or 'global'" }, { status: 400 });
+        return NextResponse.json({ error: "Invalid type. Must be 'game' or 'global'" }, { status: 400 });
       }
     }
 

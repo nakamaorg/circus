@@ -208,7 +208,19 @@ function EndorsementsTable({
       name: game?.name || `Game ${gameEndorsement.game_id}`,
       key: gameEndorsement.game_id.toString(),
     };
-  }).sort((a, b) => {
+  });
+
+  // First, sort by endorsements to establish original ranking
+  const rankedByEndorsements = [...leaderboardData].sort((a, b) => b.endorsements - a.endorsements);
+
+  // Add original rank based on endorsements (this rank will stay fixed)
+  const dataWithRanks = rankedByEndorsements.map((item, index) => ({
+    ...item,
+    rank: index + 1,
+  }));
+
+  // Then sort by the selected column
+  const rankedData = dataWithRanks.sort((a, b) => {
     switch (sortConfig.key) {
       case "endorsements": {
         return sortConfig.direction === "asc"
@@ -223,22 +235,15 @@ function EndorsementsTable({
       }
 
       case "rank": {
-        // For rank, we want to sort by endorsements (opposite of endorsements sort)
         return sortConfig.direction === "asc"
-          ? b.endorsements - a.endorsements
-          : a.endorsements - b.endorsements;
+          ? a.rank - b.rank
+          : b.rank - a.rank;
       }
 
       default:
         return 0;
     }
   });
-
-  // Add rank to sorted data
-  const rankedData = leaderboardData.map((item, index) => ({
-    ...item,
-    rank: index + 1,
-  }));
 
   return (
     <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">

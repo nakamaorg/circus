@@ -3,7 +3,7 @@
 import type { JSX } from "react";
 import type { EndorsementData, UserEndorsementData } from "@/lib/hooks/use-game-endorsements";
 
-import { ArrowDown, ArrowUp, ChevronDown, Crown, Filter, Gamepad2, Search, Trophy } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronDown, Filter, Gamepad2, Search, Trophy } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useGameEndorsements } from "@/lib/hooks/use-game-endorsements";
@@ -43,6 +43,7 @@ interface EndorsementsTableProps {
   games: Game[];
   users: User[];
   type: "game" | "global";
+  endorsementTypeFilter: JSX.Element;
 }
 
 interface EndorsementTypeFilterProps {
@@ -94,49 +95,37 @@ function EndorsementTypeFilter({
   };
 
   return (
-    <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-      <div className="bg-blue-400 border-b-4 border-black p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Crown className="w-6 h-6 text-yellow-600" />
-            <h3 className="text-2xl font-black text-black uppercase tracking-wider">Game Endorsements Leaderboard</h3>
+    <div className="relative" ref={dropdownRef}>
+      <Filter className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
+      <button
+        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        className="pl-10 pr-8 py-2 text-black bg-white border-2 border-black font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none min-w-[200px] cursor-pointer flex items-center justify-between"
+      >
+        <span className="truncate">{getEndorsementTypeName()}</span>
+        <ChevronDown className={`w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
+      </button>
+
+      {/* Custom Dropdown */}
+      {isDropdownOpen && (
+        <div className="animate__animated animate__bounceIn animate__faster absolute top-full left-0 right-0 mt-1 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50">
+          <div
+            onClick={() => handleTypeSelect("game")}
+            className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 hover:bg-purple-100 transition-colors ${
+              endorsementType === "game" ? "bg-purple-200" : ""
+            }`}
+          >
+            Game Endorsements
           </div>
-
-          {/* Endorsement Type Filter */}
-          <div className="relative" ref={dropdownRef}>
-            <Filter className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="pl-10 pr-8 py-2 text-black bg-white border-2 border-black font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none min-w-[200px] cursor-pointer flex items-center justify-between"
-            >
-              <span className="truncate">{getEndorsementTypeName()}</span>
-              <ChevronDown className={`w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
-            </button>
-
-            {/* Custom Dropdown */}
-            {isDropdownOpen && (
-              <div className="animate__animated animate__bounceIn animate__faster absolute top-full left-0 right-0 mt-1 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50">
-                <div
-                  onClick={() => handleTypeSelect("game")}
-                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 hover:bg-purple-100 transition-colors ${
-                    endorsementType === "game" ? "bg-purple-200" : ""
-                  }`}
-                >
-                  Game Endorsements
-                </div>
-                <div
-                  onClick={() => handleTypeSelect("global")}
-                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 last:border-b-0 hover:bg-purple-100 transition-colors ${
-                    endorsementType === "global" ? "bg-purple-200" : ""
-                  }`}
-                >
-                  Global Endorsements
-                </div>
-              </div>
-            )}
+          <div
+            onClick={() => handleTypeSelect("global")}
+            className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 last:border-b-0 hover:bg-purple-100 transition-colors ${
+              endorsementType === "global" ? "bg-purple-200" : ""
+            }`}
+          >
+            Global Endorsements
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -146,6 +135,7 @@ function EndorsementsTable({
   games,
   users,
   type,
+  endorsementTypeFilter,
 }: EndorsementsTableProps): JSX.Element {
   const [sortConfig, setSortConfig] = useState<{
     key: "rank" | "name" | "endorsements";
@@ -237,12 +227,19 @@ function EndorsementsTable({
   return (
     <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <div className="bg-blue-400 border-b-4 border-black p-4">
-        <div className="flex items-center gap-3">
-          <Trophy className="w-6 h-6 text-yellow-600" />
-          <h3 className="text-xl font-black text-black uppercase tracking-wider">Results</h3>
-          <span className="bg-black text-white px-3 py-1 rounded-full text-sm font-black">
-            {rankedData.length}
-          </span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Trophy className="w-6 h-6 text-yellow-600" />
+            <h3 className="text-xl font-black text-black uppercase tracking-wider">
+              {type === "global" ? "Global Endorsements" : "Game Endorsements"}
+            </h3>
+            <span className="bg-black text-white px-3 py-1 rounded-full text-sm font-black">
+              {rankedData.length}
+            </span>
+          </div>
+
+          {/* Endorsement Type Filter moved to the right */}
+          {endorsementTypeFilter}
         </div>
       </div>
 
@@ -470,15 +467,6 @@ export default function GamingPage(): JSX.Element {
 
           {!isLoadingEndorsements && !endorsementsError && (
             <>
-              {/* Always show the dropdown filter */}
-              <div className="mb-6">
-                <EndorsementTypeFilter
-                  endorsementType={endorsementType}
-                  onTypeChange={setEndorsementType}
-                  onGameIdChange={setSelectedGameId}
-                />
-              </div>
-
               {endorsements && endorsements.length > 0
                 ? (
                     <EndorsementsTable
@@ -486,6 +474,15 @@ export default function GamingPage(): JSX.Element {
                       games={games || []}
                       users={users || []}
                       type={endorsementType}
+                      endorsementTypeFilter={
+                        (
+                          <EndorsementTypeFilter
+                            endorsementType={endorsementType}
+                            onTypeChange={setEndorsementType}
+                            onGameIdChange={setSelectedGameId}
+                          />
+                        )
+                      }
                     />
                   )
                 : (

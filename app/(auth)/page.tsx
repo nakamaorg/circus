@@ -127,6 +127,90 @@ function WsLsChart({ ws, ls }: WsLsChartProps): JSX.Element {
   );
 }
 
+function DashboardSkeleton(): JSX.Element {
+  return (
+    <div className="space-y-8">
+      {/* Hero Section Skeleton */}
+      <div className="text-center space-y-4">
+        <div className="mx-auto w-80 h-20 bg-gray-300 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-pulse"></div>
+        <div className="mx-auto w-64 h-12 bg-gray-200 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] animate-pulse"></div>
+      </div>
+
+      {/* Stats Grid Skeleton */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div key={index} className="bg-gray-300 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] h-40 animate-pulse">
+            <div className="p-6 h-full flex flex-col">
+              <div className="flex items-center justify-between mb-4 flex-1">
+                <div className="w-8 h-8 bg-gray-400 rounded animate-pulse"></div>
+                <div className="text-right flex-1 ml-4">
+                  <div className="w-16 h-8 bg-gray-400 rounded mb-2 ml-auto animate-pulse"></div>
+                  <div className="w-20 h-4 bg-gray-400 rounded ml-auto animate-pulse"></div>
+                </div>
+              </div>
+              <div className="w-24 h-3 bg-gray-400 rounded animate-pulse"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Charts Section Skeleton */}
+      <div className="grid lg:grid-cols-2 gap-8">
+        {/* Chart Skeleton */}
+        <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-6 h-6 bg-gray-300 rounded animate-pulse"></div>
+            <div className="w-32 h-6 bg-gray-300 rounded animate-pulse"></div>
+          </div>
+          <div className="h-64 bg-gray-100 border-2 border-gray-300 animate-pulse"></div>
+          <div className="mt-4 grid grid-cols-2 gap-4">
+            <div className="bg-gray-100 border-2 border-black p-3 h-16 animate-pulse"></div>
+            <div className="bg-gray-100 border-2 border-black p-3 h-16 animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* Quick Stats Skeleton */}
+        <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-6 h-6 bg-gray-300 rounded animate-pulse"></div>
+            <div className="w-32 h-6 bg-gray-300 rounded animate-pulse"></div>
+          </div>
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 border-2 border-black">
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 bg-gray-300 rounded animate-pulse"></div>
+                  <div className="w-20 h-4 bg-gray-300 rounded animate-pulse"></div>
+                </div>
+                <div className="w-12 h-6 bg-gray-300 rounded animate-pulse"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Activity Skeleton */}
+      <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-6 h-6 bg-gray-300 rounded animate-pulse"></div>
+          <div className="w-40 h-6 bg-gray-300 rounded animate-pulse"></div>
+        </div>
+        <div className="space-y-3">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 border-2 border-black">
+              <div className="flex items-center gap-3">
+                <div className="w-4 h-4 bg-gray-300 rounded animate-pulse"></div>
+                <div className="w-32 h-4 bg-gray-300 rounded animate-pulse"></div>
+              </div>
+              <div className="w-16 h-3 bg-gray-300 rounded animate-pulse"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /**
  * @description
  * Main dashboard page with refined NeoBrutalism design.
@@ -179,16 +263,7 @@ export default function DashboardPage(): JSX.Element {
   }, [matches, userEndorsements, user?.discord?.id, events, reputation]);
 
   if (isUserLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[600px]">
-        <div className="text-center bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-black border-t-transparent mx-auto mb-4"></div>
-          <p className="text-2xl font-black text-black">
-            Loading dashboard...
-          </p>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   return (
@@ -216,7 +291,7 @@ export default function DashboardPage(): JSX.Element {
           subtitle="Next 7 days"
           href="/fenj"
         />
-        
+
         <DashboardCard
           title="Memes Created"
           value={dashboardStats.memesCount}
@@ -225,7 +300,7 @@ export default function DashboardPage(): JSX.Element {
           subtitle="All time"
           href="/memes"
         />
-        
+
         <DashboardCard
           title="Events"
           value={dashboardStats.eventsCount}
@@ -234,7 +309,7 @@ export default function DashboardPage(): JSX.Element {
           subtitle="Total events"
           href="/timeline"
         />
-        
+
         <DashboardCard
           title="Game Endorsements"
           value={dashboardStats.userEndorsementsCount}

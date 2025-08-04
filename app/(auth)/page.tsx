@@ -27,24 +27,24 @@ interface DashboardCardProps {
 
 function DashboardCard({ title, value, icon, color, subtitle, href }: DashboardCardProps): JSX.Element {
   return (
-    <Link href={href}>
-      <div className={`${color} border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 cursor-pointer`}>
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="text-black opacity-80">
+    <Link href={href} className="block">
+      <div className={`${color} border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 cursor-pointer h-full min-h-[140px] flex flex-col`}>
+        <div className="p-6 flex-1 flex flex-col">
+          <div className="flex items-center justify-between mb-4 flex-1">
+            <div className="text-black opacity-80 flex-shrink-0">
               {icon}
             </div>
-            <div className="text-right">
-              <div className="text-3xl font-black text-black">
+            <div className="text-right flex-1 min-w-0">
+              <div className="text-3xl font-black text-black truncate">
                 {value}
               </div>
-              <div className="text-sm font-bold text-black opacity-70">
+              <div className="text-sm font-bold text-black opacity-70 leading-tight">
                 {title}
               </div>
             </div>
           </div>
           {subtitle && (
-            <div className="text-xs font-bold text-black opacity-60">
+            <div className="text-xs font-bold text-black opacity-60 mt-auto">
               {subtitle}
             </div>
           )}
@@ -207,7 +207,7 @@ export default function DashboardPage(): JSX.Element {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <DashboardCard
           title="Upcoming Fenj Matches"
           value={dashboardStats.upcomingFenjMatches}
@@ -216,7 +216,7 @@ export default function DashboardPage(): JSX.Element {
           subtitle="Next 7 days"
           href="/fenj"
         />
-
+        
         <DashboardCard
           title="Memes Created"
           value={dashboardStats.memesCount}
@@ -225,7 +225,7 @@ export default function DashboardPage(): JSX.Element {
           subtitle="All time"
           href="/memes"
         />
-
+        
         <DashboardCard
           title="Events"
           value={dashboardStats.eventsCount}
@@ -234,7 +234,7 @@ export default function DashboardPage(): JSX.Element {
           subtitle="Total events"
           href="/timeline"
         />
-
+        
         <DashboardCard
           title="Game Endorsements"
           value={dashboardStats.userEndorsementsCount}
@@ -266,7 +266,7 @@ export default function DashboardPage(): JSX.Element {
             <div className="flex items-center justify-between p-4 bg-gray-50 border-2 border-black">
               <div className="flex items-center gap-3">
                 <Trophy className="w-5 h-5 text-yellow-600" />
-                <span className="font-bold text-black">Win Rate</span>
+                <span className="font-bold text-black">Credibility</span>
               </div>
               <span className="text-lg font-black text-black">
                 {dashboardStats.ws + dashboardStats.ls > 0
@@ -282,7 +282,7 @@ export default function DashboardPage(): JSX.Element {
                 <span className="font-bold text-black">Total Matches</span>
               </div>
               <span className="text-lg font-black text-black">
-                {dashboardStats.ws + dashboardStats.ls}
+                {matches?.length || 0}
               </span>
             </div>
 

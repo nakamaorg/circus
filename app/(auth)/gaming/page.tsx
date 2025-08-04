@@ -380,7 +380,7 @@ export default function GamingPage(): JSX.Element {
   usePageReady();
   const [activeTab, setActiveTab] = useState<TabType>("endorsements");
   const [searchQuery, setSearchQuery] = useState("");
-  const [endorsementType, setEndorsementType] = useState<"game" | "global">("game");
+  const [endorsementType, setEndorsementType] = useState<"game" | "global">("global");
   const [selectedGameId, setSelectedGameId] = useState<number | undefined>(undefined);
 
   const { data: games, isLoading, error } = useGames();

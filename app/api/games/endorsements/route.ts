@@ -119,7 +119,6 @@ export async function GET(request: NextRequest) {
         Payload: new TextEncoder().encode(JSON.stringify(payload)),
       });
 
-      console.log(`Invoking Lambda function: ${functionName} with payload:`, payload);
       const response = await lambda.send(command);
       const responsePayload = response.Payload;
 

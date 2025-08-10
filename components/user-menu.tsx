@@ -3,7 +3,7 @@
 import type { Session } from "next-auth";
 import type { JSX } from "react";
 
-import { LogOut, Trophy, User } from "lucide-react";
+import { Bell, LogOut, Trophy, User } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useState, useTransition } from "react";
 
@@ -93,6 +93,8 @@ export function UserMenu({ session }: TUserMenuProps): JSX.Element {
                 <div className="p-2 space-y-2">
                   <div className="h-10 w-full bg-gray-300 rounded border-2 border-black"></div>
                   <div className="h-10 w-full bg-gray-300 rounded border-2 border-black"></div>
+                  <div className="h-10 w-full bg-gray-300 rounded border-2 border-black"></div>
+                  <div className="h-10 w-full bg-gray-300 rounded border-2 border-black"></div>
                 </div>
               </div>
             )
@@ -110,6 +112,14 @@ export function UserMenu({ session }: TUserMenuProps): JSX.Element {
                   >
                     <User className="mr-3 h-5 w-5" />
                     <span>View Profile</span>
+                  </NavigationLink>
+                  <NavigationLink
+                    href="/reminders"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full h-10 bg-purple-400 hover:bg-purple-500 text-purple-900 hover:text-purple-950 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 flex items-center px-4 py-2 text-sm font-black cursor-pointer uppercase tracking-wide block transform rotate-[1deg] hover:rotate-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] rounded-[5px]"
+                  >
+                    <Bell className="mr-3 h-5 w-5" />
+                    <span>View Reminders</span>
                   </NavigationLink>
                   <NavigationLink
                     href="/reputation"

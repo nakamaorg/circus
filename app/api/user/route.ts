@@ -43,6 +43,9 @@ export async function GET(_request: NextRequest) {
       name: dbUser.username as string,
       autobiography: dbUser.autobiography as string,
       wanted: dbUser.wanted as boolean,
+      permissions: typeof dbUser.permissions === "number"
+        ? (dbUser.permissions as number)
+        : (typeof dbUser.permissions === "string" ? Number.parseInt(dbUser.permissions as string, 10) : undefined),
       discord: {
         id: session.user.discordId,
         name: session.user.name || "Unknown",

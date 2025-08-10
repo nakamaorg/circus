@@ -2,7 +2,7 @@
 
 import type { JSX } from "react";
 
-import { ArrowDown, ArrowUp, Bell, ChevronDown, ExternalLink, Filter, Loader2, Search } from "lucide-react";
+import { ArrowDown, ArrowUp, Bell, ChevronDown, ExternalLink, Filter } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 
@@ -36,9 +36,7 @@ type RemindersResponse = {
 
 interface RemindersTableProps {
   reminders: Reminder[];
-  searchTerm: string;
   filterType: FilterType;
-  onSearchChange: (value: string) => void;
   onFilterChange: (value: FilterType) => void;
 }
 
@@ -127,7 +125,7 @@ function StatusFilter({
   );
 }
 
-function RemindersTable({ reminders, searchTerm, filterType, onSearchChange, onFilterChange }: RemindersTableProps): JSX.Element {
+function RemindersTable({ reminders, filterType, onFilterChange }: RemindersTableProps): JSX.Element {
   const [sortConfig, setSortConfig] = useState<{
     key: "reminder_date" | "message" | "status";
     direction: "asc" | "desc";
@@ -153,7 +151,7 @@ function RemindersTable({ reminders, searchTerm, filterType, onSearchChange, onF
       : <ArrowDown className="w-4 h-4 text-white" />;
   };
 
-  // Filter reminders based on status and search
+  // Filter reminders based on status
   const now = Date.now() / 1000;
   const filteredReminders = reminders.filter((reminder) => {
     const isPassed = reminder.timestamp < now;
@@ -164,16 +162,6 @@ function RemindersTable({ reminders, searchTerm, filterType, onSearchChange, onF
     }
     if (filterType === "passed" && (!isPassed && !reminder.reminded)) {
       return false;
-    }
-
-    // Filter by search term
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-
-      return (
-        reminder.message_content.toLowerCase().includes(searchLower)
-        || new Date(reminder.timestamp * 1000).toLocaleDateString().includes(searchLower)
-      );
     }
 
     return true;
@@ -190,8 +178,8 @@ function RemindersTable({ reminders, searchTerm, filterType, onSearchChange, onF
 
       case "message": {
         return sortConfig.direction === "asc"
-          ? a.message_content.localeCompare(b.message_content)
-          : b.message_content.localeCompare(a.message_content);
+          ? (a.message_content || "").localeCompare(b.message_content || "")
+          : (b.message_content || "").localeCompare(a.message_content || "");
       }
 
       case "status": {
@@ -233,8 +221,8 @@ function RemindersTable({ reminders, searchTerm, filterType, onSearchChange, onF
 
   return (
     <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-      <div className="bg-purple-400 border-b-4 border-black p-4">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-orange-300 border-b-4 border-black p-4">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Bell className="w-6 h-6 text-black" />
             <h3 className="text-xl font-black text-black uppercase tracking-wider">
@@ -245,19 +233,7 @@ function RemindersTable({ reminders, searchTerm, filterType, onSearchChange, onF
             </span>
           </div>
           {reminders.length > 0 && (
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-              <div className="relative">
-                <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={e => onSearchChange(e.target.value)}
-                  placeholder="Search reminders..."
-                  className="w-full sm:w-64 pl-10 pr-4 py-2 text-black bg-white border-2 border-black font-bold placeholder-gray-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none"
-                />
-              </div>
-              <StatusFilter status={filterType} onStatusChange={onFilterChange} />
-            </div>
+            <StatusFilter status={filterType} onStatusChange={onFilterChange} />
           )}
         </div>
       </div>
@@ -267,10 +243,10 @@ function RemindersTable({ reminders, searchTerm, filterType, onSearchChange, onF
             <div className="p-8 text-center">
               <Bell className="h-16 w-16 mx-auto mb-4 text-gray-400" />
               <p className="text-xl font-black text-gray-600">
-                {searchTerm ? "No matching reminders found" : "No reminders found"}
+                No reminders found
               </p>
               <p className="text-sm font-bold text-gray-500 mt-2">
-                {searchTerm ? "Try adjusting your search query" : "Your reminders will appear here"}
+                Your reminders will appear here
               </p>
             </div>
           )
@@ -336,7 +312,7 @@ function RemindersTable({ reminders, searchTerm, filterType, onSearchChange, onF
                         </td>
                         <td className="px-4 py-3">
                           <div className="font-bold text-black max-w-md truncate">
-                            {reminder.message_content}
+                            {reminder.message_content || "No message content"}
                           </div>
                         </td>
                         <td className="px-4 py-3">
@@ -381,7 +357,6 @@ export default function RemindersPage(): JSX.Element {
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<FilterType>("all");
 
   useEffect(() => {
@@ -437,32 +412,40 @@ export default function RemindersPage(): JSX.Element {
         </p>
       </div>
 
-      {isLoading
-        ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="flex items-center gap-3 bg-white border-2 border-black px-6 py-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                <Loader2 className="h-6 w-6 animate-spin" />
-                <span className="text-lg font-black">Loading reminders...</span>
-              </div>
+      {isLoading && (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-black border-t-transparent mx-auto mb-4"></div>
+            <p className="text-2xl font-black text-black">
+              Loading reminders...
+            </p>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8">
+            <div className="text-red-600 mb-4">
+              <Bell className="h-16 w-16 mx-auto" />
             </div>
-          )
-        : error
-          ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="bg-red-300 border-2 border-black px-6 py-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <span className="text-lg font-black text-red-800">{error}</span>
-                </div>
-              </div>
-            )
-          : (
-              <RemindersTable
-                reminders={reminders}
-                searchTerm={searchTerm}
-                filterType={filterType}
-                onSearchChange={setSearchTerm}
-                onFilterChange={setFilterType}
-              />
-            )}
+            <p className="text-2xl font-black text-black">
+              Failed to load reminders
+            </p>
+            <p className="text-lg font-bold text-gray-700 mt-2">
+              {error}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {!isLoading && !error && (
+        <RemindersTable
+          reminders={reminders}
+          filterType={filterType}
+          onFilterChange={setFilterType}
+        />
+      )}
     </div>
   );
 }

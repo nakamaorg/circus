@@ -3,12 +3,16 @@
 import type { JSX } from "react";
 import type { EndorsementData, UserEndorsementData } from "@/lib/hooks/use-game-endorsements";
 
-import { ArrowDown, ArrowUp, ChevronDown, Filter, Gamepad2, Search, Trophy } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronDown, Filter, Gamepad2, Plus, Search, Trophy } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { GameAddModal } from "@/components/game-add-modal";
+import { Button } from "@/components/ui/button";
+import { isGamer } from "@/lib/helpers/permission.helper";
 import { useGameEndorsements } from "@/lib/hooks/use-game-endorsements";
 import { useGames } from "@/lib/hooks/use-games";
 import { usePageReady } from "@/lib/hooks/use-page-ready";
+import { useUser } from "@/lib/hooks/use-user";
 import { useUsers } from "@/lib/hooks/use-users";
 
 
@@ -390,8 +394,10 @@ export default function GamingPage(): JSX.Element {
   const [searchQuery, setSearchQuery] = useState("");
   const [endorsementType, setEndorsementType] = useState<"game" | "global" | "my">("my");
   const [selectedGameId, setSelectedGameId] = useState<number | undefined>(undefined);
+  const [showAddGameModal, setShowAddGameModal] = useState(false);
 
-  const { data: games, isLoading, error } = useGames();
+  const { user } = useUser();
+  const { data: games, isLoading, error, refetch: refetchGames } = useGames();
   const { data: users } = useUsers();
   const { data: endorsements, isLoading: isLoadingEndorsements, error: endorsementsError } = useGameEndorsements({
     type: endorsementType,
@@ -408,6 +414,11 @@ export default function GamingPage(): JSX.Element {
       game.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [games, searchQuery]);
+
+  // Handle game addition
+  const handleGameAdded = () => {
+    refetchGames();
+  };
 
   return (
     <div className="space-y-8">
@@ -516,18 +527,30 @@ export default function GamingPage(): JSX.Element {
 
       {activeTab === "games" && (
         <div className="space-y-6">
-          {/* Search Input - only show when not loading */}
+          {/* Search Input and Add Game Button - only show when not loading */}
           {!isLoading && (
-            <div className="mb-6">
-              <div className="relative">
-                <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
-                <input
-                  type="text"
-                  placeholder="Search games..."
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 text-black bg-white border-2 border-black font-bold placeholder-gray-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none"
-                />
+            <div className="mb-6 space-y-4">
+              <div className="flex gap-4">
+                <div className="relative flex-1">
+                  <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
+                  <input
+                    type="text"
+                    placeholder="Search games..."
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 text-black bg-white border-2 border-black font-bold placeholder-gray-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none"
+                  />
+                </div>
+                {/* Add Game Button - Only show for Gamers */}
+                {user && isGamer(user) && (
+                  <Button
+                    onClick={() => setShowAddGameModal(true)}
+                    className="bg-purple-500 hover:bg-purple-600 text-white font-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Game
+                  </Button>
+                )}
               </div>
             </div>
           )}
@@ -641,6 +664,13 @@ export default function GamingPage(): JSX.Element {
           )}
         </div>
       )}
+
+      {/* Game Add Modal */}
+      <GameAddModal
+        isOpen={showAddGameModal}
+        onClose={() => setShowAddGameModal(false)}
+        onGameAdded={handleGameAdded}
+      />
     </div>
   );
 }

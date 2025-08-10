@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { HeadObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 
 import { AWS_BUCKETS, s3 } from "@/lib/config/aws.config";
@@ -101,16 +101,46 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           continue;
         }
 
-        // Generate unique filename
-        const timestamp = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-        const uniqueId = Math.random().toString(36).substring(2, 10); // Generate 8 char random string
+        // Generate filename (keep original name but sanitize it)
         const safeFilename = file.name.replace(/[^a-z0-9.-]/gi, "_").toLowerCase();
-        const newFilename = `${timestamp}-${uniqueId}-${safeFilename}`;
 
         // Determine S3 key based on file type
         const s3Key = isVideo
-          ? `assets/videos/lore/${newFilename}`
-          : `assets/images/lore/${newFilename}`;
+          ? `assets/videos/lore/${safeFilename}`
+          : `assets/images/lore/${safeFilename}`;
+
+        // Check if file already exists in S3
+        try {
+          const headCommand = new HeadObjectCommand({
+            Bucket: AWS_BUCKETS.NAKAMAORG,
+            Key: s3Key,
+          });
+
+          await s3.send(headCommand);
+
+          // File exists, skip it
+          results.push({
+            success: false,
+            filename: file.name,
+            key: "",
+            error: "File already exists. Choose a different name or rename the file.",
+          });
+          continue;
+        }
+        catch (error: unknown) {
+          // File doesn't exist (404 error), proceed with upload
+          if (error instanceof Error && error.name !== "NotFound") {
+            // Some other error occurred
+            console.error(`Error checking file existence for ${file.name}:`, error);
+            results.push({
+              success: false,
+              filename: file.name,
+              key: "",
+              error: "Failed to check if file exists",
+            });
+            continue;
+          }
+        }
 
         // Convert file to buffer
         const arrayBuffer = await file.arrayBuffer();

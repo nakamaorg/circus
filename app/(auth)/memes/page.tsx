@@ -5,9 +5,9 @@ import type { JSX } from "react";
 import { ArrowUp, Download, Eye, Play, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { MemeUploadButton } from "@/components/meme-upload-button";
+import { MemeUploadStatusModal } from "@/components/meme-upload-status-modal";
 import { Button } from "@/components/ui/button";
-import { UploadButton } from "@/components/upload-button";
-import { UploadStatusModal } from "@/components/upload-status-modal";
 import { isMemer } from "@/lib/helpers/permission.helper";
 import { usePageReady } from "@/lib/hooks/use-page-ready";
 import { useUser } from "@/lib/hooks/use-user";
@@ -486,7 +486,7 @@ export default function MemesPage(): JSX.Element {
 
                 {/* Upload Button - Only show for Memers */}
                 {canUpload && (
-                  <UploadButton
+                  <MemeUploadButton
                     onUpload={handleUpload}
                     onError={handleUploadError}
                     isUploading={isUploading}
@@ -664,7 +664,7 @@ export default function MemesPage(): JSX.Element {
 
       {/* Upload Status Modal */}
       {showUploadModal && uploadSummary && (
-        <UploadStatusModal
+        <MemeUploadStatusModal
           isOpen={showUploadModal}
           results={uploadResults}
           summary={uploadSummary}

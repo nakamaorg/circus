@@ -112,7 +112,7 @@ export function GameAddModal({ isOpen, onClose, onGameAdded }: GameAddModalProps
   }
 
   return (
-    <div className="animate__animated animate__jackInTheBox animate__fast fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-sm">
+    <div className="animate__animated animate__fadeIn animate__fast fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-sm">
       {/* NeoBrutalism themed backdrop */}
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
@@ -148,7 +148,7 @@ export function GameAddModal({ isOpen, onClose, onGameAdded }: GameAddModalProps
       </button>
 
       {/* Modal Content */}
-      <div className="animate__animated animate__zoomIn animate__fast relative bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 max-w-md w-full mx-4">
+      <div className="animate__animated animate__jackInTheBox animate__fast relative bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 max-w-md w-full mx-4">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <Gamepad2 className="w-8 h-8 text-purple-600" />

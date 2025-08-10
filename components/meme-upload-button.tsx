@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 
 
-interface UploadButtonProps {
+interface MemeUploadButtonProps {
   onUpload: (files: File[]) => void;
   onError?: (message: string) => void;
   isUploading: boolean;
@@ -15,15 +15,15 @@ interface UploadButtonProps {
 
 /**
  * @description
- * Upload button component for selecting multiple meme files
+ * Meme upload button component for selecting multiple meme files
  *
  * @param props - The component props
  * @param props.onUpload - Callback when files are selected
  * @param props.onError - Callback for validation errors
  * @param props.isUploading - Whether upload is in progress
- * @returns The upload button component
+ * @returns The meme upload button component
  */
-export function UploadButton({ onUpload, onError, isUploading }: UploadButtonProps): JSX.Element {
+export function MemeUploadButton({ onUpload, onError, isUploading }: MemeUploadButtonProps): JSX.Element {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
 
@@ -119,7 +119,7 @@ export function UploadButton({ onUpload, onError, isUploading }: UploadButtonPro
 
       {/* Upload hint tooltip */}
       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-xs rounded border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50">
-        Drop files here or click to browse
+        Drop meme files here or click to browse
         <br />
         Max 10 files, 4MB each
         <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>

@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 
 
 interface UseGameEndorsementsOptions {
-  type?: "game" | "global";
+  type?: "game" | "global" | "my";
   gameId?: number;
 }
 
@@ -58,7 +58,7 @@ export function useGameEndorsements(options: UseGameEndorsementsOptions = {}) {
         }));
       }
 
-      // For "game" type, keys are game_ids
+      // For "game" and "my" types, keys are game_ids
       return Object.entries(data).map(([game_id, endorsements]) => ({
         game_id: Number.parseInt(game_id, 10),
         endorsements,

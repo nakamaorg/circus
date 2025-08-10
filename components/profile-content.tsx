@@ -246,12 +246,12 @@ export function ProfileContent(): JSX.Element {
                       <div className="flex flex-wrap gap-2">
                         {(() => {
                           const p = userData.permissions as number;
-                          const roles: { label: string; mask: number; color: string }[] = [
-                            { label: "Dictator", mask: 0b00001, color: "bg-red-300" },
-                            { label: "Memer", mask: 0b00010, color: "bg-pink-300" },
-                            { label: "Fenjer", mask: 0b00100, color: "bg-yellow-300" },
-                            { label: "Historian", mask: 0b01000, color: "bg-blue-300" },
-                            { label: "Gamer", mask: 0b10000, color: "bg-green-300" },
+                          const roles: { label: string; mask: number; color: string; tooltip: string }[] = [
+                            { label: "Dictator", mask: 0b00001, color: "bg-red-300", tooltip: "Can manage users" },
+                            { label: "Memer", mask: 0b00010, color: "bg-pink-300", tooltip: "Can add memes" },
+                            { label: "Fenjer", mask: 0b00100, color: "bg-yellow-300", tooltip: "Can manage fenj" },
+                            { label: "Historian", mask: 0b01000, color: "bg-blue-300", tooltip: "Can manage events" },
+                            { label: "Gamer", mask: 0b10000, color: "bg-green-300", tooltip: "Can manage gaming related stuff" },
                           ];
                           const active = roles.filter(r => (p & r.mask) === r.mask);
 
@@ -264,9 +264,15 @@ export function ProfileContent(): JSX.Element {
                           return active.map(r => (
                             <span
                               key={r.label}
-                              className={`${r.color} border-2 border-black px-2 sm:px-3 py-1 text-xs sm:text-sm font-black`}
+                              className={`${r.color} border-2 border-black px-2 sm:px-3 py-1 text-xs sm:text-sm font-black relative group/tooltip cursor-help`}
                             >
                               {r.label}
+                              {/* Tooltip */}
+                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 whitespace-nowrap z-[100] pointer-events-none">
+                                {r.tooltip}
+                                {/* Tooltip arrow */}
+                                <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-t-4 border-l-4 border-r-4 border-transparent border-t-black"></div>
+                              </div>
                             </span>
                           ));
                         })()}

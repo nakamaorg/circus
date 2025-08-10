@@ -15,7 +15,7 @@ interface LambdaResponse {
 }
 
 interface LambdaPayload {
-  discord_id?: string | number;
+  discord_id?: string;
   game_id?: number;
 }
 

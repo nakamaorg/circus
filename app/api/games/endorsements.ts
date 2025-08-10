@@ -21,13 +21,6 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Parse discord ID as number
-    const discordId = Number.parseInt(session.user.discordId, 10);
-
-    if (Number.isNaN(discordId)) {
-      return NextResponse.json({ error: "Invalid discord ID" }, { status: 400 });
-    }
-
     try {
       // Mock data for development - replace with actual lambda call
       const mockEndorsements = {
@@ -38,17 +31,6 @@ export async function GET(_request: NextRequest) {
         1020: 7,
         242408: 15,
       };
-
-      // TODO: Replace with actual lambda call when environment variables are configured
-      // const lambdaResponse = await fetch(lambdaUrl, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     discord_id: discordId,
-      //   }),
-      // });
 
       return NextResponse.json(mockEndorsements);
     }

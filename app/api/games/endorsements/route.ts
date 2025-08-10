@@ -108,8 +108,14 @@ export async function GET(request: NextRequest) {
         break;
       }
 
+      case "my": {
+        functionName = "nakamaorg-core-game-get-gamer-leaderboard";
+        payload = { discord_id: session.user.discordId };
+        break;
+      }
+
       default: {
-        return NextResponse.json({ error: "Invalid type. Must be 'game' or 'global'" }, { status: 400 });
+        return NextResponse.json({ error: "Invalid type. Must be 'game', 'global', or 'my'" }, { status: 400 });
       }
     }
 

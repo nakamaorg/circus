@@ -127,14 +127,14 @@ function StatusFilter({
 
 function RemindersTable({ reminders, filterType, onFilterChange }: RemindersTableProps): JSX.Element {
   const [sortConfig, setSortConfig] = useState<{
-    key: "reminder_date" | "message" | "status";
+    key: "reminder_date" | "status";
     direction: "asc" | "desc";
   }>({
     key: "reminder_date",
     direction: "desc",
   });
 
-  const handleSort = (key: "reminder_date" | "message" | "status") => {
+  const handleSort = (key: "reminder_date" | "status") => {
     setSortConfig(prev => ({
       key,
       direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
@@ -174,12 +174,6 @@ function RemindersTable({ reminders, filterType, onFilterChange }: RemindersTabl
         return sortConfig.direction === "asc"
           ? a.timestamp - b.timestamp
           : b.timestamp - a.timestamp;
-      }
-
-      case "message": {
-        return sortConfig.direction === "asc"
-          ? (a.message_content || "").localeCompare(b.message_content || "")
-          : (b.message_content || "").localeCompare(a.message_content || "");
       }
 
       case "status": {
@@ -266,15 +260,6 @@ function RemindersTable({ reminders, filterType, onFilterChange }: RemindersTabl
                     </th>
                     <th
                       className="px-4 py-3 text-left font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
-                      onClick={() => handleSort("message")}
-                    >
-                      <div className="flex items-center gap-2">
-                        Message
-                        {getSortIcon("message")}
-                      </div>
-                    </th>
-                    <th
-                      className="px-4 py-3 text-left font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
                       onClick={() => handleSort("status")}
                     >
                       <div className="flex items-center gap-2">
@@ -308,11 +293,6 @@ function RemindersTable({ reminders, filterType, onFilterChange }: RemindersTabl
                               hour: "2-digit",
                               minute: "2-digit",
                             })}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="font-bold text-black max-w-md truncate">
-                            {reminder.message_content || "No message content"}
                           </div>
                         </td>
                         <td className="px-4 py-3">

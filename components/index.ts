@@ -5,6 +5,7 @@ export { DashboardHeader } from "./dashboard-header";
 export { DashboardLayout } from "./dashboard-layout";
 export { DiscordLoginButton } from "./discord-login-button";
 export { EventModal } from "./event-modal";
+export { GameAddModal } from "./game-add-modal";
 export { MemeUploadButton } from "./meme-upload-button";
 export { MemeUploadStatusModal } from "./meme-upload-status-modal";
 export { ProfileContent } from "./profile-content";

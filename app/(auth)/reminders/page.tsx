@@ -2,7 +2,7 @@
 
 import type { JSX } from "react";
 
-import { ArrowDown, ArrowUp, Bell, Calendar, ChevronDown, Clock, ExternalLink, Filter, Loader2, Search } from "lucide-react";
+import { ArrowDown, ArrowUp, Bell, ChevronDown, ExternalLink, Filter, Loader2, Search } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 
@@ -38,6 +38,8 @@ interface RemindersTableProps {
   reminders: Reminder[];
   searchTerm: string;
   filterType: FilterType;
+  onSearchChange: (value: string) => void;
+  onFilterChange: (value: FilterType) => void;
 }
 
 function StatusFilter({
@@ -125,23 +127,23 @@ function StatusFilter({
   );
 }
 
-function RemindersTable({ reminders, searchTerm, filterType }: RemindersTableProps): JSX.Element {
+function RemindersTable({ reminders, searchTerm, filterType, onSearchChange, onFilterChange }: RemindersTableProps): JSX.Element {
   const [sortConfig, setSortConfig] = useState<{
-    key: "timestamp" | "issued" | "status";
+    key: "reminder_date" | "message" | "status";
     direction: "asc" | "desc";
   }>({
-    key: "timestamp",
+    key: "reminder_date",
     direction: "desc",
   });
 
-  const handleSort = (key: "timestamp" | "issued" | "status") => {
+  const handleSort = (key: "reminder_date" | "message" | "status") => {
     setSortConfig(prev => ({
       key,
       direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
     }));
   };
 
-  const getSortIcon = (columnKey: "timestamp" | "issued" | "status") => {
+  const getSortIcon = (columnKey: "reminder_date" | "message" | "status") => {
     if (sortConfig.key !== columnKey) {
       return <ArrowUp className="w-4 h-4 text-gray-400" />;
     }
@@ -151,105 +153,64 @@ function RemindersTable({ reminders, searchTerm, filterType }: RemindersTablePro
       : <ArrowDown className="w-4 h-4 text-white" />;
   };
 
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleString();
-  };
-
-  const formatRelativeTime = (timestamp: number) => {
-    const now = Date.now();
-    const reminderTime = timestamp * 1000;
-    const diff = reminderTime - now;
-    const absDiff = Math.abs(diff);
-
-    const minutes = Math.floor(absDiff / (1000 * 60));
-    const hours = Math.floor(absDiff / (1000 * 60 * 60));
-    const days = Math.floor(absDiff / (1000 * 60 * 60 * 24));
-
-    if (diff > 0) {
-      if (days > 0) {
-        return `in ${days} day${days > 1 ? "s" : ""}`;
-      }
-
-      if (hours > 0) {
-        return `in ${hours} hour${hours > 1 ? "s" : ""}`;
-      }
-
-      if (minutes > 0) {
-        return `in ${minutes} minute${minutes > 1 ? "s" : ""}`;
-      }
-
-      return "very soon";
-    }
-    else {
-      if (days > 0) {
-        return `${days} day${days > 1 ? "s" : ""} ago`;
-      }
-
-      if (hours > 0) {
-        return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-      }
-
-      if (minutes > 0) {
-        return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
-      }
-
-      return "just now";
-    }
-  };
-
-  const handleReminderClick = (reminder: Reminder) => {
-    const discordUrl = `https://discord.com/channels/${reminder.guild_id}/${reminder.channel_id}/${reminder.message_id}`;
-
-    window.open(discordUrl, "_blank");
-  };
-
-  // Filter reminders
+  // Filter reminders based on status and search
   const now = Date.now() / 1000;
   const filteredReminders = reminders.filter((reminder) => {
-    // Apply status filter
-    const isUpcoming = reminder.timestamp >= now;
+    const isPassed = reminder.timestamp < now;
 
-    if (filterType === "upcoming" && !isUpcoming) {
+    // Filter by status
+    if (filterType === "upcoming" && (isPassed || reminder.reminded)) {
+      return false;
+    }
+    if (filterType === "passed" && (!isPassed && !reminder.reminded)) {
       return false;
     }
 
-    if (filterType === "passed" && isUpcoming) {
-      return false;
-    }
-
-    // Apply search filter
+    // Filter by search term
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
-      const reminderText = `${formatDate(reminder.timestamp)} ${formatDate(reminder.issued)} ${reminder.reminded ? "sent" : "pending"}`.toLowerCase();
 
-      return reminderText.includes(searchLower);
+      return (
+        reminder.message_content.toLowerCase().includes(searchLower)
+        || new Date(reminder.timestamp * 1000).toLocaleDateString().includes(searchLower)
+      );
     }
 
     return true;
   });
 
-  // Sort reminders
+  // Sort the filtered reminders
   const sortedReminders = [...filteredReminders].sort((a, b) => {
     switch (sortConfig.key) {
-      case "timestamp": {
+      case "reminder_date": {
         return sortConfig.direction === "asc"
           ? a.timestamp - b.timestamp
           : b.timestamp - a.timestamp;
       }
 
-      case "issued": {
+      case "message": {
         return sortConfig.direction === "asc"
-          ? a.issued - b.issued
-          : b.issued - a.issued;
+          ? a.message_content.localeCompare(b.message_content)
+          : b.message_content.localeCompare(a.message_content);
       }
 
       case "status": {
-        const aStatus = a.timestamp >= now ? "upcoming" : "passed";
-        const bStatus = b.timestamp >= now ? "upcoming" : "passed";
+        const getStatusValue = (reminder: Reminder) => {
+          const isPassed = reminder.timestamp < now;
+
+          if (reminder.reminded) {
+            return 2; // Completed
+          }
+          if (isPassed) {
+            return 1; // Overdue
+          }
+
+          return 0; // Upcoming
+        };
 
         return sortConfig.direction === "asc"
-          ? aStatus.localeCompare(bStatus)
-          : bStatus.localeCompare(aStatus);
+          ? getStatusValue(a) - getStatusValue(b)
+          : getStatusValue(b) - getStatusValue(a);
       }
 
       default:
@@ -257,12 +218,25 @@ function RemindersTable({ reminders, searchTerm, filterType }: RemindersTablePro
     }
   });
 
+  const getStatusDisplay = (reminder: Reminder) => {
+    const isPassed = reminder.timestamp < now;
+
+    if (reminder.reminded) {
+      return { text: "Completed", color: "bg-green-400", textColor: "text-black" };
+    }
+    if (isPassed) {
+      return { text: "Overdue", color: "bg-red-400", textColor: "text-white" };
+    }
+
+    return { text: "Upcoming", color: "bg-blue-400", textColor: "text-black" };
+  };
+
   return (
     <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <div className="bg-purple-400 border-b-4 border-black p-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Bell className="w-6 h-6 text-purple-900" />
+            <Bell className="w-6 h-6 text-black" />
             <h3 className="text-xl font-black text-black uppercase tracking-wider">
               Reminders
             </h3>
@@ -270,15 +244,33 @@ function RemindersTable({ reminders, searchTerm, filterType }: RemindersTablePro
               {sortedReminders.length}
             </span>
           </div>
+          {reminders.length > 0 && (
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+              <div className="relative">
+                <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={e => onSearchChange(e.target.value)}
+                  placeholder="Search reminders..."
+                  className="w-full sm:w-64 pl-10 pr-4 py-2 text-black bg-white border-2 border-black font-bold placeholder-gray-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none"
+                />
+              </div>
+              <StatusFilter status={filterType} onStatusChange={onFilterChange} />
+            </div>
+          )}
         </div>
       </div>
 
       {sortedReminders.length === 0
         ? (
             <div className="p-8 text-center">
-              <p className="text-xl font-black text-gray-600">No reminders found</p>
+              <Bell className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+              <p className="text-xl font-black text-gray-600">
+                {searchTerm ? "No matching reminders found" : "No reminders found"}
+              </p>
               <p className="text-sm font-bold text-gray-500 mt-2">
-                {searchTerm ? "Try adjusting your search or filter" : "No reminders to display"}
+                {searchTerm ? "Try adjusting your search query" : "Your reminders will appear here"}
               </p>
             </div>
           )
@@ -289,29 +281,29 @@ function RemindersTable({ reminders, searchTerm, filterType }: RemindersTablePro
                   <tr className="bg-black text-white">
                     <th
                       className="px-4 py-3 text-left font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
+                      onClick={() => handleSort("reminder_date")}
+                    >
+                      <div className="flex items-center gap-2">
+                        Date
+                        {getSortIcon("reminder_date")}
+                      </div>
+                    </th>
+                    <th
+                      className="px-4 py-3 text-left font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
+                      onClick={() => handleSort("message")}
+                    >
+                      <div className="flex items-center gap-2">
+                        Message
+                        {getSortIcon("message")}
+                      </div>
+                    </th>
+                    <th
+                      className="px-4 py-3 text-left font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
                       onClick={() => handleSort("status")}
                     >
                       <div className="flex items-center gap-2">
                         Status
                         {getSortIcon("status")}
-                      </div>
-                    </th>
-                    <th
-                      className="px-4 py-3 text-left font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
-                      onClick={() => handleSort("timestamp")}
-                    >
-                      <div className="flex items-center gap-2">
-                        Reminder Time
-                        {getSortIcon("timestamp")}
-                      </div>
-                    </th>
-                    <th
-                      className="px-4 py-3 text-left font-black uppercase tracking-wide cursor-pointer hover:bg-gray-800 transition-colors"
-                      onClick={() => handleSort("issued")}
-                    >
-                      <div className="flex items-center gap-2">
-                        Created
-                        {getSortIcon("issued")}
                       </div>
                     </th>
                     <th className="px-4 py-3 text-center font-black uppercase tracking-wide">
@@ -321,7 +313,8 @@ function RemindersTable({ reminders, searchTerm, filterType }: RemindersTablePro
                 </thead>
                 <tbody>
                   {sortedReminders.map((reminder, index) => {
-                    const isUpcoming = reminder.timestamp >= now;
+                    const discordUrl = `https://discord.com/channels/${reminder.guild_id}/${reminder.channel_id}/${reminder.message_id}`;
+                    const status = getStatusDisplay(reminder);
 
                     return (
                       <tr
@@ -331,49 +324,38 @@ function RemindersTable({ reminders, searchTerm, filterType }: RemindersTablePro
                         } hover:bg-yellow-100 transition-colors`}
                       >
                         <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            {isUpcoming
-                              ? (
-                                  <>
-                                    <Clock className="w-4 h-4 text-green-600" />
-                                    <span className="text-sm font-black text-green-600 uppercase">
-                                      {formatRelativeTime(reminder.timestamp)}
-                                    </span>
-                                  </>
-                                )
-                              : (
-                                  <>
-                                    <Calendar className="w-4 h-4 text-gray-600" />
-                                    <span className="text-sm font-black text-gray-600 uppercase">
-                                      {formatRelativeTime(reminder.timestamp)}
-                                    </span>
-                                    {reminder.reminded && (
-                                      <span className="text-xs bg-blue-200 border border-black px-1 py-0.5 font-black ml-2">
-                                        SENT
-                                      </span>
-                                    )}
-                                  </>
-                                )}
+                          <div className="font-bold text-black">
+                            {new Date(reminder.timestamp * 1000).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <div className="text-sm font-bold text-black">
-                            {formatDate(reminder.timestamp)}
+                          <div className="font-bold text-black max-w-md truncate">
+                            {reminder.message_content}
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <div className="text-sm font-bold text-gray-600">
-                            {formatDate(reminder.issued)}
+                          <div className={`${status.color} border-2 border-black px-3 py-1 inline-block`}>
+                            <div className={`text-sm font-black ${status.textColor}`}>
+                              {status.text}
+                            </div>
                           </div>
                         </td>
                         <td className="px-4 py-3 text-center">
-                          <button
-                            onClick={() => handleReminderClick(reminder)}
-                            className="bg-cyan-400 hover:bg-cyan-500 text-cyan-900 hover:text-cyan-950 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 px-3 py-1 text-xs font-black uppercase tracking-wide flex items-center gap-1 mx-auto"
+                          <a
+                            href={discordUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 border-2 border-black font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-200"
                           >
-                            <ExternalLink className="w-3 h-3" />
-                            Discord
-                          </button>
+                            <ExternalLink className="w-4 h-4" />
+                            View
+                          </a>
                         </td>
                       </tr>
                     );
@@ -473,26 +455,13 @@ export default function RemindersPage(): JSX.Element {
               </div>
             )
           : (
-              <>
-                {/* Search and Filter Controls */}
-                <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                  <div className="relative flex-1 max-w-md">
-                    <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
-                    <input
-                      type="text"
-                      placeholder="Search reminders..."
-                      value={searchTerm}
-                      onChange={e => setSearchTerm(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 text-black bg-white border-2 border-black font-bold placeholder-gray-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none"
-                    />
-                  </div>
-
-                  <StatusFilter status={filterType} onStatusChange={setFilterType} />
-                </div>
-
-                {/* Reminders Table */}
-                <RemindersTable reminders={reminders} searchTerm={searchTerm} filterType={filterType} />
-              </>
+              <RemindersTable
+                reminders={reminders}
+                searchTerm={searchTerm}
+                filterType={filterType}
+                onSearchChange={setSearchTerm}
+                onFilterChange={setFilterType}
+              />
             )}
     </div>
   );

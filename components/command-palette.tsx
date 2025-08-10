@@ -2,7 +2,7 @@
 
 import type { JSX } from "react";
 
-import { Command, Gamepad2, GanttChartSquare, Home, ImageIcon, LogOut, Search, Trophy, User, Volleyball, X } from "lucide-react";
+import { Bell, Command, Gamepad2, GanttChartSquare, Home, ImageIcon, LogOut, Search, Trophy, User, Volleyball, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -67,6 +67,17 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps): JSX.El
       icon: <Volleyball className="w-4 h-4" />,
       action: () => {
         router.push("/fenj");
+        onClose();
+      },
+      category: "Navigation",
+    },
+    {
+      id: "reminders",
+      title: "View Reminders",
+      description: "Check your Discord reminder history",
+      icon: <Bell className="w-4 h-4" />,
+      action: () => {
+        router.push("/reminders");
         onClose();
       },
       category: "Navigation",

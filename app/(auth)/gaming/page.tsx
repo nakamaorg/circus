@@ -7,6 +7,7 @@ import { ArrowDown, ArrowUp, ChevronDown, Filter, Gamepad2, Plus, Search, Trophy
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { GameAddModal } from "@/components/game-add-modal";
+import { Button } from "@/components/ui/button";
 import { isGamer } from "@/lib/helpers/permission.helper";
 import { useGameEndorsements } from "@/lib/hooks/use-game-endorsements";
 import { useGames } from "@/lib/hooks/use-games";
@@ -542,13 +543,13 @@ export default function GamingPage(): JSX.Element {
                 </div>
                 {/* Add Game Button - Only show for Gamers */}
                 {user && isGamer(user) && (
-                  <button
+                  <Button
                     onClick={() => setShowAddGameModal(true)}
-                    className="bg-purple-500 hover:bg-purple-600 text-white font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 flex items-center gap-2 px-4 py-2 whitespace-nowrap"
+                    className="bg-purple-500 hover:bg-purple-600 text-white font-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-4 h-4 mr-2" />
                     Add Game
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>

@@ -2,7 +2,7 @@
 
 import type { JSX } from "react";
 
-import { Command, GanttChartSquare, Home, ImageIcon, LogOut, Search, Trophy, User, Volleyball, X } from "lucide-react";
+import { Command, Gamepad2, GanttChartSquare, Home, ImageIcon, LogOut, Search, Trophy, User, Volleyball, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -45,6 +45,17 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps): JSX.El
       icon: <Home className="w-4 h-4" />,
       action: () => {
         router.push("/");
+        onClose();
+      },
+      category: "Navigation",
+    },
+    {
+      id: "gaming",
+      title: "View Gaming",
+      description: "Games and endorsements leaderboard",
+      icon: <Gamepad2 className="w-4 h-4" />,
+      action: () => {
+        router.push("/gaming");
         onClose();
       },
       category: "Navigation",

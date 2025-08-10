@@ -6,7 +6,11 @@ import { ArrowUp, Download, Eye, Play, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { UploadButton } from "@/components/upload-button";
+import { UploadStatusModal } from "@/components/upload-status-modal";
+import { isMemer } from "@/lib/helpers/permission.helper";
 import { usePageReady } from "@/lib/hooks/use-page-ready";
+import { useUser } from "@/lib/hooks/use-user";
 
 
 
@@ -15,6 +19,19 @@ interface MediaItem {
   url: string;
   type: "image" | "video";
   name: string;
+}
+
+interface UploadResult {
+  success: boolean;
+  filename: string;
+  key: string;
+  error?: string;
+}
+
+interface UploadSummary {
+  total: number;
+  successful: number;
+  failed: number;
 }
 
 interface MediaModalProps {
@@ -201,6 +218,9 @@ function MediaModal({ item, isOpen, onClose }: MediaModalProps): JSX.Element | n
 export default function MemesPage(): JSX.Element {
   usePageReady();
 
+  const { user } = useUser();
+  const canUpload = user ? isMemer(user) : false;
+
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -210,6 +230,13 @@ export default function MemesPage(): JSX.Element {
   // Search and filter state
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<"all" | "image" | "video">("all");
+
+  // Upload state
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadResults, setUploadResults] = useState<UploadResult[]>([]);
+  const [uploadSummary, setUploadSummary] = useState<UploadSummary | null>(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   // Fetch media items from S3
   useEffect(() => {
@@ -309,6 +336,70 @@ export default function MemesPage(): JSX.Element {
     setSelectedType("all");
   };
 
+  // Upload functions
+  const handleUpload = async (files: File[]) => {
+    if (!canUpload) {
+      setUploadError("You don't have permission to upload memes. Memer role required.");
+
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadError(null);
+
+    try {
+      const formData = new FormData();
+
+      for (const file of files) {
+        formData.append("files", file);
+      }
+
+      const response = await fetch("/api/upload-memes", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Upload failed");
+      }
+
+      setUploadResults(result.results);
+      setUploadSummary(result.summary);
+      setShowUploadModal(true);
+
+      // Optimistically update the media list for successful uploads
+      if (result.summary.successful > 0) {
+        // Refetch media items to get the new ones
+        const mediaResponse = await fetch("/api/lore-media");
+
+        if (mediaResponse.ok) {
+          const mediaData = await mediaResponse.json();
+
+          setMediaItems(mediaData.items || []);
+        }
+      }
+    }
+    catch (err) {
+      console.error("Upload error:", err);
+      setUploadError(err instanceof Error ? err.message : "Upload failed");
+    }
+    finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleUploadError = (message: string) => {
+    setUploadError(message);
+  };
+
+  const closeUploadModal = () => {
+    setShowUploadModal(false);
+    setUploadResults([]);
+    setUploadSummary(null);
+  };
+
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* Content */}
@@ -391,6 +482,15 @@ export default function MemesPage(): JSX.Element {
                     <X className="w-3 h-3" />
                     Clear
                   </Button>
+                )}
+
+                {/* Upload Button - Only show for Memers */}
+                {canUpload && (
+                  <UploadButton
+                    onUpload={handleUpload}
+                    onError={handleUploadError}
+                    isUploading={isUploading}
+                  />
                 )}
               </div>
 
@@ -560,6 +660,37 @@ export default function MemesPage(): JSX.Element {
           isOpen={!!selectedMedia}
           onClose={closeMedia}
         />
+      )}
+
+      {/* Upload Status Modal */}
+      {showUploadModal && uploadSummary && (
+        <UploadStatusModal
+          isOpen={showUploadModal}
+          results={uploadResults}
+          summary={uploadSummary}
+          onClose={closeUploadModal}
+        />
+      )}
+
+      {/* Upload Error Toast */}
+      {uploadError && (
+        <div className="fixed top-4 right-4 z-50 animate__animated animate__slideInRight">
+          <div className="bg-red-500 text-white p-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-w-sm">
+            <div className="flex items-start gap-3">
+              <X className="w-5 h-5 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="font-black text-sm">Upload Error</p>
+                <p className="font-bold text-xs mt-1">{uploadError}</p>
+              </div>
+              <button
+                onClick={() => setUploadError(null)}
+                className="text-white hover:text-gray-200 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

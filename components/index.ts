@@ -8,4 +8,6 @@ export { EventModal } from "./event-modal";
 export { ProfileContent } from "./profile-content";
 export { Sidebar } from "./sidebar";
 export { SpeakButton } from "./speak-button";
+export { UploadButton } from "./upload-button";
+export { UploadStatusModal } from "./upload-status-modal";
 export { UserMenu } from "./user-menu";

@@ -4,6 +4,7 @@ export { CopyButton } from "./copy-button";
 export { DashboardHeader } from "./dashboard-header";
 export { DashboardLayout } from "./dashboard-layout";
 export { DiscordLoginButton } from "./discord-login-button";
+export { EventAddModal } from "./event-add-modal";
 export { EventModal } from "./event-modal";
 export { FenjAddModal } from "./fenj-add-modal";
 export { FieldAddModal } from "./field-add-modal";

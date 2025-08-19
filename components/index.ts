@@ -6,6 +6,7 @@ export { DashboardLayout } from "./dashboard-layout";
 export { DiscordLoginButton } from "./discord-login-button";
 export { EventModal } from "./event-modal";
 export { FenjAddModal } from "./fenj-add-modal";
+export { FieldAddModal } from "./field-add-modal";
 export { GameAddModal } from "./game-add-modal";
 export { MemeUploadButton } from "./meme-upload-button";
 export { MemeUploadStatusModal } from "./meme-upload-status-modal";

@@ -2,12 +2,16 @@
 
 import type { JSX } from "react";
 
-import { ChevronUp } from "lucide-react";
+import { ChevronUp, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { EventAddModal } from "@/components/event-add-modal";
 import { TimelineItem } from "@/components/timeline-item";
+import { Button } from "@/components/ui/button";
+import { isHistorian } from "@/lib/helpers/permission.helper";
 import { useEvents } from "@/lib/hooks/use-events";
 import { usePageReady } from "@/lib/hooks/use-page-ready";
+import { useUser } from "@/lib/hooks/use-user";
 
 
 
@@ -19,8 +23,10 @@ import { usePageReady } from "@/lib/hooks/use-page-ready";
  */
 export default function TimelinePage(): JSX.Element {
   usePageReady();
-  const { data: events, isLoading, error } = useEvents();
+  const { user } = useUser();
+  const { data: events, isLoading, error, refetch } = useEvents();
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
 
   // Handle scroll to show/hide back to top button
   useEffect(() => {
@@ -44,6 +50,11 @@ export default function TimelinePage(): JSX.Element {
       top: 0,
       behavior: "smooth",
     });
+  };
+
+  // Handle successful event creation
+  const handleEventSuccess = () => {
+    refetch(); // Refetch events to show the new event
   };
 
   // Sort events from newest to oldest by timestamp
@@ -83,6 +94,19 @@ export default function TimelinePage(): JSX.Element {
         <p className="text-lg sm:text-xl font-bold text-black bg-white inline-block px-4 sm:px-6 py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
           Journey through events in chronological order
         </p>
+        
+        {/* Add Event Button for Historians */}
+        {user && isHistorian(user) && (
+          <div className="mt-6">
+            <Button
+              onClick={() => setIsEventModalOpen(true)}
+              className="bg-green-400 hover:bg-green-500 text-black font-black px-6 py-3 text-lg uppercase tracking-wider border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Add Event
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Timeline Content */}
@@ -138,6 +162,13 @@ export default function TimelinePage(): JSX.Element {
           <ChevronUp className="w-5 h-5 sm:w-7 sm:h-7 text-black font-bold" />
         </button>
       )}
+
+      {/* Event Add Modal */}
+      <EventAddModal
+        isOpen={isEventModalOpen}
+        onClose={() => setIsEventModalOpen(false)}
+        onSuccess={handleEventSuccess}
+      />
     </div>
   );
 }

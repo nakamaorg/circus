@@ -11,6 +11,7 @@ import { useEvents } from "@/lib/hooks/use-events";
 import { useGameEndorsements } from "@/lib/hooks/use-game-endorsements";
 import { useMatches } from "@/lib/hooks/use-matches";
 import { usePageReady } from "@/lib/hooks/use-page-ready";
+import { useReminders } from "@/lib/hooks/use-reminders";
 import { useReputation } from "@/lib/hooks/use-reputation";
 import { useUser } from "@/lib/hooks/use-user";
 
@@ -189,18 +190,22 @@ function DashboardSkeleton(): JSX.Element {
         </div>
       </div>
 
-      {/* Recent Activity Skeleton */}
+      {/* Upcoming Reminders Skeleton */}
       <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-6 h-6 bg-gray-300 rounded animate-pulse"></div>
           <div className="w-40 h-6 bg-gray-300 rounded animate-pulse"></div>
+          <div className="ml-auto w-20 h-8 bg-gray-300 rounded animate-pulse"></div>
         </div>
         <div className="space-y-3">
-          {Array.from({ length: 5 }).map((_, index) => (
+          {Array.from({ length: 3 }).map((_, index) => (
             <div key={index} className="flex items-center justify-between p-3 bg-gray-50 border-2 border-black">
               <div className="flex items-center gap-3">
                 <div className="w-4 h-4 bg-gray-300 rounded animate-pulse"></div>
-                <div className="w-32 h-4 bg-gray-300 rounded animate-pulse"></div>
+                <div className="flex-1">
+                  <div className="w-32 h-4 bg-gray-300 rounded mb-2 animate-pulse"></div>
+                  <div className="w-24 h-3 bg-gray-300 rounded animate-pulse"></div>
+                </div>
               </div>
               <div className="w-16 h-3 bg-gray-300 rounded animate-pulse"></div>
             </div>
@@ -227,6 +232,7 @@ export default function DashboardPage(): JSX.Element {
   const { data: userEndorsements } = useGameEndorsements({
     type: "global",
   });
+  const { data: reminders } = useReminders();
 
   // Calculate dashboard metrics
   const dashboardStats = useMemo(() => {
@@ -239,6 +245,12 @@ export default function DashboardPage(): JSX.Element {
       && match.timestamp * 1000 > currentTime
       && match.timestamp * 1000 < oneWeekFromNow,
     ).length || 0;
+
+    // Get upcoming reminders (next 7 days)
+    const upcomingReminders = reminders?.reminders?.filter(reminder =>
+      reminder.reminder_time * 1000 > currentTime
+      && reminder.reminder_time * 1000 < oneWeekFromNow,
+    ) || [];
 
     // Get user's endorsements count
     const userEndorsementsCount = userEndorsements?.find(endorsement =>
@@ -254,13 +266,14 @@ export default function DashboardPage(): JSX.Element {
 
     return {
       upcomingFenjMatches,
+      upcomingReminders,
       userEndorsementsCount,
       eventsCount,
       memesCount,
       ws: reputation?.summary.received_ws || 0,
       ls: reputation?.summary.received_ls || 0,
     };
-  }, [matches, userEndorsements, user?.discord?.id, events, reputation]);
+  }, [matches, reminders, userEndorsements, user?.discord?.id, events, reputation]);
 
   if (isUserLoading) {
     return <DashboardSkeleton />;
@@ -374,33 +387,70 @@ export default function DashboardPage(): JSX.Element {
         </div>
       </div>
 
-      {/* Recent Activity Section */}
+      {/* Upcoming Reminders Section */}
       <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
         <div className="flex items-center gap-3 mb-6">
           <Clock className="w-6 h-6 text-orange-600" />
           <h2 className="text-2xl font-black text-black uppercase tracking-wider">
-            Recent Activity
+            Upcoming Reminders
           </h2>
+          <div className="ml-auto bg-orange-200 border-2 border-black px-3 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <span className="text-sm font-black text-black">
+              {dashboardStats.upcomingReminders.length}
+              {" "}
+              upcoming
+            </span>
+          </div>
         </div>
 
         <div className="space-y-3">
-          {matches?.slice(0, 5).map(match => (
-            <div key={match.id} className="flex items-center justify-between p-3 bg-gray-50 border-2 border-black">
-              <div className="flex items-center gap-3">
-                <Gamepad2 className="w-4 h-4 text-blue-600" />
-                <span className="font-bold text-black text-sm">
-                  {match.field_name || `Field ${match.field_id}`}
-                </span>
-              </div>
-              <span className="text-xs font-bold text-gray-600">
-                {new Date(match.timestamp * 1000).toLocaleDateString()}
-              </span>
-            </div>
-          )) || (
-            <div className="text-center py-8">
-              <p className="text-lg font-bold text-gray-600">No recent activity</p>
-            </div>
-          )}
+          {dashboardStats.upcomingReminders.length > 0
+            ? (
+                dashboardStats.upcomingReminders.slice(0, 5).map(reminder => (
+                  <div key={reminder.id} className="flex items-center justify-between p-3 bg-gray-50 border-2 border-black">
+                    <div className="flex items-center gap-3">
+                      <Clock className="w-4 h-4 text-orange-600" />
+                      <div className="flex-1">
+                        <span className="font-bold text-black text-sm block">
+                          {reminder.title}
+                        </span>
+                        {reminder.content && (
+                          <span className="text-xs text-gray-600 block mt-1">
+                            {reminder.content.length > 50
+                              ? `${reminder.content.substring(0, 50)}...`
+                              : reminder.content}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs font-bold text-gray-600 block">
+                        {new Date(reminder.reminder_time * 1000).toLocaleDateString()}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {new Date(reminder.reminder_time * 1000).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              )
+            : (
+                <div className="text-center py-8">
+                  <p className="text-lg font-bold text-gray-600">No upcoming reminders</p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Visit the
+                    {" "}
+                    <Link href="/reminders" className="text-orange-600 font-bold hover:underline">
+                      reminders page
+                    </Link>
+                    {" "}
+                    to create new reminders
+                  </p>
+                </div>
+              )}
         </div>
       </div>
     </div>

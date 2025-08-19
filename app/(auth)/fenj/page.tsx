@@ -1,12 +1,16 @@
 "use client";
 
 import type { JSX } from "react";
+import type { TUser } from "@/lib/types/user.type";
 
-import { ArrowDown, ArrowUp, Calendar, ChevronDown, Clock, Filter, MapPin, Search, Trophy, Users } from "lucide-react";
+import { ArrowDown, ArrowUp, Calendar, ChevronDown, Clock, Filter, MapPin, Plus, Search, Trophy, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { FenjAddModal } from "@/components/fenj-add-modal";
 import { Button } from "@/components/ui/button";
+import { isFenjer } from "@/lib/helpers/permission.helper";
 import { usePageReady } from "@/lib/hooks/use-page-ready";
+import { useUser } from "@/lib/hooks/use-user";
 
 
 
@@ -134,7 +138,19 @@ function UpcomingMatch({ match }: { match: MatchWithField | null }): JSX.Element
   );
 }
 
-function MatchesTable({ matches, fields }: { matches: MatchWithField[]; fields: Field[] }): JSX.Element {
+function MatchesTable({
+  matches,
+  fields,
+  user,
+  showAddModal: _showAddModal,
+  setShowAddModal,
+}: {
+  matches: MatchWithField[];
+  fields: Field[];
+  user: TUser | null;
+  showAddModal: boolean;
+  setShowAddModal: (show: boolean) => void;
+}): JSX.Element {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedField, setSelectedField] = useState<string>("all");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -316,6 +332,17 @@ function MatchesTable({ matches, fields }: { matches: MatchWithField[]; fields: 
               </div>
             )}
           </div>
+
+          {/* Add Match Button - Only show for Fenjers */}
+          {user && isFenjer(user) && (
+            <Button
+              onClick={() => setShowAddModal(true)}
+              className="bg-green-500 hover:bg-green-600 text-white font-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Match
+            </Button>
+          )}
         </div>
       </div>
 
@@ -426,12 +453,14 @@ function MatchesTable({ matches, fields }: { matches: MatchWithField[]; fields: 
 export default function FenjPage(): JSX.Element {
   usePageReady();
 
+  const { user } = useUser();
   const [fields, setFields] = useState<Field[]>([]);
   const [matches, setMatches] = useState<MatchWithField[]>([]);
   const [isLoadingFields, setIsLoadingFields] = useState(true);
   const [isLoadingMatches, setIsLoadingMatches] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>("matches");
+  const [showAddModal, setShowAddModal] = useState(false);
 
   // Fetch fields data
   useEffect(() => {
@@ -570,7 +599,13 @@ export default function FenjPage(): JSX.Element {
                             <UpcomingMatch match={upcomingMatch} />
 
                             {/* All Matches Table */}
-                            <MatchesTable matches={matches} fields={fields} />
+                            <MatchesTable
+                              matches={matches}
+                              fields={fields}
+                              user={user || null}
+                              showAddModal={showAddModal}
+                              setShowAddModal={setShowAddModal}
+                            />
                           </>
                         )}
                   </div>
@@ -611,6 +646,13 @@ export default function FenjPage(): JSX.Element {
               </div>
             )}
       </div>
+
+      {/* Add Match Modal */}
+      <FenjAddModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        fields={fields}
+      />
     </div>
   );
 }

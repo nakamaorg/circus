@@ -96,7 +96,7 @@ export function EventAddModal({ isOpen, onClose, onSuccess }: EventAddModalProps
 
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
-    
+
     if (file) {
       // Validate file type - must be an image
       if (!file.type.startsWith("image/")) {
@@ -104,7 +104,7 @@ export function EventAddModal({ isOpen, onClose, onSuccess }: EventAddModalProps
 
         return;
       }
-      
+
       // Validate file size - max 4MB
       if (file.size > 4 * 1024 * 1024) {
         setError("Image size must be less than 4MB");
@@ -112,7 +112,7 @@ export function EventAddModal({ isOpen, onClose, onSuccess }: EventAddModalProps
         return;
       }
     }
-    
+
     setFormData(prev => ({ ...prev, photo: file }));
     setError("");
   };
@@ -144,7 +144,7 @@ export function EventAddModal({ isOpen, onClose, onSuccess }: EventAddModalProps
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -159,7 +159,7 @@ export function EventAddModal({ isOpen, onClose, onSuccess }: EventAddModalProps
       submitFormData.append("title", formData.title.trim());
       submitFormData.append("description", formData.description.trim());
       submitFormData.append("timestamp", new Date(formData.timestamp).getTime().toString());
-      
+
       // Process tags - split by comma and clean up
       const tags = formData.tags
         .split(",")
@@ -167,7 +167,7 @@ export function EventAddModal({ isOpen, onClose, onSuccess }: EventAddModalProps
         .filter(tag => tag.length > 0);
 
       submitFormData.append("tags", JSON.stringify(tags));
-      
+
       if (formData.photo) {
         submitFormData.append("photo", formData.photo);
       }

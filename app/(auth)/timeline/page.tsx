@@ -94,7 +94,7 @@ export default function TimelinePage(): JSX.Element {
         <p className="text-lg sm:text-xl font-bold text-black bg-white inline-block px-4 sm:px-6 py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
           Journey through events in chronological order
         </p>
-        
+
         {/* Add Event Button for Historians */}
         {user && isHistorian(user) && (
           <div className="mt-6">

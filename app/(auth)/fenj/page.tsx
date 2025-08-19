@@ -489,28 +489,28 @@ export default function FenjPage(): JSX.Element {
   }, []);
 
   // Fetch matches data
+  const fetchMatches = async () => {
+    try {
+      setIsLoadingMatches(true);
+      const response = await fetch("/api/matches");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to fetch matches");
+      }
+
+      setMatches(data.matches || []);
+    }
+    catch (err) {
+      console.error("Error fetching matches:", err);
+      setError(err instanceof Error ? err.message : "Failed to load matches");
+    }
+    finally {
+      setIsLoadingMatches(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchMatches = async () => {
-      try {
-        setIsLoadingMatches(true);
-        const response = await fetch("/api/matches");
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Failed to fetch matches");
-        }
-
-        setMatches(data.matches || []);
-      }
-      catch (err) {
-        console.error("Error fetching matches:", err);
-        setError(err instanceof Error ? err.message : "Failed to load matches");
-      }
-      finally {
-        setIsLoadingMatches(false);
-      }
-    };
-
     fetchMatches();
   }, []);
 
@@ -652,6 +652,9 @@ export default function FenjPage(): JSX.Element {
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
         fields={fields}
+        onSuccess={() => {
+          fetchMatches();
+        }}
       />
     </div>
   );

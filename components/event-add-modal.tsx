@@ -158,7 +158,7 @@ export function EventAddModal({ isOpen, onClose, onSuccess }: EventAddModalProps
 
       submitFormData.append("title", formData.title.trim());
       submitFormData.append("description", formData.description.trim());
-      submitFormData.append("timestamp", new Date(formData.timestamp).getTime().toString());
+      submitFormData.append("timestamp", Math.round(new Date(formData.timestamp).getTime() / 1000).toString());
 
       // Process tags - split by comma and clean up
       const tags = formData.tags

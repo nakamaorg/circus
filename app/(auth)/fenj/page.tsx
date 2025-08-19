@@ -7,6 +7,7 @@ import { ArrowDown, ArrowUp, Calendar, ChevronDown, Clock, Filter, MapPin, Plus,
 import { useEffect, useRef, useState } from "react";
 
 import { FenjAddModal } from "@/components/fenj-add-modal";
+import { FieldAddModal } from "@/components/field-add-modal";
 import { Button } from "@/components/ui/button";
 import { isFenjer } from "@/lib/helpers/permission.helper";
 import { usePageReady } from "@/lib/hooks/use-page-ready";
@@ -461,30 +462,31 @@ export default function FenjPage(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>("matches");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showFieldAddModal, setShowFieldAddModal] = useState(false);
 
   // Fetch fields data
+  const fetchFields = async () => {
+    try {
+      setIsLoadingFields(true);
+      const response = await fetch("/api/fields");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to fetch fields");
+      }
+
+      setFields(data.fields || []);
+    }
+    catch (err) {
+      console.error("Error fetching fields:", err);
+      setError(err instanceof Error ? err.message : "Failed to load fields");
+    }
+    finally {
+      setIsLoadingFields(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchFields = async () => {
-      try {
-        setIsLoadingFields(true);
-        const response = await fetch("/api/fields");
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Failed to fetch fields");
-        }
-
-        setFields(data.fields || []);
-      }
-      catch (err) {
-        console.error("Error fetching fields:", err);
-        setError(err instanceof Error ? err.message : "Failed to load fields");
-      }
-      finally {
-        setIsLoadingFields(false);
-      }
-    };
-
     fetchFields();
   }, []);
 
@@ -614,6 +616,19 @@ export default function FenjPage(): JSX.Element {
                 {/* Fields Tab */}
                 {activeTab === "fields" && (
                   <div>
+                    {/* Add Field Button - Only show for Fenjers */}
+                    {user && isFenjer(user) && (
+                      <div className="mb-6 flex justify-end">
+                        <Button
+                          onClick={() => setShowFieldAddModal(true)}
+                          className="bg-purple-500 hover:bg-purple-600 text-white font-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all duration-100"
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add Field
+                        </Button>
+                      </div>
+                    )}
+
                     {isLoadingFields
                       ? (
                           <div className="flex items-center justify-center min-h-[400px]">
@@ -654,6 +669,15 @@ export default function FenjPage(): JSX.Element {
         fields={fields}
         onSuccess={() => {
           fetchMatches();
+        }}
+      />
+
+      {/* Add Field Modal */}
+      <FieldAddModal
+        isOpen={showFieldAddModal}
+        onClose={() => setShowFieldAddModal(false)}
+        onSuccess={() => {
+          fetchFields();
         }}
       />
     </div>

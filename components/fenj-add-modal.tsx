@@ -17,6 +17,7 @@ interface FenjAddModalProps {
   isOpen: boolean;
   onClose: () => void;
   fields: Field[];
+  onSuccess?: () => void;
 }
 
 /**
@@ -28,13 +29,15 @@ interface FenjAddModalProps {
  * @param props.isOpen - Whether the modal is open
  * @param props.onClose - Callback to close the modal
  * @param props.fields - Available fields to select from
+ * @param props.onSuccess - Optional callback called after successful match creation
  * @returns The Fenj add modal component
  */
-export function FenjAddModal({ isOpen, onClose, fields }: FenjAddModalProps): JSX.Element | null {
+export function FenjAddModal({ isOpen, onClose, fields, onSuccess }: FenjAddModalProps): JSX.Element | null {
   const [selectedField, setSelectedField] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Handle escape key
   useEffect(() => {
@@ -60,22 +63,26 @@ export function FenjAddModal({ isOpen, onClose, fields }: FenjAddModalProps): JS
       setSelectedDate("");
       setMessage("");
       setError(null);
+      setIsSubmitting(false);
     }
   }, [isOpen]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setIsSubmitting(true);
 
     // Validation
     if (!selectedField) {
       setError("Please select a field");
+      setIsSubmitting(false);
 
       return;
     }
 
     if (!selectedDate) {
       setError("Please select a date");
+      setIsSubmitting(false);
 
       return;
     }
@@ -86,21 +93,42 @@ export function FenjAddModal({ isOpen, onClose, fields }: FenjAddModalProps): JS
 
     if (selectedDateTime <= currentTime) {
       setError("Date must be in the future");
+      setIsSubmitting(false);
 
       return;
     }
 
-    // Log the submission for now
-    // eslint-disable-next-line no-console
-    console.log("Fenj Entry Submission:", {
-      fieldId: selectedField,
-      date: selectedDate,
-      timestamp: Math.floor(selectedDateTime / 1000),
-      message: message.trim() || null,
-    });
+    try {
+      // Call the API route to create the match
+      const response = await fetch("/api/matches", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: message.trim() || null,
+          field_id: selectedField,
+          timestamp: Math.floor(selectedDateTime / 1000),
+        }),
+      });
 
-    // Close modal after successful submission
-    onClose();
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to create match");
+      }
+
+      // Success - close modal
+      onSuccess?.();
+      onClose();
+    }
+    catch (fetchError) {
+      console.error("Failed to create match:", fetchError);
+      setError(fetchError instanceof Error ? fetchError.message : "Failed to create match");
+    }
+    finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) {
@@ -233,10 +261,22 @@ export function FenjAddModal({ isOpen, onClose, fields }: FenjAddModalProps): JS
             </Button>
             <Button
               type="submit"
-              className="flex-1 bg-green-500 hover:bg-green-600 text-white font-black border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100"
+              disabled={isSubmitting}
+              className="flex-1 bg-green-500 hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:translate-x-0 disabled:translate-y-0 transition-all duration-100"
             >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Match
+              {isSubmitting
+                ? (
+                    <>
+                      <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Creating...
+                    </>
+                  )
+                : (
+                    <>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Match
+                    </>
+                  )}
             </Button>
           </div>
         </form>

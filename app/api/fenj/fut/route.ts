@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 
-import { ScanCommand } from "@aws-sdk/client-dynamodb";
+import { ScanCommand, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import { NextResponse } from "next/server";
 
 
@@ -47,8 +47,8 @@ function cleanupCache(): void {
 }
 
 // Generate cache key based on user and fenj player ID
-function generateCacheKey(userId: string, fenjPlayerId: string): string {
-  return `${userId}:${fenjPlayerId}`;
+function generateCacheKey(userId: string, fenjPlayerId: string, cardType: string): string {
+  return `${userId}:${fenjPlayerId}:${cardType}`;
 }
 
 
@@ -86,6 +86,21 @@ export async function POST(request: NextRequest) {
     cleanupCache();
 
     try {
+      // Try to parse optional JSON body for cardType override
+      let requestedCardType: string | undefined;
+
+      if (request.headers.get("content-type")?.includes("application/json")) {
+        try {
+          const body = await request.json();
+
+          if (typeof body?.cardType === "string") {
+            requestedCardType = body.cardType.trim();
+          }
+        }
+        catch {
+          // ignore body parse errors
+        }
+      }
       // Get FENJ player data from DynamoDB using user_id (scan since we don't know the partition key)
       const scanCommand = new ScanCommand({
         TableName: AWS_TABLES.FENJ,
@@ -120,12 +135,100 @@ export async function POST(request: NextRequest) {
         shooting: Number.parseInt(playerItem.shooting?.N || "50", 10),
       };
 
+      // Whitelist of allowed card codes
+      const allowedCardTypes = new Set([
+        "common_bronze",
+        "common_silver",
+        "common_gold",
+        "rare_bronze",
+        "rare_silver",
+        "rare_gold",
+        "if_bronze",
+        "if_silver",
+        "if_gold",
+        "fc_bronze",
+        "fc_silver",
+        "fc_gold",
+        "motm",
+        "pl_potm",
+        "bl_potm",
+        "futties",
+        "futtiesw",
+        "toty",
+        "toty_n",
+        "el",
+        "el_motm",
+        "el_live",
+        "el_sbc",
+        "el_tott",
+        "common_ucl",
+        "rare_ucl",
+        "ucl_motm",
+        "ucl_live",
+        "ucl_sbc",
+        "ucl_tott",
+        "fsr",
+        "fs",
+        "fsn",
+        "pp",
+        "cb",
+        "rb",
+        "hero",
+        "aw",
+        "fb",
+        "headliners",
+        "cc",
+        "sbc",
+        "sbcp",
+        "legend",
+        "fs1",
+        "fs2",
+        "fs3",
+        "fs4",
+        "fs5",
+        "fs6",
+        "fs7",
+        "fs8",
+        "fs9",
+        "fs10",
+        "fs11",
+        "otw",
+        "st_patricks",
+      ]);
+
+      let effectiveCardType = fenjPlayer.fut_card;
+
+      if (requestedCardType && allowedCardTypes.has(requestedCardType) && requestedCardType !== fenjPlayer.fut_card) {
+        // Update DynamoDB with new card type
+        try {
+          const updateCommand = new UpdateItemCommand({
+            TableName: AWS_TABLES.FENJ,
+            Key: {
+              id: { S: fenjPlayer.id },
+              user_id: { S: fenjPlayer.user_id },
+            },
+            UpdateExpression: "SET fut_card = :card",
+            ExpressionAttributeValues: {
+              ":card": { S: requestedCardType },
+            },
+          });
+
+          await dynamodb.send(updateCommand);
+          effectiveCardType = requestedCardType;
+        }
+        catch (updateErr) {
+          console.error("Failed to update card type in DynamoDB", updateErr);
+        }
+      }
+
+      // If card type changed, we invalidate previous cache implicitly by using cardType in key
+
       // Check cache first
-      const cacheKey = generateCacheKey(userId, fenjPlayer.id);
+      const cacheKey = generateCacheKey(userId, fenjPlayer.id, effectiveCardType);
       const cachedEntry = futCardCache.get(cacheKey);
 
       if (cachedEntry && cachedEntry.expiresAt > Date.now()) {
-        return NextResponse.json({ imageUrl: cachedEntry.imageUrl });
+        return NextResponse.json({ imageUrl: cachedEntry.imageUrl, cardType: effectiveCardType });
       }
 
       // Get API configuration from Parameter Store (cached)
@@ -135,7 +238,7 @@ export async function POST(request: NextRequest) {
       // Create FormData for multipart request
       const formData = new FormData();
 
-      formData.append("kind", fenjPlayer.fut_card);
+      formData.append("kind", effectiveCardType);
       formData.append("name", userData.discord?.name || "Player");
       formData.append("country", fenjPlayer.country);
 
@@ -263,7 +366,7 @@ export async function POST(request: NextRequest) {
 
       futCardCache.set(cacheKey, cacheEntry);
 
-      return NextResponse.json({ imageUrl });
+      return NextResponse.json({ imageUrl, cardType: effectiveCardType });
     }
     catch (apiError) {
       console.error("Failed to generate FUT card from third-wheel API:", apiError);

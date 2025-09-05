@@ -170,3 +170,113 @@ export async function loreMediaExists(key: string): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * @description
+ * Generate a presigned URL for FENJ club logo in S3
+ *
+ * @returns Promise<TNullable<string>> - The presigned URL or null if error/not found
+ */
+export async function getFenjClubLogoUrl(): Promise<TNullable<string>> {
+  try {
+    const key = "assets/images/logo.png";
+    const exists = await fenjClubLogoExists();
+
+    if (!exists) {
+      return null;
+    }
+
+    const command = new GetObjectCommand({
+      Bucket: AWS_BUCKETS.NAKAMAORG,
+      Key: key,
+    });
+
+    // Generate presigned URL that expires in 1 hour
+    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+    return url;
+  }
+  catch {
+    return null;
+  }
+}
+
+/**
+ * @description
+ * Check if FENJ club logo exists
+ *
+ * @returns Promise<boolean> - Whether the club logo exists
+ */
+export async function fenjClubLogoExists(): Promise<boolean> {
+  try {
+    const key = "assets/images/logo.png";
+
+    const command = new HeadObjectCommand({
+      Bucket: AWS_BUCKETS.NAKAMAORG,
+      Key: key,
+    });
+
+    await s3.send(command);
+
+    return true;
+  }
+  catch {
+    return false;
+  }
+}
+
+/**
+ * @description
+ * Generate a presigned URL for FENJ player image in S3
+ *
+ * @param playerId - The FENJ player ID to get the image for
+ * @returns Promise<TNullable<string>> - The presigned URL or null if error/not found
+ */
+export async function getFenjPlayerImageUrl(playerId: string): Promise<TNullable<string>> {
+  try {
+    const key = `assets/images/fenj/${playerId}.png`;
+    const exists = await fenjPlayerImageExists(playerId);
+
+    if (!exists) {
+      return null;
+    }
+
+    const command = new GetObjectCommand({
+      Bucket: AWS_BUCKETS.NAKAMAORG,
+      Key: key,
+    });
+
+    // Generate presigned URL that expires in 1 hour
+    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+    return url;
+  }
+  catch {
+    return null;
+  }
+}
+
+/**
+ * @description
+ * Check if FENJ player image exists
+ *
+ * @param playerId - The FENJ player ID to check for
+ * @returns Promise<boolean> - Whether the player image exists
+ */
+export async function fenjPlayerImageExists(playerId: string): Promise<boolean> {
+  try {
+    const key = `assets/images/fenj/${playerId}.png`;
+
+    const command = new HeadObjectCommand({
+      Bucket: AWS_BUCKETS.NAKAMAORG,
+      Key: key,
+    });
+
+    await s3.send(command);
+
+    return true;
+  }
+  catch {
+    return false;
+  }
+}

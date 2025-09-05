@@ -5,6 +5,7 @@ import type { TUser } from "@/lib/types/user.type";
 
 import { ArrowDown, ArrowUp, Calendar, ChevronDown, Clock, Filter, MapPin, Plus, Search, Trophy, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import Tilt from "react-parallax-tilt";
 
 import { FenjAddModal } from "@/components/fenj-add-modal";
 import { FieldAddModal } from "@/components/field-add-modal";
@@ -32,7 +33,7 @@ interface MatchWithField extends Match {
   field_name?: string;
 }
 
-type TabType = "fields" | "matches";
+type TabType = "fields" | "matches" | "fut";
 
 function FieldCard({ field, matchCount }: { field: Field; matchCount: number }): JSX.Element {
   const handleLocationClick = () => {
@@ -464,6 +465,12 @@ export default function FenjPage(): JSX.Element {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showFieldAddModal, setShowFieldAddModal] = useState(false);
 
+  // FUT card state
+  const [futCardUrl, setFutCardUrl] = useState<string | null>(null);
+  const [isLoadingFutCard, setIsLoadingFutCard] = useState(false);
+  const [futError, setFutError] = useState<string | null>(null);
+  const [lastGeneratedTime, setLastGeneratedTime] = useState<number>(0);
+
   // Fetch fields data
   const fetchFields = async () => {
     try {
@@ -525,6 +532,122 @@ export default function FenjPage(): JSX.Element {
     return matches.filter(match => match.field_id === fieldId).length;
   };
 
+  // Generate FUT card from real FENJ data
+  const generateFutCard = async () => {
+    try {
+      // Rate limiting: prevent requests more than once every 10 seconds
+      const now = Date.now();
+      const timeSinceLastGeneration = now - lastGeneratedTime;
+      const minInterval = 10 * 1000; // 10 seconds
+
+      if (timeSinceLastGeneration < minInterval && futCardUrl) {
+        setFutError(`Please wait ${Math.ceil((minInterval - timeSinceLastGeneration) / 1000)} more seconds before generating a new card.`);
+
+        return;
+      }
+
+      setIsLoadingFutCard(true);
+      setFutError(null);
+
+      // Check localStorage cache first (with 5 minute TTL)
+      const cacheKey = `fut_card_${user?.id}`;
+      const cachedData = localStorage.getItem(cacheKey);
+
+      if (cachedData) {
+        try {
+          const { imageUrl, timestamp } = JSON.parse(cachedData);
+          const cacheAge = now - timestamp;
+          const cacheMaxAge = 5 * 60 * 1000; // 5 minutes
+
+          if (cacheAge < cacheMaxAge && imageUrl) {
+            setFutCardUrl(imageUrl);
+            setLastGeneratedTime(timestamp);
+
+            return;
+          }
+          else {
+            // Remove expired cache
+            localStorage.removeItem(cacheKey);
+          }
+        }
+        catch {
+          // Invalid cache data, remove it
+          localStorage.removeItem(cacheKey);
+        }
+      }
+
+      // Call API without any body - it will fetch data from DynamoDB
+      const response = await fetch("/api/fenj/fut", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to generate FUT card");
+      }
+
+      setFutCardUrl(data.imageUrl);
+      setLastGeneratedTime(now);
+
+      // Cache the result in localStorage
+      try {
+        localStorage.setItem(cacheKey, JSON.stringify({
+          imageUrl: data.imageUrl,
+          timestamp: now,
+        }));
+      }
+      catch {
+        // Storage quota exceeded or disabled, continue without caching
+      }
+    }
+    catch (err) {
+      console.error("Error generating FUT card:", err);
+      setFutError(err instanceof Error ? err.message : "Failed to generate FUT card");
+    }
+    finally {
+      setIsLoadingFutCard(false);
+    }
+  };
+
+  // Auto-generate FUT card when FUT tab is selected
+  useEffect(() => {
+    if (activeTab === "fut" && !futCardUrl && !isLoadingFutCard && user?.id) {
+      // Try to load from cache first
+      const cacheKey = `fut_card_${user.id}`;
+      const cachedData = localStorage.getItem(cacheKey);
+
+      if (cachedData) {
+        try {
+          const cached = JSON.parse(cachedData);
+          const cacheAge = Date.now() - cached.timestamp;
+          const cacheMaxAge = 5 * 60 * 1000; // 5 minutes
+
+          if (cacheAge < cacheMaxAge && cached.imageUrl) {
+            setFutCardUrl(cached.imageUrl);
+            setLastGeneratedTime(cached.timestamp);
+
+            return;
+          }
+          else {
+            // Remove expired cache
+            localStorage.removeItem(cacheKey);
+          }
+        }
+        catch {
+          // Invalid cache entry, remove it
+          localStorage.removeItem(cacheKey);
+        }
+      }
+
+      // No valid cache, generate new card
+      generateFutCard();
+    }
+  }, [activeTab, futCardUrl, isLoadingFutCard, user?.id]);
+
   return (
     <div className="min-h-screen overflow-x-hidden">
       <div className="container mx-auto px-6 py-12">
@@ -561,6 +684,17 @@ export default function FenjPage(): JSX.Element {
               }`}
             >
               Fields
+            </button>
+            <div className="w-0.5 bg-black"></div>
+            <button
+              onClick={() => setActiveTab("fut")}
+              className={`px-8 py-4 font-black text-lg uppercase tracking-wide transition-all duration-200 ${
+                activeTab === "fut"
+                  ? "bg-yellow-400 text-black"
+                  : "bg-white text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              FUT
             </button>
           </div>
         </div>
@@ -656,6 +790,78 @@ export default function FenjPage(): JSX.Element {
                             )}
                           </div>
                         )}
+                  </div>
+                )}
+
+                {/* FUT Tab */}
+                {activeTab === "fut" && (
+                  <div className="flex flex-col items-center space-y-8">
+                    <div className="text-center space-y-4">
+                      <h2 className="text-3xl font-black text-black uppercase tracking-wider">
+                        Your FUT Card
+                      </h2>
+                      <p className="text-lg font-bold text-gray-700">
+                        Generate your FIFA Ultimate Team card based on your FENJ stats
+                      </p>
+                    </div>
+
+                    {futError
+                      ? (
+                          <div className="text-center bg-red-100 border-4 border-red-400 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8">
+                            <p className="text-xl font-black text-red-600 mb-4">Failed to generate FUT card</p>
+                            <p className="text-base font-bold text-red-500 mb-6">{futError}</p>
+                            <Button
+                              onClick={generateFutCard}
+                              className="bg-blue-500 hover:bg-blue-600 text-white font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100"
+                            >
+                              Try Again
+                            </Button>
+                          </div>
+                        )
+                      : isLoadingFutCard
+                        ? (
+                            <div className="text-center bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8">
+                              <div className="animate-spin w-16 h-16 border-4 border-black border-t-transparent rounded-full mx-auto mb-4"></div>
+                              <p className="text-2xl font-black text-black">Generating FUT card...</p>
+                              <p className="text-base font-bold text-gray-600 mt-2">This may take a few seconds</p>
+                            </div>
+                          )
+                        : futCardUrl
+                          ? (
+                              <div className="flex flex-col items-center">
+                                {/* FUT Card with Tilt Effect */}
+                                <Tilt
+                                  tiltMaxAngleX={15}
+                                  tiltMaxAngleY={15}
+                                  perspective={1000}
+                                  scale={1.05}
+                                  transitionSpeed={1500}
+                                  gyroscope={true}
+                                  glareEnable={true}
+                                  glareMaxOpacity={0.45}
+                                >
+                                  <img
+                                    alt="Your FUT Card"
+                                    className="w-full h-auto object-contain max-w-md"
+                                    src={futCardUrl}
+                                  />
+                                </Tilt>
+                              </div>
+                            )
+                          : (
+                              <div className="text-center bg-gray-100 border-4 border-gray-400 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8">
+                                <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                                <p className="text-2xl font-black text-gray-600">No FUT card generated yet</p>
+                                <p className="text-base font-bold text-gray-500 mt-2 mb-6">Click the button below to generate your card</p>
+                                <Button
+                                  onClick={generateFutCard}
+                                  className="bg-yellow-400 hover:bg-yellow-500 text-black font-black border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 px-8 py-3 text-lg uppercase tracking-wider"
+                                >
+                                  <Trophy className="w-5 h-5 mr-2" />
+                                  Generate FUT Card
+                                </Button>
+                              </div>
+                            )}
                   </div>
                 )}
               </div>

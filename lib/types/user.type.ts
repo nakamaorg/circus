@@ -3,6 +3,7 @@ export type TUser = {
   name: string;
   autobiography: string;
   wanted: boolean;
+  permissions?: number;
   discord: {
     id: string;
     name: string;
@@ -16,4 +17,5 @@ export type TUserDynamoDB = {
   autobiography: { S: string };
   discord_id: { N: string };
   wanted: { BOOL: boolean };
+  permissions?: { N: string };
 };

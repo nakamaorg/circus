@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import type { TUser } from "@/lib/types/user.type";
 
-import { NumberValue, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { NextResponse } from "next/server";
 import { AWS_TABLES, docClient } from "@/lib/config/aws.config";
 import { auth } from "@/lib/helpers/auth.helper";
@@ -26,7 +26,7 @@ export async function GET(_request: NextRequest) {
       TableName: AWS_TABLES.USERS,
       FilterExpression: "discord_id = :discordId",
       ExpressionAttributeValues: {
-        ":discordId": NumberValue.from(session.user.discordId),
+        ":discordId": session.user.discordId,
       },
     });
 
@@ -43,6 +43,9 @@ export async function GET(_request: NextRequest) {
       name: dbUser.username as string,
       autobiography: dbUser.autobiography as string,
       wanted: dbUser.wanted as boolean,
+      permissions: typeof dbUser.permissions === "number"
+        ? (dbUser.permissions as number)
+        : (typeof dbUser.permissions === "string" ? Number.parseInt(dbUser.permissions as string, 10) : undefined),
       discord: {
         id: session.user.discordId,
         name: session.user.name || "Unknown",

@@ -43,39 +43,51 @@ export function ProfileSkeleton(): JSX.Element {
 
         {/* User Information Card Skeleton */}
         <Card className="bg-purple-300 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] pt-12 md:pt-16">
-          <CardContent className="p-8">
-            <div className="grid gap-6 md:grid-cols-2">
+          <CardContent className="p-4 sm:p-6 md:p-8">
+            <div className="grid gap-4 sm:gap-6 sm:grid-cols-2">
               {/* Display Name Field */}
-              <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
-                <h3 className="text-lg font-black text-black mb-2 uppercase">Display Name</h3>
-                <div className="h-6 bg-purple-200 rounded w-3/4 animate-pulse"></div>
+              <div className="bg-white border-2 border-black p-4 sm:p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:transform sm:-rotate-1">
+                <h3 className="text-base sm:text-lg font-black text-black mb-2 uppercase">Display Name</h3>
+                <div className="h-5 sm:h-6 bg-purple-200 rounded w-3/4 animate-pulse"></div>
               </div>
 
               {/* Discord Username Field */}
-              <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
-                <h3 className="text-lg font-black text-black mb-2 uppercase">Discord Username</h3>
-                <div className="h-6 bg-purple-200 rounded w-2/3 animate-pulse"></div>
+              <div className="bg-white border-2 border-black p-4 sm:p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:transform sm:rotate-1">
+                <h3 className="text-base sm:text-lg font-black text-black mb-2 uppercase">Discord Username</h3>
+                <div className="h-5 sm:h-6 bg-purple-200 rounded w-2/3 animate-pulse"></div>
               </div>
 
               {/* Status Field with Button */}
-              <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-black text-black mb-2 uppercase">Status</h3>
-                    <div className="h-6 bg-gray-200 rounded w-16 animate-pulse"></div>
+              <div className="bg-white border-2 border-black p-4 sm:p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:transform sm:rotate-1">
+                <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-base sm:text-lg font-black text-black mb-2 uppercase">Status</h3>
+                    <div className="h-5 sm:h-6 bg-gray-200 rounded w-16 animate-pulse"></div>
                   </div>
-                  <div className="w-24 h-8 bg-red-200 border-2 border-black rounded shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] animate-pulse"></div>
+                  <div className="w-full sm:w-24 h-8 bg-red-200 border-2 border-black rounded shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] animate-pulse"></div>
                 </div>
               </div>
 
               {/* Discord ID Field with Copy Button */}
-              <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-black text-black mb-2 uppercase">Discord ID</h3>
-                    <div className="h-6 bg-purple-200 rounded w-32 animate-pulse font-mono"></div>
+              <div className="bg-white border-2 border-black p-4 sm:p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:transform sm:-rotate-1">
+                <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-base sm:text-lg font-black text-black mb-2 uppercase">Discord ID</h3>
+                    <div className="h-4 sm:h-5 md:h-6 bg-purple-200 rounded w-32 animate-pulse font-mono"></div>
                   </div>
                   <div className="w-10 h-10 bg-cyan-200 border-2 border-black rounded-[5px] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] animate-pulse"></div>
+                </div>
+              </div>
+
+              {/* Permissions Field */}
+              <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:transform col-span-2">
+                <h3 className="text-lg font-black text-black mb-3 uppercase">Permissions</h3>
+                <div className="flex flex-wrap gap-2">
+                  <div className="h-7 w-28 bg-gray-200 border-2 border-black animate-pulse"></div>
+                  <div className="h-7 w-20 bg-gray-200 border-2 border-black animate-pulse"></div>
+                  <div className="h-7 w-24 bg-gray-200 border-2 border-black animate-pulse"></div>
+                  <div className="h-7 w-24 bg-gray-200 border-2 border-black animate-pulse"></div>
+                  <div className="h-7 w-20 bg-gray-200 border-2 border-black animate-pulse"></div>
                 </div>
               </div>
             </div>

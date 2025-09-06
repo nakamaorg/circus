@@ -180,21 +180,21 @@ export function ProfileContent(): JSX.Element {
 
         {/* User Information Card */}
         <Card className="bg-purple-300 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] pt-12 md:pt-16">
-          <CardContent className="p-8">
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
-                <h3 className="text-lg font-black text-black mb-2 uppercase">Display Name</h3>
-                <p className="text-xl font-bold text-purple-700">{sessionUser.name || "Unknown User"}</p>
+          <CardContent className="p-4 sm:p-6 md:p-8">
+            <div className="grid gap-4 sm:gap-6 sm:grid-cols-2">
+              <div className="bg-white border-2 border-black p-4 sm:p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:transform sm:-rotate-1">
+                <h3 className="text-base sm:text-lg font-black text-black mb-2 uppercase">Display Name</h3>
+                <p className="text-lg sm:text-xl font-bold text-purple-700 break-words">{sessionUser.name || "Unknown User"}</p>
               </div>
-              <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
-                <h3 className="text-lg font-black text-black mb-2 uppercase">Discord Username</h3>
-                <p className="text-xl font-bold text-purple-700">{userData?.discord?.name || "Not available"}</p>
+              <div className="bg-white border-2 border-black p-4 sm:p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:transform sm:rotate-1">
+                <h3 className="text-base sm:text-lg font-black text-black mb-2 uppercase">Discord Username</h3>
+                <p className="text-lg sm:text-xl font-bold text-purple-700 break-words">{userData?.discord?.name || "Not available"}</p>
               </div>
-              <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-black text-black mb-2 uppercase">Status</h3>
-                    <p className={`text-xl font-bold ${userData?.wanted ? "text-red-600" : "text-green-600"}`}>
+              <div className="bg-white border-2 border-black p-4 sm:p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:transform sm:rotate-1">
+                <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-base sm:text-lg font-black text-black mb-2 uppercase">Status</h3>
+                    <p className={`text-lg sm:text-xl font-bold ${userData?.wanted ? "text-red-600" : "text-green-600"}`}>
                       {userData?.wanted ? "WANTED" : "SAINT"}
                     </p>
                   </div>
@@ -203,7 +203,7 @@ export function ProfileContent(): JSX.Element {
                       onClick={handleViewBounty}
                       disabled={loadingBountyImage}
                       size="sm"
-                      className="bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 transform rotate-1 hover:rotate-0 disabled:translate-x-0 disabled:translate-y-0 disabled:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+                      className="bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 transform rotate-1 hover:rotate-0 disabled:translate-x-0 disabled:translate-y-0 disabled:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] w-full sm:w-auto"
                     >
                       {loadingBountyImage
                         ? (
@@ -222,11 +222,11 @@ export function ProfileContent(): JSX.Element {
                   )}
                 </div>
               </div>
-              <div className="bg-white border-2 border-black p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-black text-black mb-2 uppercase">Discord ID</h3>
-                    <p className="text-xl font-bold text-purple-700 font-mono">{userData?.discord?.id || "Not available"}</p>
+              <div className="bg-white border-2 border-black p-4 sm:p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:transform sm:-rotate-1">
+                <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-base sm:text-lg font-black text-black mb-2 uppercase">Discord ID</h3>
+                    <p className="text-sm sm:text-lg md:text-xl font-bold text-purple-700 font-mono break-all">{userData?.discord?.id || "Not available"}</p>
                   </div>
                   {userData?.discord?.id && (
                     <CopyButton
@@ -237,6 +237,50 @@ export function ProfileContent(): JSX.Element {
                     />
                   )}
                 </div>
+              </div>
+
+              <div className="bg-white border-2 border-black p-4 sm:p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:transform sm:col-span-2">
+                <h3 className="text-base sm:text-lg font-black text-black mb-3 uppercase">Permissions</h3>
+                {typeof userData?.permissions === "number"
+                  ? (
+                      <div className="flex flex-wrap gap-2">
+                        {(() => {
+                          const p = userData.permissions as number;
+                          const roles: { label: string; mask: number; color: string; tooltip: string }[] = [
+                            { label: "Dictator", mask: 0b00001, color: "bg-red-300", tooltip: "Can manage users" },
+                            { label: "Memer", mask: 0b00010, color: "bg-pink-300", tooltip: "Can add memes" },
+                            { label: "Fenjer", mask: 0b00100, color: "bg-yellow-300", tooltip: "Can manage fenj" },
+                            { label: "Historian", mask: 0b01000, color: "bg-blue-300", tooltip: "Can manage events" },
+                            { label: "Gamer", mask: 0b10000, color: "bg-green-300", tooltip: "Can manage gaming related stuff" },
+                          ];
+                          const active = roles.filter(r => (p & r.mask) === r.mask);
+
+                          if (active.length === 0) {
+                            return (
+                              <span className="text-sm font-bold text-gray-600">No special permissions</span>
+                            );
+                          }
+
+                          return active.map(r => (
+                            <span
+                              key={r.label}
+                              className={`${r.color} border-2 border-black px-2 sm:px-3 py-1 text-xs sm:text-sm font-black relative group/tooltip cursor-help`}
+                            >
+                              {r.label}
+                              {/* Tooltip */}
+                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 whitespace-nowrap z-[100] pointer-events-none">
+                                {r.tooltip}
+                                {/* Tooltip arrow */}
+                                <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-t-4 border-l-4 border-r-4 border-transparent border-t-black"></div>
+                              </div>
+                            </span>
+                          ));
+                        })()}
+                      </div>
+                    )
+                  : (
+                      <span className="text-xs sm:text-sm font-bold text-gray-600">No special permissions</span>
+                    )}
               </div>
             </div>
           </CardContent>

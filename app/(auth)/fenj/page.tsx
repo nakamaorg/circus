@@ -934,7 +934,7 @@ export default function FenjPage(): JSX.Element {
                     </div>
 
                     {/* Card Type Selector */}
-                    <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
+                    {isLoadingFutCard ? '' : <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
                       <div className="flex flex-col sm:flex-row items-center gap-4">
                         <label className="text-lg font-black text-black uppercase tracking-wider">
                           Card Type:
@@ -984,7 +984,7 @@ export default function FenjPage(): JSX.Element {
                           </Button>
                         )}
                       </div>
-                    </div>
+                    </div>}
 
                     {futError
                       ? (

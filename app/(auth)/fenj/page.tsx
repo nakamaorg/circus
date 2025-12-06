@@ -934,57 +934,61 @@ export default function FenjPage(): JSX.Element {
                     </div>
 
                     {/* Card Type Selector */}
-                    {isLoadingFutCard ? '' : <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
-                      <div className="flex flex-col sm:flex-row items-center gap-4">
-                        <label className="text-lg font-black text-black uppercase tracking-wider">
-                          Card Type:
-                        </label>
+                    {isLoadingFutCard
+                      ? ""
+                      : (
+                          <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
+                            <div className="flex flex-col sm:flex-row items-center gap-4">
+                              <label className="text-lg font-black text-black uppercase tracking-wider">
+                                Card Type:
+                              </label>
 
-                        <div className="relative" ref={cardTypeDropdownRef}>
-                          <Filter className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
-                          <button
-                            onClick={() => setIsCardTypeDropdownOpen(!isCardTypeDropdownOpen)}
-                            className="pl-10 pr-8 py-2 text-black bg-white border-2 border-black font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none min-w-[200px] cursor-pointer flex items-center justify-between"
-                          >
-                            <span className="truncate">
-                              {cardTypes.find(type => type.code === selectedCardType)?.name || "Common Gold"}
-                            </span>
-                            <ChevronDown className={`w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-200 ${isCardTypeDropdownOpen ? "rotate-180" : ""}`} />
-                          </button>
-
-                          {/* Custom Dropdown */}
-                          {isCardTypeDropdownOpen && (
-                            <div className="animate__animated animate__bounceIn animate__faster absolute top-full left-0 right-0 mt-1 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50 max-h-64 overflow-y-auto">
-                              {cardTypes.map(type => (
-                                <div
-                                  key={type.code}
-                                  onClick={() => {
-                                    setSelectedCardType(type.code);
-                                    setIsCardTypeDropdownOpen(false);
-                                  }}
-                                  className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 last:border-b-0 hover:bg-purple-100 transition-colors ${
-                                    selectedCardType === type.code ? "bg-purple-200" : ""
-                                  }`}
+                              <div className="relative" ref={cardTypeDropdownRef}>
+                                <Filter className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
+                                <button
+                                  onClick={() => setIsCardTypeDropdownOpen(!isCardTypeDropdownOpen)}
+                                  className="pl-10 pr-8 py-2 text-black bg-white border-2 border-black font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-1px] focus:translate-y-[-1px] transition-all duration-200 outline-none min-w-[200px] cursor-pointer flex items-center justify-between"
                                 >
-                                  {type.name}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
+                                  <span className="truncate">
+                                    {cardTypes.find(type => type.code === selectedCardType)?.name || "Common Gold"}
+                                  </span>
+                                  <ChevronDown className={`w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-200 ${isCardTypeDropdownOpen ? "rotate-180" : ""}`} />
+                                </button>
 
-                        {/* Confirm Button */}
-                        {selectedCardType !== currentCardType && (
-                          <Button
-                            onClick={updateCardType}
-                            disabled={isUpdatingCardType}
-                            className="bg-green-500 hover:bg-green-600 text-white font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 px-6 py-3"
-                          >
-                            {isUpdatingCardType ? "Updating..." : "Confirm"}
-                          </Button>
+                                {/* Custom Dropdown */}
+                                {isCardTypeDropdownOpen && (
+                                  <div className="animate__animated animate__bounceIn animate__faster absolute top-full left-0 right-0 mt-1 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50 max-h-64 overflow-y-auto">
+                                    {cardTypes.map(type => (
+                                      <div
+                                        key={type.code}
+                                        onClick={() => {
+                                          setSelectedCardType(type.code);
+                                          setIsCardTypeDropdownOpen(false);
+                                        }}
+                                        className={`px-4 py-2 font-bold text-black cursor-pointer border-b border-gray-200 last:border-b-0 hover:bg-purple-100 transition-colors ${
+                                          selectedCardType === type.code ? "bg-purple-200" : ""
+                                        }`}
+                                      >
+                                        {type.name}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Confirm Button */}
+                              {selectedCardType !== currentCardType && (
+                                <Button
+                                  onClick={updateCardType}
+                                  disabled={isUpdatingCardType}
+                                  className="bg-green-500 hover:bg-green-600 text-white font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100 px-6 py-3"
+                                >
+                                  {isUpdatingCardType ? "Updating..." : "Confirm"}
+                                </Button>
+                              )}
+                            </div>
+                          </div>
                         )}
-                      </div>
-                    </div>}
 
                     {futError
                       ? (

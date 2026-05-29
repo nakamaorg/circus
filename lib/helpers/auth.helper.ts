@@ -2,6 +2,7 @@ import type { TUnsafe } from "@eoussama/core";
 
 import NextAuth from "next-auth";
 import Discord from "next-auth/providers/discord";
+import { authConfig } from "@/lib/config/auth.config";
 import { env } from "@/lib/config/env.config";
 
 
@@ -13,12 +14,9 @@ declare module "next-auth" {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   secret: env.AUTH_SECRET,
   session: { strategy: "jwt" },
-  pages: {
-    signIn: "/login",
-    error: "/login",
-  },
   providers: [
     Discord({
       clientId: env.AUTH_DISCORD_ID,

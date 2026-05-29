@@ -7,7 +7,7 @@ import { CircusLogo } from "@/components/circus-logo";
 import { NavigationLink } from "@/components/navigation-link";
 import { Button } from "@/components/ui";
 import { MENU_ITEMS } from "@/lib/consts/menu.const";
-import { version } from "../package.json";
+import pkg from "../package.json";
 
 
 
@@ -66,7 +66,7 @@ export function Sidebar({ isOpen = true, onLinkClick }: TSidebarProps): JSX.Elem
         <div className="text-center bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
           <p className="text-sm font-black text-black uppercase tracking-wider">
             Circus v
-            {version}
+            {pkg.version}
           </p>
           <p className="text-xs font-black text-black mt-2 uppercase">
             NakamaOrg Circus © 2025

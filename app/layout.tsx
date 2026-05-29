@@ -8,7 +8,7 @@ import { CommandPaletteProvider } from "@/components/providers/command-palette-p
 import { NavigationProvider } from "@/components/providers/navigation-provider";
 import { ReactQueryProvider } from "@/components/providers/react-query-provider";
 
-import "./globals.scss";
+import "./globals.css";
 
 
 

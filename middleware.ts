@@ -1,34 +1,10 @@
-import type { NextRequest } from "next/server";
+import NextAuth from "next-auth";
 
-import { NextResponse } from "next/server";
-import { auth } from "@/lib/helpers/auth.helper";
-
+import { authConfig } from "@/lib/config/auth.config";
 
 
-/**
- * @description Middleware for handling authentication routes.
- * It checks if the user is authenticated and redirects them accordingly.
- * If the user is not authenticated, they are redirected to the login page.
- *
- * @param request - The incoming request object.
- * @returns {NextResponse} The response object, either allowing the request to continue or redirect
- */
-export default async function middleware(request: NextRequest): Promise<NextResponse> {
-  const session = await auth();
-  const isLoggedIn = !!session;
-  const { pathname } = request.nextUrl;
-  const isGuestRoute = pathname.startsWith("/login") || pathname.match(/^\/\(guest\)/);
 
-  if (!isLoggedIn && !isGuestRoute) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  if (isLoggedIn && isGuestRoute) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  return NextResponse.next();
-}
+export const { auth: middleware } = NextAuth(authConfig);
 
 export const config = {
   matcher: [
